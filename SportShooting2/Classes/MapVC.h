@@ -40,6 +40,9 @@
     BOOL isVideoPreviewerViewLarge;
     CGRect smallSize;
     
+    
+    CLLocation * phoneLocation;
+    
     __weak IBOutlet UIButton *MenuButton;
     __weak IBOutlet UIView *videoPreviewerView;
     
@@ -92,9 +95,12 @@
 
 @property BOOL isPathDrawingEnabled;
 @property BOOL isDroneRecording;
+@property BOOL isLocationServiceAuthorized;
 
 
 
 -(void) enableMainMenuPan;
 -(void) disableMainMenuPan;
+
+-(void) startUpdatingLoc;
 @end

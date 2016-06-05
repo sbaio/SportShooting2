@@ -51,33 +51,42 @@
 
 #pragma mark - mapView
 
+-(void) startUpdatingLoc{
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager startUpdatingLocation];
+}
 -(void) initMapView{
     
     mapView.mapVC = self;
+    
 
-    
-    // enable location updates
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    
-    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-        [self.locationManager requestWhenInUseAuthorization];
-        NSLog(@"qfsf");
-    }
-    
-    [self.locationManager startUpdatingLocation];
-    
    swipeGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnScreen:)];
     
     [self.view addGestureRecognizer:swipeGR];
-    
-    
 
     _mapVideoSwitchingTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapSwitchMapAndVideo:)];
 
     [mapView addGestureRecognizer:_mapVideoSwitchingTapGR];
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    phoneLocation = _locationManager.location;
+    _autopilot.userLocation = _locationManager.location;
+
+    if(phoneLocation.coordinate.longitude && phoneLocation.coordinate.latitude){
+        if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:phoneLocation.coordinate] > 10000) {
+            [mapView setRegion:MKCoordinateRegionMake(phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
+        }
+        
+    }
+//
+//    else if(!phoneLocation.coordinate.latitude && !phoneLocation.coordinate.longitude && isPhoneLocationValid){
+//        isPhoneLocationValid = NO;
+//        DVLog(@"phoneLocation not valid");
+//    }
+    
+}
 
 #pragma mark - video previewer view
 

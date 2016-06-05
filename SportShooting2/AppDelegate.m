@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-
+#import <PermissionScope/PermissionScope-Swift.h>
 
 @interface AppDelegate ()
 
@@ -40,6 +40,25 @@
     
     NSLog(@"%@",mapVC);
     [self registerApp];
+    
+    PermissionScope * locationPermission = [[PermissionScope alloc]init];
+    [locationPermission addPermission:[[LocationWhileInUsePermission alloc]init] message:@"We use this to track\r\nwhere you live"];
+
+    [locationPermission show:^(BOOL completed, NSArray *results) {
+        NSLog(@"Changed: %@ - %@", @(completed), results);
+        if (completed) {
+            NSLog(@"mabrouuuuuk");
+            mapVC.isLocationServiceAuthorized = YES;
+        
+            [mapVC startUpdatingLoc];
+        }
+        else{
+            mapVC.isLocationServiceAuthorized = NO;
+        }
+    } cancelled:^(NSArray *x) {
+        NSLog(@"cancelled");
+        mapVC.isLocationServiceAuthorized = NO;
+    }];
     DVWindowShow();
     return YES;
 }
