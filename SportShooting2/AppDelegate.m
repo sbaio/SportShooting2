@@ -8,15 +8,39 @@
 
 #import "AppDelegate.h"
 
+
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
-
+@synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+    
+    mainRevealController = (SWRevealViewController*)[mainStoryboard instantiateInitialViewController];
+    [self.window setRootViewController:mainRevealController];
+    
+    MapVC* mapVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
+    
+    menuRevealController = (SWRevealViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"mainBackVC"];
+    [mainRevealController setFrontVC:mapVC rearVC:menuRevealController];
+    
+    UINavigationController* navC = [[UINavigationController alloc] init];
+    
+    UITableViewController* GeneralMenu = [mainStoryboard instantiateViewControllerWithIdentifier:@"generalMenuVC"];
+    
+    [menuRevealController setFrontVC:navC rearVC:GeneralMenu];
+    
+    [self setMainAndMenuRevealProperties];
+    
+    [[Menu instance] setSubmenu:0];
+    
+    NSLog(@"%@",mapVC);
+    [self registerApp];
+    DVWindowShow();
     return YES;
 }
 
@@ -41,5 +65,135 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+#pragma mark - App registration
+-(void) sdkManagerDidRegisterAppWithError:(NSError *)error {
+    
+    if (error) { // try multiple times
+        //DVLog(@"attempts to register %d",attemptsToRegister);
+        if (attemptsToRegister < 3 ) {
+            sleep(2);
+            attemptsToRegister ++;
+            registered  = NO;
+            [self registerApp];
+        }
+        else{
+            DVLog(@"Registration error : %@",error.localizedDescription);
+        }
+        
+    }
+    else {
+                DVLog(@"app registered");
+        registered = YES;
+#if ENTER_DEBUG_MODE
+        [DJISDKManager enterDebugModeWithDebugId:@"192.168.168.79"];
+#else
+        //        DVLog(@"starting connection to product");
+        [DJISDKManager startConnectionToProduct];
+#endif
+        
+#if ENABLE_REMOTE_LOGGER
+        [DJISDKManager enableRemoteLoggingWithDeviceID:@"Device ID" logServerURLString:@"Enter Remote Logger URL here"];
+#endif
+        
+        if (attemptsToRegister) {
+            DVLog(@"registered after %d attempts !",attemptsToRegister);
+#if ENTER_DEBUG_MODE
+            
+            [DJISDKManager enterDebugModeWithDebugId:@"192.168.0.5"];
+#else
+            DVLog(@"starting connection to product");
+            [DJISDKManager startConnectionToProduct];
+#endif
+        }
+    }
+    
+}
+
+-(void) sdkManagerProductDidChangeFrom:(DJIBaseProduct* _Nullable) oldProduct to:(DJIBaseProduct* _Nullable) newProduct{
+    
+    
+    _realDrone = [ComponentHelper fetchAircraft];
+    
+//    if (_realDrone) {
+//        DVLog(@"Agumon : I'm here");
+//        [[Menu instance] getGeneralMenu].isDroneConnected = YES;
+//        // set green icon for drone connected
+//        [[[Menu instance] getGeneralMenu].tableView reloadData];
+//        
+//        if ([[Menu instance] getGeneralMenu].realDroneSwitch) {
+//            
+//        }
+//        
+//        //setting delegates
+//        
+//        DJIFlightController* fc = [ComponentHelper fetchFlightController];
+//        fc.delegate = [[Menu instance] getMapVC];;
+//        
+//        DJICamera* cam = [ComponentHelper fetchCamera];
+//        cam.delegate = [[Menu instance] getMapVC];;
+//        
+//        // post notification
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
+//        
+//        
+//    }else{
+//        DVLog(@"Agumon : not here");
+//        [[Menu instance] getGeneralMenu].isDroneConnected = NO;
+//        // set red icon for drone not connected
+//        [[[Menu instance] getGeneralMenu].tableView reloadData];
+//    }
+}
+
+-(void) registerApp {
+    
+    attemptsToRegister = 0;
+    registered = NO;
+    
+    NSString* appKey = @"c0c4b76bc9958412ef245778";
+    
+    [DJISDKManager registerApp:appKey withDelegate:self];
+}
+
+
+#pragma mark - SWReveal 
+
+-(void) setMainAndMenuRevealProperties{
+    // MENU
+    
+    float generalMenuWidth = 200; // = rearViewRevealWidth+ rearViewRevealOverdraw
+    //    float subMenuWidth = 250;// _totalViewWidth - generalMenuWidth
+    
+    [menuRevealController _initDefaultProperties];
+    menuRevealController.rearViewRevealWidth = generalMenuWidth;
+    menuRevealController.rearViewRevealOverdraw = 0; // general menu width ...
+    menuRevealController.bounceBackOnOverdraw = NO;
+    menuRevealController.stableDragOnOverdraw = YES;
+    menuRevealController.rearViewRevealDisplacement = 200; // !!!!!
+    // modifications !!
+    menuRevealController.isLeftViewAboveFront = YES;
+    menuRevealController.isViewCropping = YES;
+    menuRevealController.alwaysGoRightMost = YES; ///!!!!!
+    menuRevealController.totalViewWidth = 467;
+    menuRevealController.presentFrontViewHierarchically = NO;
+    menuRevealController.delegate = self;
+    [menuRevealController.frontViewController.view addGestureRecognizer:menuRevealController.panGestureRecognizer];
+    [menuRevealController setFrontViewPosition:FrontViewPositionRightMost animated:NO];
+    
+    // MAIN
+    [mainRevealController _initDefaultProperties];
+    
+    mainRevealController.rearViewRevealWidth = 200;
+    mainRevealController.rearViewRevealOverdraw = 250;
+    mainRevealController.bounceBackOnOverdraw = NO;
+    mainRevealController.stableDragOnOverdraw = YES;
+    mainRevealController.presentFrontViewHierarchically = NO;
+    mainRevealController.frontViewShadowOpacity = 0.5;
+    mainRevealController.delegate = self;
+    
+    [mainRevealController.frontViewController.view addGestureRecognizer:mainRevealController.panGestureRecognizer];
+    //    [mainRevealController setFrontViewPosition:FrontViewPositionRight animated:NO];
+}
+
 
 @end
