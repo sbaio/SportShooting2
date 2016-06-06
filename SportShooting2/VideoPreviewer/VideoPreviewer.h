@@ -9,6 +9,7 @@
 #import "VideoFrameExtractor.h"
 #import "MovieGLView.h"
 #import "DJILinkQueues.h"
+#import "Menu.h"
 
 #define RENDER_FRAME_NUMBER (4)
 
@@ -134,6 +135,8 @@ typedef NS_ENUM(NSUInteger, VideoPreviewerEvent){
  */
 - (void) setDecoderDataSource:(int)type;
 
--(void) addImageViewWithImage:(UIImage*) image;
+
+
+-(void) setGLviewMaskImage:(BOOL) set isDroneConnected:(BOOL) isDroneConnected isLocEnabled:(BOOL) isLocationServicesAuth;
 
 @end

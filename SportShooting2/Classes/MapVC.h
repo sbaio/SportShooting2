@@ -23,6 +23,9 @@
 #import "VideoPreviewer.h"
 #import "MapView.h"
 
+#import "AppDelegate.h"
+
+
 @class MapView;
 @class Drone;
 
@@ -95,7 +98,6 @@
 
 @property BOOL isPathDrawingEnabled;
 @property BOOL isDroneRecording;
-@property BOOL isLocationServiceAuthorized;
 
 
 

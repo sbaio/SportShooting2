@@ -14,7 +14,11 @@
 #import "ComponentHelper.h"
 #import "DVFloatingWindow.h"
 
+#import <PermissionScope/PermissionScope-Swift.h>
+
+#import "VideoPreviewer/VideoPreviewer.h"
 #import "MapVC.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate>
 {
@@ -22,9 +26,21 @@
     BOOL registered;
     SWRevealViewController *menuRevealController;
     SWRevealViewController *mainRevealController;
+    
+    
+//    BOOL isConnectedToDrone;
+    BOOL isReceivingDroneStateUpdates;
+    BOOL isReceivingVideoData;
+//    BOOL isLocationsServicesEnabled;
+    
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
+@property(nonatomic,strong) PermissionScope * locationPermission;
+@property BOOL isConnectedToDrone;
+@property BOOL isLocationsServicesEnabled;
+
+-(void) promptForLocationServices;
 
 
 @end

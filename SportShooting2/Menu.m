@@ -120,4 +120,13 @@
 
     return;
 }
+
+-(AppDelegate*) getAppDelegate{
+    AppDelegate* appD = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    return appD;
+}
+
+-(VideoPreviewer*) getVideoPreviewer{
+    return [VideoPreviewer instance];
+}
 @end

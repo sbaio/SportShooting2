@@ -14,10 +14,12 @@
 #import "CircuitsTVC.h"
 
 #import "MapVC.h"
-
+#import "AppDelegate.h"
+#import "VideoPreviewer.h"
 
 @class MapVC;
 @class GeneralMenuVC;
+@class AppDelegate;
 
 @interface Menu : NSObject
 {
@@ -35,7 +37,7 @@
 -(GeneralMenuVC*) getGeneralMenu;
 
 -(MapVC*) getMapVC;
--(UINavigationController*) getMapVCNavC;
+-(AppDelegate*) getAppDelegate;
 
 -(MKMapView*) getMap;
 

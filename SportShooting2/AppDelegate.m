@@ -7,14 +7,14 @@
 //
 
 #import "AppDelegate.h"
-#import <PermissionScope/PermissionScope-Swift.h>
+
 
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
-@synthesize window = _window;
+@synthesize window = _window , isLocationsServicesEnabled,isConnectedToDrone;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
@@ -38,28 +38,16 @@
     
     [[Menu instance] setSubmenu:0];
     
-    NSLog(@"%@",mapVC);
-    [self registerApp];
     
-    PermissionScope * locationPermission = [[PermissionScope alloc]init];
-    [locationPermission addPermission:[[LocationWhileInUsePermission alloc]init] message:@"We use this to track\r\nwhere you live"];
-
-    [locationPermission show:^(BOOL completed, NSArray *results) {
-        NSLog(@"Changed: %@ - %@", @(completed), results);
-        if (completed) {
-            NSLog(@"mabrouuuuuk");
-            mapVC.isLocationServiceAuthorized = YES;
-        
-            [mapVC startUpdatingLoc];
-        }
-        else{
-            mapVC.isLocationServiceAuthorized = NO;
-        }
-    } cancelled:^(NSArray *x) {
-        NSLog(@"cancelled");
-        mapVC.isLocationServiceAuthorized = NO;
-    }];
+    isConnectedToDrone = NO;
+    
+    
+    [self registerApp];
+    [self initPermissionLocationWhileInUse];
+    
     DVWindowShow();
+
+    DVWindowActivationLongPress(1, 0.5);
     return YES;
 }
 
@@ -134,34 +122,37 @@
     
     _realDrone = [ComponentHelper fetchAircraft];
     
-//    if (_realDrone) {
-//        DVLog(@"Agumon : I'm here");
-//        [[Menu instance] getGeneralMenu].isDroneConnected = YES;
-//        // set green icon for drone connected
-//        [[[Menu instance] getGeneralMenu].tableView reloadData];
-//        
-//        if ([[Menu instance] getGeneralMenu].realDroneSwitch) {
-//            
-//        }
-//        
-//        //setting delegates
-//        
-//        DJIFlightController* fc = [ComponentHelper fetchFlightController];
-//        fc.delegate = [[Menu instance] getMapVC];;
-//        
-//        DJICamera* cam = [ComponentHelper fetchCamera];
-//        cam.delegate = [[Menu instance] getMapVC];;
-//        
-//        // post notification
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
-//        
-//        
-//    }else{
-//        DVLog(@"Agumon : not here");
-//        [[Menu instance] getGeneralMenu].isDroneConnected = NO;
-//        // set red icon for drone not connected
-//        [[[Menu instance] getGeneralMenu].tableView reloadData];
-//    }
+    if (_realDrone) {
+        DVLog(@"Agumon : I'm here");
+        
+        // set green icon for drone connected
+        [[[Menu instance] getGeneralMenu].tableView reloadData];
+        
+        if ([[Menu instance] getGeneralMenu].realDroneSwitch) {
+            
+        }
+        
+        //setting delegates
+        
+        DJIFlightController* fc = [ComponentHelper fetchFlightController];
+        fc.delegate = [[Menu instance] getMapVC];;
+        
+        DJICamera* cam = [ComponentHelper fetchCamera];
+        cam.delegate = [[Menu instance] getMapVC];;
+        
+        // post notification
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
+        
+        
+    }else{
+        DVLog(@"Agumon : not here");
+        isConnectedToDrone = NO;
+        // set red icon for drone not connected
+        [[[Menu instance] getGeneralMenu].tableView reloadData];
+        
+        isConnectedToDrone = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"droneDisconnected" object:self];
+    }
 }
 
 -(void) registerApp {
@@ -213,6 +204,46 @@
     [mainRevealController.frontViewController.view addGestureRecognizer:mainRevealController.panGestureRecognizer];
     //    [mainRevealController setFrontViewPosition:FrontViewPositionRight animated:NO];
 }
+
+-(void) initPermissionLocationWhileInUse{
+    _locationPermission = [[PermissionScope alloc]init];
+    [_locationPermission addPermission:[[LocationWhileInUsePermission alloc]init] message:@"We use this to track\r\nwhere you live"];
+    
+    if (_locationPermission.statusLocationInUse == PermissionStatusAuthorized) {
+        isLocationsServicesEnabled = YES;
+        
+        [[[Menu instance] getMapVC] startUpdatingLoc];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocEnabled" object:self];
+    }
+    else {
+        isLocationsServicesEnabled = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
+    }
+    
+}
+
+-(void) promptForLocationServices{ // in use
+    
+    [_locationPermission show:^(BOOL completed, NSArray *results) {
+        NSLog(@"Changed: %@ - %@", @(completed), results);
+        if (completed) {
+            isLocationsServicesEnabled = YES;
+            [[[Menu instance] getMapVC] startUpdatingLoc];
+            
+        }
+        else{
+            isLocationsServicesEnabled = NO;
+        }
+    } cancelled:^(NSArray *x) {
+        NSLog(@"cancelled");
+        isLocationsServicesEnabled = NO;
+    }];
+}
+
+-(void) startLocationUpdates{
+    
+}
+
 
 
 @end

@@ -61,6 +61,9 @@ static VideoPreviewer* previewer = nil;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeGround:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"droneConnected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"InUseLocEnabled" object:nil];
     return self;
 }
 
@@ -124,6 +127,7 @@ static VideoPreviewer* previewer = nil;
         [_glView setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 //    });
 }
+
 -(BOOL)setView:(UIView *)view
 {
     if (view == nil) {
@@ -134,13 +138,15 @@ static VideoPreviewer* previewer = nil;
         BEGIN_DISPATCH_QUEUE
         if(_glView == nil){
             _glView = [[MovieGLView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, view.frame.size.width, view.frame.size.height)];
-            [self addImageViewWithImage:[UIImage imageNamed:@"Logo.png"]];
             _status.isGLViewInit = YES;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [_glView setFrame:CGRectMake(0.0f, 0.0f, view.frame.size.width, view.frame.size.height)];
             [view addSubview:_glView];
             [view sendSubviewToBack:_glView];
+            [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
+            NSLog(@"on init setting , %d, %d ",[[Menu instance]getAppDelegate].isConnectedToDrone,[[Menu instance]getAppDelegate].isLocationsServicesEnabled);
+            
         });
         END_DISPATCH_QUEUE
     }
@@ -448,24 +454,68 @@ static VideoPreviewer* previewer = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
--(void) addImageViewWithImage:(UIImage*) image{
-    if (!_glView) {
-        NSLog(@"glview not allocated");
+
+
+-(void) setGLviewMaskImage:(BOOL) set isDroneConnected:(BOOL) isDroneConnected isLocEnabled:(BOOL) isLocationServicesAuth{
+    if (!set) {
+        // remove maskImage if existant
+        for (UIView* subview in [_glView subviews]) {
+            [UIView animateWithDuration:2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                subview.alpha = 0;
+            } completion:^(BOOL finished){
+                [subview removeFromSuperview];
+            }];
+            
+        }
     }
     else{
-        UIImageView* imageView = [[UIImageView alloc] initWithImage:image];
-        imageView.frame = _glView.bounds;
-        imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        for (UIView* subview in [_glView subviews]) {
+            [subview removeFromSuperview];
+        }
         
-//        UIButton* button  = [[UIButton alloc] initWithFrame:imageView.frame];
-//        [button addTarget:self action:@selector(onButtontapped) forControlEvents:UIControlEventTouchUpInside];
-//        button.backgroundColor = [UIColor redColor];
-//        button.alpha = 0.2;
-//        [imageView addSubview:button];
-        [_glView addSubview:imageView];
+        UIImageView* droneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Inspire_red.png"]];
+        UIImageView* RCView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"RC_red.png"]];
+        UIImageView* GPSView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"GPS_red.png"]];
+        UIImageView* cableView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Cable_red.png"]];
+        UIImageView* phoneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"phone"]];
+        
+        if (isDroneConnected) {
+            [droneView setImage:[UIImage imageNamed:@"Inspire_green.png"]];
+            [RCView setImage:[UIImage imageNamed:@"RC_green.png"]];
+            [cableView setImage:[UIImage imageNamed:@"Cable_green"]];
+        }
+        
+        if (isLocationServicesAuth) {
+            [GPSView setImage:[UIImage imageNamed:@"GPS_green.png"]];
+        }
+        
+        
+        [_glView addSubview:droneView];
+        [_glView addSubview:RCView];
+        [_glView addSubview:GPSView];
+        [_glView addSubview:cableView];
+        [_glView addSubview:phoneView];
+        for (UIView* subview in [_glView subviews]) {
+            subview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+            subview.frame = _glView.bounds;
+        }
+        
+        if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
+                    [self setGLviewMaskImage:NO isDroneConnected:NO isLocEnabled:NO];
+                }
+            });
+        }
+    
     }
 }
 
+
+
+-(void) onTap{
+    NSLog(@"tap");
+}
 
 #pragma mark - hardware decoder
 
@@ -505,8 +555,14 @@ static VideoPreviewer* previewer = nil;
     }
 }
 
-
--(void) onButtontapped{
-    NSLog(@"heoppaaa");
+-(void) handleNotification:(NSNotification*) notification{
+    NSLog(@"notification  %@",notification);
+    if ([notification.name isEqualToString:@"InUseLocEnabled"] || [notification.name isEqualToString:@"InUseLocNotEnabled"] || [notification.name isEqualToString:@"droneConnected"] || [notification.name isEqualToString:@"droneDisconnected"] ) {
+        [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
+    }
+    
+    // should also check for camera video updates !!!
+    
 }
+
 @end

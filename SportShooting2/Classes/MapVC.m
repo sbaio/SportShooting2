@@ -52,7 +52,10 @@
 #pragma mark - mapView
 
 -(void) startUpdatingLoc{
-    self.locationManager = [[CLLocationManager alloc] init];
+    if (!self.locationManager) {
+        self.locationManager = [[CLLocationManager alloc] init];
+    }
+    
     self.locationManager.delegate = self;
     [self.locationManager startUpdatingLocation];
 }
@@ -241,6 +244,10 @@
     else{
         [mapView enableMapViewScroll];
     }
+    
+    [[[Menu instance] getAppDelegate] promptForLocationServices];
+    [[Menu instance] getAppDelegate].isConnectedToDrone = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
 }
 
 -(void) didSwipeOnScreen:(UIPanGestureRecognizer*) pan{

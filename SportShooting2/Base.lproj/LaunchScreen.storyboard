@@ -21,13 +21,21 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" red="1" green="0.57804069302227767" blue="0.32580534659392479" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SportShooting" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kpj-YI-t62">
+                                <rect key="frame" x="140" y="267" width="321" height="66"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="48"/>
+                                <color key="textColor" red="0.14266847278205341" green="0.70177085380024407" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="tQG-b0-U5z" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="K8Y-M5-hdq"/>
                             <constraint firstItem="tQG-b0-U5z" firstAttribute="height" secondItem="Ze5-6b-2t3" secondAttribute="height" id="YtJ-9c-NVv"/>
+                            <constraint firstItem="Kpj-YI-t62" firstAttribute="centerY" secondItem="tQG-b0-U5z" secondAttribute="centerY" id="epO-z6-7Do"/>
                             <constraint firstItem="tQG-b0-U5z" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" id="iRv-4z-u1j"/>
                             <constraint firstItem="tQG-b0-U5z" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="n9g-nN-m9a"/>
+                            <constraint firstItem="Kpj-YI-t62" firstAttribute="centerX" secondItem="tQG-b0-U5z" secondAttribute="centerX" id="og9-2F-fcD"/>
                         </constraints>
                     </view>
                 </viewController>

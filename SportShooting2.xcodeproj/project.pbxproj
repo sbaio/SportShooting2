@@ -7,9 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
+		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
+		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
+		D6218CA81D04D4CC00DF1E55 /* GPS_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA41D04D4CC00DF1E55 /* GPS_red.png */; };
+		D6218CA91D04D4CC00DF1E55 /* RC_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA51D04D4CC00DF1E55 /* RC_green.png */; };
+		D6218CAA1D04D4CC00DF1E55 /* GPS_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA61D04D4CC00DF1E55 /* GPS_green.png */; };
+		D6218CAB1D04D4CC00DF1E55 /* RC_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA71D04D4CC00DF1E55 /* RC_red.png */; };
+		D6218CAE1D04D82C00DF1E55 /* Cable_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CAC1D04D82C00DF1E55 /* Cable_green.png */; };
+		D6218CAF1D04D82C00DF1E55 /* Cable_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CAD1D04D82C00DF1E55 /* Cable_red.png */; };
+		D6218CB11D04DF7100DF1E55 /* phone.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CB01D04DF7100DF1E55 /* phone.png */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
-		D632D4171D03F5CB00B12946 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4161D03F5CB00B12946 /* ViewController.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
 		D632D41C1D03F5CB00B12946 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D632D41B1D03F5CB00B12946 /* Assets.xcassets */; };
 		D632D41F1D03F5CB00B12946 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D41D1D03F5CB00B12946 /* LaunchScreen.storyboard */; };
@@ -146,12 +155,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
+		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
+		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
+		D6218CA41D04D4CC00DF1E55 /* GPS_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GPS_red.png; sourceTree = "<group>"; };
+		D6218CA51D04D4CC00DF1E55 /* RC_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RC_green.png; sourceTree = "<group>"; };
+		D6218CA61D04D4CC00DF1E55 /* GPS_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GPS_green.png; sourceTree = "<group>"; };
+		D6218CA71D04D4CC00DF1E55 /* RC_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RC_red.png; sourceTree = "<group>"; };
+		D6218CAC1D04D82C00DF1E55 /* Cable_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Cable_green.png; sourceTree = "<group>"; };
+		D6218CAD1D04D82C00DF1E55 /* Cable_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Cable_red.png; sourceTree = "<group>"; };
+		D6218CB01D04DF7100DF1E55 /* phone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phone.png; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D632D4131D03F5CB00B12946 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		D632D4151D03F5CB00B12946 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D632D4161D03F5CB00B12946 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		D632D4191D03F5CB00B12946 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D632D41B1D03F5CB00B12946 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D632D41E1D03F5CB00B12946 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -488,8 +505,6 @@
 				D632D52D1D0402B100B12946 /* Classes */,
 				D699023C1D0405770038D05B /* MGSwipeableCell */,
 				D69902431D0406330038D05B /* Animators */,
-				D632D4151D03F5CB00B12946 /* ViewController.h */,
-				D632D4161D03F5CB00B12946 /* ViewController.m */,
 				D632D52B1D04019800B12946 /* Storyboard.storyboard */,
 				D632D4181D03F5CB00B12946 /* Main.storyboard */,
 				D632D41B1D03F5CB00B12946 /* Assets.xcassets */,
@@ -1012,6 +1027,16 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CB01D04DF7100DF1E55 /* phone.png */,
+				D6218CAC1D04D82C00DF1E55 /* Cable_green.png */,
+				D6218CAD1D04D82C00DF1E55 /* Cable_red.png */,
+				D6218CA41D04D4CC00DF1E55 /* GPS_red.png */,
+				D6218CA51D04D4CC00DF1E55 /* RC_green.png */,
+				D6218CA61D04D4CC00DF1E55 /* GPS_green.png */,
+				D6218CA71D04D4CC00DF1E55 /* RC_red.png */,
+				D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */,
+				D6218CA01D04CE0700DF1E55 /* Inspire_red.png */,
+				D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */,
 				D69902581D0408110038D05B /* batteryicon.png */,
 				D69902591D0408110038D05B /* carSpeed.png */,
 				D699025A1D0408110038D05B /* circuit.png */,
@@ -1099,8 +1124,11 @@
 				D69902791D0408110038D05B /* pan_50.png in Resources */,
 				D69902751D0408110038D05B /* Logo.png in Resources */,
 				D699027E1D0408110038D05B /* renault sport logo.png in Resources */,
+				D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */,
 				D699027B1D0408110038D05B /* recButton.png in Resources */,
+				D6218CAB1D04D4CC00DF1E55 /* RC_red.png in Resources */,
 				D69902801D0408110038D05B /* reveal-icon@2x.png in Resources */,
+				D6218CA81D04D4CC00DF1E55 /* GPS_red.png in Resources */,
 				D632D41F1D03F5CB00B12946 /* LaunchScreen.storyboard in Resources */,
 				D69902731D0408110038D05B /* inspire_drone.png in Resources */,
 				D69902561D0407850038D05B /* LUT_YR.png in Resources */,
@@ -1111,14 +1139,19 @@
 				D632D41C1D03F5CB00B12946 /* Assets.xcassets in Resources */,
 				D632D56C1D04042200B12946 /* target.png in Resources */,
 				D632D5661D04042200B12946 /* flagDrone.png in Resources */,
+				D6218CB11D04DF7100DF1E55 /* phone.png in Resources */,
 				D69902761D0408110038D05B /* map.png in Resources */,
 				D632D5611D04042200B12946 /* car.png in Resources */,
 				D699026F1D0408110038D05B /* circuit.png in Resources */,
 				D69902771D0408110038D05B /* menuIcon.png in Resources */,
+				D6218CA91D04D4CC00DF1E55 /* RC_green.png in Resources */,
 				D69902811D0408110038D05B /* video.png in Resources */,
 				D632D56D1D04042200B12946 /* targetDronePosition.png in Resources */,
+				D6218CAE1D04D82C00DF1E55 /* Cable_green.png in Resources */,
 				D632D5631D04042200B12946 /* droneTargetLocation.png in Resources */,
 				D632D55F1D04042200B12946 /* aircraft.png in Resources */,
+				D6218CAA1D04D4CC00DF1E55 /* GPS_green.png in Resources */,
+				D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */,
 				D69902551D0407850038D05B /* LUT_YG.png in Resources */,
 				D699027D1D0408110038D05B /* recButton_on.png in Resources */,
 				D69902781D0408110038D05B /* pan.png in Resources */,
@@ -1134,9 +1167,11 @@
 				D69902701D0408110038D05B /* GPS_satellite-512.png in Resources */,
 				D632D5681D04042200B12946 /* Me.png in Resources */,
 				D69902541D0407850038D05B /* LUT_YB.png in Resources */,
+				D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */,
 				D632D5671D04042200B12946 /* home.png in Resources */,
 				D699026D1D0408110038D05B /* batteryicon.png in Resources */,
 				D69902511D0407850038D05B /* LUT_XB.png in Resources */,
+				D6218CAF1D04D82C00DF1E55 /* Cable_red.png in Resources */,
 				D632D5651D04042200B12946 /* flagCamera.png in Resources */,
 				D69902721D0408110038D05B /* images.jpeg in Resources */,
 				D632D5621D04042200B12946 /* danger.png in Resources */,
@@ -1154,7 +1189,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D632D4171D03F5CB00B12946 /* ViewController.m in Sources */,
 				D632D4F11D03F6A200B12946 /* POPAnimationRuntime.mm in Sources */,
 				D632D50C1D03F6D900B12946 /* DVButtonObject.m in Sources */,
 				D632D51E1D03F71900B12946 /* MovieWriter.m in Sources */,

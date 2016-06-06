@@ -148,6 +148,8 @@ typedef struct
 @property(readwrite,nonatomic) CGFloat zoomSpeed;
 @property(readwrite, nonatomic) CGPoint centerZoom;
 
+@property (nonatomic,strong) UIImageView* maskImage;
+
 - (id)initWithFrame:(CGRect)frame;
 
 - (void)render: (VideoFrameYUV *) frame;
