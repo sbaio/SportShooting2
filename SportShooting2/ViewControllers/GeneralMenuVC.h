@@ -20,8 +20,6 @@
     
 }
 
-@property (strong, nonatomic) IBOutlet UISwitch* realDroneSwitch; // set manually by  usert to set either real drone or simulated drone .. to simulate the race ..
-
 @property BOOL realDrone;
 @property BOOL isCameraConnected;
 @property BOOL isDroneRecordingVideo;

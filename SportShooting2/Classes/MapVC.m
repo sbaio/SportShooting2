@@ -68,9 +68,9 @@
     
     [self.view addGestureRecognizer:swipeGR];
 
-    _mapVideoSwitchingTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapSwitchMapAndVideo:)];
 
-    [mapView addGestureRecognizer:_mapVideoSwitchingTapGR];
+    mapView.tapGRMapVideoSwitching = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(switchMapAndVideoViews:)];
+    [mapView addGestureRecognizer:mapView.tapGRMapVideoSwitching];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
@@ -99,7 +99,7 @@
     
     [[VideoPreviewer instance] setView:videoPreviewerView];
     
-    
+    [VideoPreviewer instance].tapGRSwitching = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(switchMapAndVideoViews:)];
 
     [[VideoPreviewer instance] start];
 
@@ -127,14 +127,16 @@
     [self.view addConstraints:[NSArray arrayWithObjects:videoSmallHeight,videoSmallX,videoSmallY, nil]];
 }
 
--(void) onTapSwitchMapAndVideo:(UITapGestureRecognizer*) tapG{
-    isVideoPreviewerViewLarge = (videoPreviewerView.frame.size.width == [[UIScreen mainScreen]bounds].size.width);
+
+-(void)switchMapAndVideoViews:(UITapGestureRecognizer*) tap{
+    
+    BOOL isVideoMain = (videoPreviewerView.frame.size.width == [[UIScreen mainScreen]bounds].size.width);
     
     void (^completionWhenFinishedShowingMap)(BOOL) = ^(BOOL finished)
     {
         NSLog(@"finished showing map");
         [self.view sendSubviewToBack:mapView];
-
+        
         
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             videoPreviewerView.alpha = 1.0;
@@ -144,51 +146,55 @@
     void (^completionWhenFinishedShowingVideo)(BOOL) = ^(BOOL finished)
     {
         NSLog(@"finished showing video");
-    
+        
         
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-
+            
             mapView.alpha = 1.0;
         } completion:nil];
         
     };
-    if ([mapView.gestureRecognizers containsObject:tapG] && isVideoPreviewerViewLarge) {
-        // enlarge Map
-        
+    
+    if (isVideoMain) {
+        // enlarge map
         if (CGRectIsEmpty(smallSize)) {
             smallSize = mapView.frame;
         }
-
-        [mapView removeGestureRecognizer:_mapVideoSwitchingTapGR];
-        [videoPreviewerView addGestureRecognizer:_mapVideoSwitchingTapGR];
-        
         
         [UIView animateWithDuration:0.9 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             videoPreviewerView.alpha = 0.8;
             
             mapView.alpha = 0.8;//1
             [mapView setFrame:[[UIScreen mainScreen] bounds]];
-            
-            
-            
+      
         } completion:completionWhenFinishedShowingMap];
         [self enlargeMap_MakeVideoSmall_updateConstraints];
-        
         [videoPreviewerView setFrame:smallSize];
         [[VideoPreviewer instance].glView adjustSize];
         [mapView disableMapViewScroll];
-    }
-    else if([videoPreviewerView.gestureRecognizers containsObject:tapG] && !isVideoPreviewerViewLarge){
-        //enlarge video
         
+        [mapView removeGestureRecognizer:mapView.tapGRMapVideoSwitching];
+        [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
+        [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
+        
+        // circuit selection part
+        if (_isCircuitDefined) {
+            [mapView setMapViewMaskImage:NO];
+        }
+        else{// if circuit not yet selected
+            [mapView setMapViewMaskImage:YES];
+            // push the circuit list vc
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self pushCircuitList];
+            });
+        }
+        
+        
+    }
+    else{
         if (CGRectIsEmpty(smallSize)) {
             smallSize = videoPreviewerView.frame;
         }
-        
-    
-        [videoPreviewerView removeGestureRecognizer:_mapVideoSwitchingTapGR];
-        [mapView addGestureRecognizer:_mapVideoSwitchingTapGR];
-        
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             mapView.alpha = 0.5;//1
             [mapView setFrame:smallSize];
@@ -200,11 +206,11 @@
         
         [videoPreviewerView setFrame:[[UIScreen mainScreen] bounds]];
         [[VideoPreviewer instance].glView adjustSize];
+        
+        [mapView addGestureRecognizer:mapView.tapGRMapVideoSwitching];
+        [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
+        [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
     }
-}
-
--(void) setVideoPreviewLargeWithDuration:(NSTimeInterval) duration{
-    
 }
 #pragma mark - drone state callback
 
@@ -245,9 +251,7 @@
         [mapView enableMapViewScroll];
     }
     
-    [[[Menu instance] getAppDelegate] promptForLocationServices];
-    [[Menu instance] getAppDelegate].isConnectedToDrone = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
+    [[[Menu instance] getAppDelegate] promptForLocationServices]; // to see when to send it !!!
 }
 
 -(void) didSwipeOnScreen:(UIPanGestureRecognizer*) pan{
@@ -304,33 +308,38 @@
 
 #pragma mark - Camera -recording delegate methods
 -(void) camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
-    
-    dateOfLastCameraUpdate = [[NSDate alloc]init];
+    DVLog(@"coucou");
+//    dateOfLastCameraUpdate = [[NSDate alloc]init];
     
     // about 100 Hz in average 2048 bits per buf
     if ([VideoPreviewer instance].status.isRunning) {
+        DVLog(@"isRunning");
+        return;
         uint8_t* pBuffer = (uint8_t*)malloc(size);
         memcpy(pBuffer, videoBuffer, size);
         [[VideoPreviewer instance].dataQueue push:pBuffer length:(int)size];
     }
-    
-    freqCutterCameraFeed ++;
-    if (freqCutterCameraFeed%10) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (dateOfLastCameraUpdate) {
-                float timeSinceLastUpdate = -[dateOfLastCameraUpdate timeIntervalSinceNow];
-                
-                if (timeSinceLastUpdate > 0.1) {
-                    DVLog(@"camera feed stopped");
-                    // Notification
-                    dateOfLastCameraUpdate = nil;
-                    freqCutterCameraFeed = 0;
-                    return;
-                }
-            }
-        });
+    else{
+        DVLog(@"not runninh");
     }
-    
+//
+//    freqCutterCameraFeed ++;
+//    if (freqCutterCameraFeed%10) {
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            if (dateOfLastCameraUpdate) {
+//                float timeSinceLastUpdate = -[dateOfLastCameraUpdate timeIntervalSinceNow];
+//                
+//                if (timeSinceLastUpdate > 0.1) {
+//                    DVLog(@"camera feed stopped");
+//                    // Notification
+//                    dateOfLastCameraUpdate = nil;
+//                    freqCutterCameraFeed = 0;
+//                    return;
+//                }
+//            }
+//        });
+//    }
+//    
     
     
 }
@@ -421,8 +430,9 @@
 //    else{
 //        [self stopRecord];
 //    }
-
-    [self pushCircuitList];
+//    _isCircuitDefined = !_isCircuitDefined;
+//    NSLog(@"_isCircuitDefined ,%d",_isCircuitDefined);
+    [_circuitsList hideCircuitList:YES];
 }
 
 - (IBAction)didClickOnBatteryButton:(id)sender {
@@ -430,18 +440,26 @@
 }
 
 -(void) pushCircuitList{
-    circuitDefinitionTVC* tvc = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"CircDefMenu"];
-    tvc.transitioningDelegate = self;
-    tvc.modalPresentationStyle = UIModalPresentationCustom;
+    [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
+    [_circuitsList initWithDefaultsProperties];
+
+    NSLog(@"circuits list %@",self.circuitsList);
     
-    [self presentViewController:tvc animated:YES completion:nil];
+    
+    mapVCTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnMapVC:)];
+    
+    [self.view addGestureRecognizer:mapVCTapGR];
+    
+    [_circuitsList showCircuitList:YES];
     
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self dismissViewControllerAnimated:YES completion:nil];
-    });
+
+    
 }
 
+-(void) didTapOnMapVC:(UITapGestureRecognizer*) tapGR{
+    NSLog(@"tap on mapVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
+}
 
 - (id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source
 {

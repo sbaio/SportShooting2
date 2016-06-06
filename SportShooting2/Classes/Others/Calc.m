@@ -588,4 +588,11 @@
         [self map:mapView addPin:loc andTitle:pinName andColor:colorName];
     }
 }
+
+-(void) map:(MKMapView*)mapView showCircuit:(Circuit*) circuit{
+    [mapView setRegion:[circuit region]];
+    [[Calc Instance] map:mapView removePolylineNamed:@"circuitPolyline"];
+    [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
+    [[Calc Instance] map:mapView drawCircuitPolyline:circuit.locations withTitle:@"circuitPolyline" andColor:@"RGB 212 175 55"];
+}
 @end

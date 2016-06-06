@@ -75,6 +75,9 @@ typedef NS_ENUM(NSUInteger, VideoPreviewerEvent){
 
 @property (weak,nonatomic) id<VideoPreviewerDelegate> delegate;
 
+@property (nonatomic,strong) UITapGestureRecognizer* tapGRSwitching;
+@property (nonatomic,strong) UITapGestureRecognizer* tapGROnLargeView;
+
 +(VideoPreviewer*) instance;
 +(void) removePreview;
 

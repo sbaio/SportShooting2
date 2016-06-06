@@ -6,8 +6,10 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#define ENTER_DEBUG_MODE 0
+#define ENABLE_REMOTE_LOGGER 0
 
+#import "AppDelegate.h"
 
 @interface AppDelegate ()
 
@@ -77,7 +79,7 @@
 -(void) sdkManagerDidRegisterAppWithError:(NSError *)error {
     
     if (error) { // try multiple times
-        //DVLog(@"attempts to register %d",attemptsToRegister);
+        //DVLog(@"attempts to register 
         if (attemptsToRegister < 3 ) {
             sleep(2);
             attemptsToRegister ++;
@@ -90,12 +92,12 @@
         
     }
     else {
-                DVLog(@"app registered");
+        DVLog(@"app registered");
         registered = YES;
 #if ENTER_DEBUG_MODE
         [DJISDKManager enterDebugModeWithDebugId:@"192.168.168.79"];
 #else
-        //        DVLog(@"starting connection to product");
+                DVLog(@"starting connection to product");
         [DJISDKManager startConnectionToProduct];
 #endif
         
@@ -119,38 +121,29 @@
 
 -(void) sdkManagerProductDidChangeFrom:(DJIBaseProduct* _Nullable) oldProduct to:(DJIBaseProduct* _Nullable) newProduct{
     
-    
     _realDrone = [ComponentHelper fetchAircraft];
     
     if (_realDrone) {
         DVLog(@"Agumon : I'm here");
         
-        // set green icon for drone connected
-        [[[Menu instance] getGeneralMenu].tableView reloadData];
-        
-        if ([[Menu instance] getGeneralMenu].realDroneSwitch) {
-            
-        }
-        
-        //setting delegates
-        
+//        //setting delegates
+
+        DVLog(@"getmapVC , %@",[[Menu instance] getMapVC]);
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
-        fc.delegate = [[Menu instance] getMapVC];;
-        
-        DJICamera* cam = [ComponentHelper fetchCamera];
-        cam.delegate = [[Menu instance] getMapVC];;
+        fc.delegate = [[Menu instance] getMapVC];
+//
+        DJICamera* cam = (DJICamera*)[ComponentHelper fetchCamera];
+        DVLog(@"%@",cam);
+        cam.delegate = [[Menu instance] getMapVC];
         
         // post notification
+        isConnectedToDrone = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
         
         
     }else{
         DVLog(@"Agumon : not here");
         isConnectedToDrone = NO;
-        // set red icon for drone not connected
-        [[[Menu instance] getGeneralMenu].tableView reloadData];
-        
-        isConnectedToDrone = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"droneDisconnected" object:self];
     }
 }
@@ -229,20 +222,24 @@
         if (completed) {
             isLocationsServicesEnabled = YES;
             [[[Menu instance] getMapVC] startUpdatingLoc];
-            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocEnabled" object:self];
         }
         else{
             isLocationsServicesEnabled = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
         }
     } cancelled:^(NSArray *x) {
         NSLog(@"cancelled");
         isLocationsServicesEnabled = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
     }];
 }
 
 -(void) startLocationUpdates{
     
 }
+
+
 
 
 

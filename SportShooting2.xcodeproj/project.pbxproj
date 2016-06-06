@@ -17,6 +17,10 @@
 		D6218CAE1D04D82C00DF1E55 /* Cable_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CAC1D04D82C00DF1E55 /* Cable_green.png */; };
 		D6218CAF1D04D82C00DF1E55 /* Cable_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CAD1D04D82C00DF1E55 /* Cable_red.png */; };
 		D6218CB11D04DF7100DF1E55 /* phone.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CB01D04DF7100DF1E55 /* phone.png */; };
+		D6218CB51D05400E00DF1E55 /* clickToSelectTrack.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CB31D05400E00DF1E55 /* clickToSelectTrack.png */; };
+		D6218CB61D05400E00DF1E55 /* mapViewLayer.psd in Resources */ = {isa = PBXBuildFile; fileRef = D6218CB41D05400E00DF1E55 /* mapViewLayer.psd */; };
+		D6218CB91D05F0BB00DF1E55 /* circuitsListFW.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CB81D05F0BB00DF1E55 /* circuitsListFW.m */; };
+		D6218CBB1D05F4E900DF1E55 /* circuitsListFW.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CBA1D05F4E900DF1E55 /* circuitsListFW.xib */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -165,6 +169,11 @@
 		D6218CAC1D04D82C00DF1E55 /* Cable_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Cable_green.png; sourceTree = "<group>"; };
 		D6218CAD1D04D82C00DF1E55 /* Cable_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Cable_red.png; sourceTree = "<group>"; };
 		D6218CB01D04DF7100DF1E55 /* phone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phone.png; sourceTree = "<group>"; };
+		D6218CB31D05400E00DF1E55 /* clickToSelectTrack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clickToSelectTrack.png; sourceTree = "<group>"; };
+		D6218CB41D05400E00DF1E55 /* mapViewLayer.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = mapViewLayer.psd; sourceTree = "<group>"; };
+		D6218CB71D05F0BB00DF1E55 /* circuitsListFW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = circuitsListFW.h; sourceTree = "<group>"; };
+		D6218CB81D05F0BB00DF1E55 /* circuitsListFW.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = circuitsListFW.m; sourceTree = "<group>"; };
+		D6218CBA1D05F4E900DF1E55 /* circuitsListFW.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = circuitsListFW.xib; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -476,6 +485,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D6218CB21D05400E00DF1E55 /* mapView layers */ = {
+			isa = PBXGroup;
+			children = (
+				D6218CB31D05400E00DF1E55 /* clickToSelectTrack.png */,
+				D6218CB41D05400E00DF1E55 /* mapViewLayer.psd */,
+			);
+			path = "mapView layers";
+			sourceTree = "<group>";
+		};
 		D632D4031D03F5CB00B12946 = {
 			isa = PBXGroup;
 			children = (
@@ -985,6 +1003,9 @@
 				D699022F1D04050A0038D05B /* CircuitsTVC.m */,
 				D69902301D04050A0038D05B /* GeneralMenuVC.h */,
 				D69902311D04050A0038D05B /* GeneralMenuVC.m */,
+				D6218CB71D05F0BB00DF1E55 /* circuitsListFW.h */,
+				D6218CB81D05F0BB00DF1E55 /* circuitsListFW.m */,
+				D6218CBA1D05F4E900DF1E55 /* circuitsListFW.xib */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1027,6 +1048,7 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CB21D05400E00DF1E55 /* mapView layers */,
 				D6218CB01D04DF7100DF1E55 /* phone.png */,
 				D6218CAC1D04D82C00DF1E55 /* Cable_green.png */,
 				D6218CAD1D04D82C00DF1E55 /* Cable_red.png */,
@@ -1156,6 +1178,7 @@
 				D699027D1D0408110038D05B /* recButton_on.png in Resources */,
 				D69902781D0408110038D05B /* pan.png in Resources */,
 				D69902741D0408110038D05B /* inspireCamera.png in Resources */,
+				D6218CB61D05400E00DF1E55 /* mapViewLayer.psd in Resources */,
 				D699026E1D0408110038D05B /* carSpeed.png in Resources */,
 				D632D4EC1D03F6A200B12946 /* pop-Info.plist in Resources */,
 				D632D5601D04042200B12946 /* cameraAnnView.png in Resources */,
@@ -1164,7 +1187,9 @@
 				D69902521D0407850038D05B /* LUT_XG.png in Resources */,
 				D632D56B1D04042200B12946 /* mvtVector_blue.png in Resources */,
 				D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */,
+				D6218CBB1D05F4E900DF1E55 /* circuitsListFW.xib in Resources */,
 				D69902701D0408110038D05B /* GPS_satellite-512.png in Resources */,
+				D6218CB51D05400E00DF1E55 /* clickToSelectTrack.png in Resources */,
 				D632D5681D04042200B12946 /* Me.png in Resources */,
 				D69902541D0407850038D05B /* LUT_YB.png in Resources */,
 				D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */,
@@ -1241,6 +1266,7 @@
 				D632D4F51D03F6A200B12946 /* POPCGUtils.mm in Sources */,
 				D632D4FA1D03F6A200B12946 /* POPMath.mm in Sources */,
 				D632D4F61D03F6A200B12946 /* POPCustomAnimation.mm in Sources */,
+				D6218CB91D05F0BB00DF1E55 /* circuitsListFW.m in Sources */,
 				D632D5261D03FCF100B12946 /* ComponentHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

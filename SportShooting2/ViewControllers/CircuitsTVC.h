@@ -27,5 +27,6 @@
     Circuit* loadedCircuit;
 }
 
+@property BOOL isOpenedInMenu; // or in mapVC
 -(void) updateCircuitsList;
 @end

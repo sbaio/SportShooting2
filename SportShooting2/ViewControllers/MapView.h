@@ -18,11 +18,13 @@
 }
 @property (weak) MapVC* mapVC;
 
-
+@property (nonatomic,strong) UITapGestureRecognizer* tapGRMapVideoSwitching;
 
 
 
 -(void) disableMapViewScroll;
 -(void) enableMapViewScroll;
+
+-(void) setMapViewMaskImage:(BOOL) set;
 
 @end

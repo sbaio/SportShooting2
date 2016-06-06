@@ -44,6 +44,12 @@
     return (GeneralMenuVC*)menuReveal.rearViewController;
 }
 
+-(CircuitsTVC*) getCircuitsMenu{
+    CircuitsTVC* circuitsTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"TrackListVC"];
+    
+    return circuitsTVC;
+}
+
 -(UINavigationController*) getNavC{
     SWRevealViewController* menuReveal = [self getMenuRevealVC];
     UINavigationController* navC = (UINavigationController*)menuReveal.frontViewController;
@@ -72,6 +78,10 @@
     return map;
 }
 
+
+-(UITableViewController*) getProtoTVC{
+    return [[self getStoryboard] instantiateViewControllerWithIdentifier:@"Proto"];
+}
 -(void) setSubmenu:(int) submenuIndex{
     
     UINavigationController* navC = [self getNavC];

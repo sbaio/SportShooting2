@@ -145,7 +145,6 @@ static VideoPreviewer* previewer = nil;
             [view addSubview:_glView];
             [view sendSubviewToBack:_glView];
             [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
-            NSLog(@"on init setting , %d, %d ",[[Menu instance]getAppDelegate].isConnectedToDrone,[[Menu instance]getAppDelegate].isLocationsServicesEnabled);
             
         });
         END_DISPATCH_QUEUE
@@ -454,7 +453,7 @@ static VideoPreviewer* previewer = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
-
+#pragma mark - app stuff
 
 -(void) setGLviewMaskImage:(BOOL) set isDroneConnected:(BOOL) isDroneConnected isLocEnabled:(BOOL) isLocationServicesAuth{
     if (!set) {
@@ -478,6 +477,7 @@ static VideoPreviewer* previewer = nil;
         UIImageView* GPSView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"GPS_red.png"]];
         UIImageView* cableView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Cable_red.png"]];
         UIImageView* phoneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"phone"]];
+        _tapGROnLargeView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
         
         if (isDroneConnected) {
             [droneView setImage:[UIImage imageNamed:@"Inspire_green.png"]];
@@ -495,6 +495,8 @@ static VideoPreviewer* previewer = nil;
         [_glView addSubview:GPSView];
         [_glView addSubview:cableView];
         [_glView addSubview:phoneView];
+        
+        
         for (UIView* subview in [_glView subviews]) {
             subview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
             subview.frame = _glView.bounds;
@@ -511,11 +513,11 @@ static VideoPreviewer* previewer = nil;
     }
 }
 
-
-
--(void) onTap{
-    NSLog(@"tap");
+-(void) onTap:(UITapGestureRecognizer*) tapGR{
+    CGPoint loc = [tapGR locationInView:tapGR.view];
+    NSLog(@"tap , %@",NSStringFromCGPoint(loc));
 }
+
 
 #pragma mark - hardware decoder
 
@@ -556,13 +558,14 @@ static VideoPreviewer* previewer = nil;
 }
 
 -(void) handleNotification:(NSNotification*) notification{
-    NSLog(@"notification  %@",notification);
     if ([notification.name isEqualToString:@"InUseLocEnabled"] || [notification.name isEqualToString:@"InUseLocNotEnabled"] || [notification.name isEqualToString:@"droneConnected"] || [notification.name isEqualToString:@"droneDisconnected"] ) {
+
+        DVLog(@"handle notification");
         [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
     }
     
-    // should also check for camera video updates !!!
-    
+    // should also check for camera video updates !!
 }
+
 
 @end

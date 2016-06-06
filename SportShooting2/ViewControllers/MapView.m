@@ -9,37 +9,57 @@
 #import "MapView.h"
 
 @interface MapView (){
-    UIImageView* layerImage;
+
 }
 
 @end
 @implementation MapView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 - (void)commonInit
 {
-    layerImage = [[UIImageView alloc] initWithFrame:self.bounds];
-    layerImage.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    layerImage.backgroundColor = [UIColor redColor];
-    layerImage.alpha = 0.5;
-    
-    [self addSubview:layerImage];
-    
+    [self setMapViewMaskImage:YES];
     self.delegate = self;
     
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [self setRegion:MKCoordinateRegionMake(self.userLocation.coordinate, MKCoordinateSpanMake(0.01, 0.01)) animated:YES];
-//    });
     
 }
 
+-(void) setMapViewMaskImage:(BOOL) set {
+    if (set) {
+        // depending on
+        BOOL isCircuitDefined = NO;
+        if (_mapVC) {
+            isCircuitDefined = _mapVC.isCircuitDefined;
+        }
+        if (!isCircuitDefined) {
+            BOOL contains = NO;
+            for (UIView* subview in [self subviews]) {
+                if ([[subview restorationIdentifier] isEqualToString:@"selectTrack"]) {
+                    contains = YES;
+                }
+            }
+            if (contains) {
+                return;
+            }
+            self.alpha = 0.5;
+            UIImageView* selecTrackIV = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"clickToSelectTrack.png"]];
+            selecTrackIV.frame = self.bounds;
+            selecTrackIV.restorationIdentifier = @"selectTrack";
+            selecTrackIV.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+            selecTrackIV.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.4];
+            [self addSubview:selecTrackIV];
+        }
+        
+    }
+    else{
+        for (UIView* subview in [self subviews]) {
+            if ([[subview restorationIdentifier] isEqualToString:@"selectTrack"]) {
+                [subview removeFromSuperview];
+            }
+        }
+    }
+    
+}
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];

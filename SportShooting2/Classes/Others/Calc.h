@@ -95,4 +95,5 @@
 -(BOOL) isCoord:(CLLocationCoordinate2D) coord1 toTheNorthOfCoord:(CLLocationCoordinate2D) coord2;
 
 -(BOOL) isCoord:(CLLocationCoordinate2D) coord1 toEastOfCoord:(CLLocationCoordinate2D) coord2;
+-(void) map:(MKMapView*)mapView showCircuit:(Circuit*) circuit;
 @end

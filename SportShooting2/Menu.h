@@ -20,6 +20,7 @@
 @class MapVC;
 @class GeneralMenuVC;
 @class AppDelegate;
+@class CircuitsTVC;
 
 @interface Menu : NSObject
 {
@@ -31,10 +32,12 @@
 
 
 -(UIStoryboard*) getStoryboard;
+-(UITableViewController*) getProtoTVC;
 -(SWRevealViewController*) getMainRevealVC;
 -(SWRevealViewController*) getMenuRevealVC;
 
 -(GeneralMenuVC*) getGeneralMenu;
+-(CircuitsTVC*) getCircuitsMenu;
 
 -(MapVC*) getMapVC;
 -(AppDelegate*) getAppDelegate;

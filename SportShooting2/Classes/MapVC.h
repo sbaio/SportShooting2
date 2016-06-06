@@ -24,10 +24,14 @@
 #import "MapView.h"
 
 #import "AppDelegate.h"
+#import "CircuitsTVC.h"
+#import "circuitsListFW.h"
 
+#import "POP.h"
 
 @class MapView;
 @class Drone;
+@class circuitsListFW;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,DJICameraDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -40,11 +44,14 @@
     UIPanGestureRecognizer * swipeGR;
     NSMutableArray* swipedCircuit;
     
-    BOOL isVideoPreviewerViewLarge;
+
     CGRect smallSize;
     
     
     CLLocation * phoneLocation;
+    CircuitsTVC* circuitListTVC;
+    
+    UITapGestureRecognizer* mapVCTapGR;
     
     __weak IBOutlet UIButton *MenuButton;
     __weak IBOutlet UIView *videoPreviewerView;
@@ -89,16 +96,15 @@
 @property(nonatomic, strong) CLLocationManager* locationManager;
 @property (weak, nonatomic) IBOutlet UIButton *recButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordingTimeLabel;
+@property (weak, nonatomic) IBOutlet circuitsListFW *circuitsList;
 
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic,strong) Autopilot* autopilot;
 
-@property(nonatomic,strong) UITapGestureRecognizer* mapVideoSwitchingTapGR;
-
 @property BOOL isPathDrawingEnabled;
 @property BOOL isDroneRecording;
-
+@property BOOL isCircuitDefined;
 
 
 -(void) enableMainMenuPan;

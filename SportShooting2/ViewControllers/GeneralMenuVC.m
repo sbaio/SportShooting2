@@ -29,11 +29,7 @@
     
     rowsArray = [@[@"Track",@"Video",@"Drone",@"Car"] mutableCopy];
     
-//    _realDroneSwitch = [[UISwitch alloc] init];
-//    _realDroneSwitch.frame = CGRectMake(175, 6.5, 31, 51);
-//    _realDroneSwitch.onTintColor = [UIColor colorWithHue:0.125 saturation:0.89 brightness:0.95 alpha:1.0];
-//    [_realDroneSwitch addTarget:self action:@selector(onSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-//    
+
 //    _realDrone = NO;
 //    _isDroneRecordingVideo = NO;
 }
@@ -64,7 +60,7 @@
 }
 
 -(void) onSwitchChanged:(id) sender{
-    _realDrone = [_realDroneSwitch isOn];
+    
     if (_realDrone) {
         DVLog(@"real drone");
     }
