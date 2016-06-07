@@ -30,7 +30,7 @@ static VideoPreviewer* previewer = nil;
 -(id)init
 {
     self= [super init];
-    
+
     av_log_set_level(AV_LOG_QUIET);
     
     _decodeThread = nil;

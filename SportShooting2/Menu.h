@@ -16,19 +16,24 @@
 #import "MapVC.h"
 #import "AppDelegate.h"
 #import "VideoPreviewer.h"
+#import "TopMenu.h"
 
 @class MapVC;
 @class GeneralMenuVC;
 @class AppDelegate;
 @class CircuitsTVC;
 
+
 @interface Menu : NSObject
 {
     NSMutableArray* arrayOfNavC;
 }
 
+@property (nonatomic,strong) TopMenu* topMenu;
+
 
 +(id) instance;
+
 
 
 -(UIStoryboard*) getStoryboard;
@@ -48,6 +53,8 @@
 
 
 -(void) setSubmenu:(int) submenuIndex;
+
+-(TopMenu*) getTopMenu;
 
 
 @end

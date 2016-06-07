@@ -26,12 +26,14 @@
 #import "AppDelegate.h"
 #import "CircuitsTVC.h"
 #import "circuitsListFW.h"
+#import "TopMenu.h"
 
 #import "POP.h"
 
 @class MapView;
 @class Drone;
 @class circuitsListFW;
+@class TopMenu;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,DJICameraDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -97,18 +99,20 @@
 @property (weak, nonatomic) IBOutlet UIButton *recButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordingTimeLabel;
 @property (weak, nonatomic) IBOutlet circuitsListFW *circuitsList;
+@property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic,strong) Autopilot* autopilot;
+@property(nonatomic,strong) DJICamera* camera;
 
 @property BOOL isPathDrawingEnabled;
 @property BOOL isDroneRecording;
-@property BOOL isCircuitDefined;
 
 
 -(void) enableMainMenuPan;
 -(void) disableMainMenuPan;
 
 -(void) startUpdatingLoc;
+-(void) showCircuitListView;
 @end

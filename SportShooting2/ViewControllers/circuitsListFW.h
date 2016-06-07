@@ -14,6 +14,7 @@
 
 #import "CircuitsTVC.h"
 #import "Menu.h"
+#import "MapView.h"
 
 
 @interface circuitsListFW : UIView <UITableViewDataSource, UITableViewDelegate,MGSwipeTableCellDelegate>

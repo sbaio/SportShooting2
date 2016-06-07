@@ -139,4 +139,9 @@
 -(VideoPreviewer*) getVideoPreviewer{
     return [VideoPreviewer instance];
 }
+
+-(TopMenu*) getTopMenu{
+    return _topMenu;
+}
+
 @end

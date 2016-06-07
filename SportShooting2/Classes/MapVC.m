@@ -39,11 +39,26 @@
     [self initMapView];
     [self initVideoPreviewerView];
     
+    [self showTopMenu];
+    
     _isDroneRecording = NO;
     
 }
 
+-(void) showTopMenu{
+    [[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil];
+//    CGRect frame = _topMenu.frame;
+//    CGRect modifiedFrame = CGRectMake(frame.origin.x, frame.origin.y-3*frame.size.height, frame.size.width, frame.size.height);
+//    _topMenu.frame = modifiedFrame;
+    
 
+    [_topMenu showOn:self.view];
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [_topMenu hideFrom:self.view];
+//    });
+    
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -136,8 +151,7 @@
     {
         NSLog(@"finished showing map");
         [self.view sendSubviewToBack:mapView];
-        
-        
+        [mapView updateMaskImageAndButton];
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             videoPreviewerView.alpha = 1.0;
             mapView.alpha = 1.0;
@@ -147,7 +161,7 @@
     {
         NSLog(@"finished showing video");
         
-        
+        [mapView updateMaskImageAndButton];
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             
             mapView.alpha = 1.0;
@@ -160,6 +174,7 @@
         if (CGRectIsEmpty(smallSize)) {
             smallSize = mapView.frame;
         }
+        [mapView setMapViewMaskImage:NO];
         
         [UIView animateWithDuration:0.9 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             videoPreviewerView.alpha = 0.8;
@@ -168,6 +183,7 @@
             [mapView setFrame:[[UIScreen mainScreen] bounds]];
       
         } completion:completionWhenFinishedShowingMap];
+        
         [self enlargeMap_MakeVideoSmall_updateConstraints];
         [videoPreviewerView setFrame:smallSize];
         [[VideoPreviewer instance].glView adjustSize];
@@ -178,15 +194,9 @@
         [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
         
         // circuit selection part
-        if (_isCircuitDefined) {
-            [mapView setMapViewMaskImage:NO];
-        }
-        else{// if circuit not yet selected
-            [mapView setMapViewMaskImage:YES];
-            // push the circuit list vc
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self pushCircuitList];
-            });
+        if (!self.circuit) {
+            
+                [self showCircuitListView];
         }
         
         
@@ -195,6 +205,9 @@
         if (CGRectIsEmpty(smallSize)) {
             smallSize = videoPreviewerView.frame;
         }
+        
+        [mapView setMapViewMaskImage:NO];
+        
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             mapView.alpha = 0.5;//1
             [mapView setFrame:smallSize];
@@ -219,8 +232,8 @@
     _FCcurrentState = state;
     _autopilot.FCcurrentState = state;
     
-    [satteliteCountLabel setText:[NSString stringWithFormat:@"%d",state.satelliteCount]];
-    
+//    [satteliteCountLabel setText:[NSString stringWithFormat:@"%d",state.satelliteCount]];
+    [[[Menu instance] getTopMenu] updateGPSLabel:state.satelliteCount];
     if (!realDrone) {
         realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
     }
@@ -251,7 +264,7 @@
         [mapView enableMapViewScroll];
     }
     
-    [[[Menu instance] getAppDelegate] promptForLocationServices]; // to see when to send it !!!
+//    [[[Menu instance] getAppDelegate] promptForLocationServices]; // to see when to send it !!!
 }
 
 -(void) didSwipeOnScreen:(UIPanGestureRecognizer*) pan{
@@ -308,40 +321,7 @@
 
 #pragma mark - Camera -recording delegate methods
 -(void) camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
-    DVLog(@"coucou");
-//    dateOfLastCameraUpdate = [[NSDate alloc]init];
-    
-    // about 100 Hz in average 2048 bits per buf
-    if ([VideoPreviewer instance].status.isRunning) {
-        DVLog(@"isRunning");
-        return;
-        uint8_t* pBuffer = (uint8_t*)malloc(size);
-        memcpy(pBuffer, videoBuffer, size);
-        [[VideoPreviewer instance].dataQueue push:pBuffer length:(int)size];
-    }
-    else{
-        DVLog(@"not runninh");
-    }
-//
-//    freqCutterCameraFeed ++;
-//    if (freqCutterCameraFeed%10) {
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            if (dateOfLastCameraUpdate) {
-//                float timeSinceLastUpdate = -[dateOfLastCameraUpdate timeIntervalSinceNow];
-//                
-//                if (timeSinceLastUpdate > 0.1) {
-//                    DVLog(@"camera feed stopped");
-//                    // Notification
-//                    dateOfLastCameraUpdate = nil;
-//                    freqCutterCameraFeed = 0;
-//                    return;
-//                }
-//            }
-//        });
-//    }
-//    
-    
-    
+   
 }
 
 -(void) camera:(DJICamera *)camera didUpdateSystemState:(DJICameraSystemState *)systemState{
@@ -430,16 +410,14 @@
 //    else{
 //        [self stopRecord];
 //    }
-//    _isCircuitDefined = !_isCircuitDefined;
-//    NSLog(@"_isCircuitDefined ,%d",_isCircuitDefined);
-    [_circuitsList hideCircuitList:YES];
 }
 
 - (IBAction)didClickOnBatteryButton:(id)sender {
     [batteryLevelLabel setText:@"86%"];
 }
 
--(void) pushCircuitList{
+-(void) showCircuitListView{
+    
     [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
     [_circuitsList initWithDefaultsProperties];
 
@@ -451,10 +429,6 @@
     [self.view addGestureRecognizer:mapVCTapGR];
     
     [_circuitsList showCircuitList:YES];
-    
-    
-
-    
 }
 
 -(void) didTapOnMapVC:(UITapGestureRecognizer*) tapGR{

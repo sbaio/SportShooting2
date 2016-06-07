@@ -21,45 +21,80 @@
     [self setMapViewMaskImage:YES];
     self.delegate = self;
     
+    button = [[UIButton alloc] initWithFrame:CGRectMake(45, 85, 600, 60)];
+    button.restorationIdentifier = @"clickToSelectTrackButton";
+    button.alpha = 0.8;
+    button.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    [button addTarget:self action:@selector(tap:) forControlEvents:UIControlEventTouchUpInside];
+    
+    selecTrackIV = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"clickToSelectTrack.png"]];
+    selecTrackIV.frame = self.bounds;
+    selecTrackIV.restorationIdentifier = @"selectTrack";
+    selecTrackIV.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    selecTrackIV.backgroundColor = [UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.1];
     
 }
 
+
+
+-(void) updateMaskImageAndButton{
+    BOOL show = (!_mapVC.circuit && ![[[[UIApplication sharedApplication]keyWindow] subviews] containsObject:_mapVC.circuitsList]);
+    
+    if (show) {
+        [self setMapViewMaskImage:YES];
+    }
+    else{
+        [self setMapViewMaskImage:NO];
+    }
+}
+
+-(void) tap:(id)sender{
+    // did click on mapview button
+    [_mapVC showCircuitListView];
+}
 -(void) setMapViewMaskImage:(BOOL) set {
+    
+    BOOL containsImageView = NO;
+    BOOL containsButton = NO;
+    for (UIView* subview in [self subviews]) {
+        if ([[subview restorationIdentifier] isEqualToString:@"selectTrack"]) {
+            containsImageView = YES;
+        }
+        if([[subview restorationIdentifier] isEqualToString:@"clickToSelectTrackButton"]) {
+            containsButton = YES;
+        }
+    }
+    
     if (set) {
-        // depending on
-        BOOL isCircuitDefined = NO;
-        if (_mapVC) {
-            isCircuitDefined = _mapVC.isCircuitDefined;
-        }
-        if (!isCircuitDefined) {
-            BOOL contains = NO;
-            for (UIView* subview in [self subviews]) {
-                if ([[subview restorationIdentifier] isEqualToString:@"selectTrack"]) {
-                    contains = YES;
-                }
+        NSLog(@"set");
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (!containsImageView) {
+                selecTrackIV.frame = self.bounds;
+                [self addSubview:selecTrackIV];
             }
-            if (contains) {
-                return;
+            if (!containsButton && self.bounds.size.width == [[UIScreen mainScreen]bounds].size.width) {
+                [self addSubview:button];
             }
-            self.alpha = 0.5;
-            UIImageView* selecTrackIV = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"clickToSelectTrack.png"]];
-            selecTrackIV.frame = self.bounds;
-            selecTrackIV.restorationIdentifier = @"selectTrack";
-            selecTrackIV.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-            selecTrackIV.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.4];
-            [self addSubview:selecTrackIV];
-        }
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                self.alpha = 1.0;
+            }];
+        });
         
     }
     else{
-        for (UIView* subview in [self subviews]) {
-            if ([[subview restorationIdentifier] isEqualToString:@"selectTrack"]) {
-                [subview removeFromSuperview];
-            }
+        NSLog(@"unset");
+        if (containsImageView) {
+            [selecTrackIV removeFromSuperview];
+        }
+        if (containsButton) {
+            [button removeFromSuperview];
         }
     }
     
 }
+
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];

@@ -388,6 +388,7 @@
                                         <constraint firstItem="3P5-PS-KSB" firstAttribute="centerX" secondItem="oGb-Y8-wks" secondAttribute="centerX" multiplier="1.7" id="rmf-Ey-FcK"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -589,7 +590,7 @@
                                 <color key="textColor" red="0.97460300820000001" green="0.70306689249999998" blue="0.22189830050000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ylO-Ai-Wia" userLabel="Top Bar View">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ylO-Ai-Wia" userLabel="Top Bar View">
                                 <rect key="frame" x="0.0" y="-3" width="600" height="60"/>
                                 <subviews>
                                     <textField opaque="NO" clipsSubviews="YES" alpha="0.65000000000000002" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pdb-AB-CdJ" userLabel="Text field for  rounded style">

@@ -43,6 +43,7 @@
     
     isConnectedToDrone = NO;
     
+    testC = 0;
     
     [self registerApp];
     [self initPermissionLocationWhileInUse];
@@ -126,15 +127,21 @@
     if (_realDrone) {
         DVLog(@"Agumon : I'm here");
         
-//        //setting delegates
+        //setting delegates
 
-        DVLog(@"getmapVC , %@",[[Menu instance] getMapVC]);
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
         fc.delegate = [[Menu instance] getMapVC];
-//
+
         DJICamera* cam = (DJICamera*)[ComponentHelper fetchCamera];
         DVLog(@"%@",cam);
-        cam.delegate = [[Menu instance] getMapVC];
+        [[Menu instance] getMapVC].camera = cam;
+        cam.delegate = self;
+//        cam.delegate = [[Menu instance] getMapVC];
+        
+        [ComponentHelper fetchRemoteController].delegate = self;
+        
+        DJIBattery* battery = [ComponentHelper fetchBattery];
+        battery.delegate = self;
         
         // post notification
         isConnectedToDrone = YES;
@@ -235,12 +242,56 @@
     }];
 }
 
--(void) startLocationUpdates{
-    
+
+#pragma mark - SWReveal delegate
+
+- (void)revealController:(SWRevealViewController *)revealController panGestureBeganFromLocation:(CGFloat)location progress:(CGFloat)progress overProgress:(CGFloat)overProgress{
+    [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
 }
 
 
+-(void) revealControllerPanGestureWillSwipeLeft:(SWRevealViewController*) revealController{
+    MapView* map = (MapView*)[[Menu instance] getMap];
+//    [map enableMapViewScroll];
+}
 
+- (void)battery:(DJIBattery *)battery didUpdateState:(DJIBatteryState *)batteryState{
+    [[[Menu instance] getTopMenu] updateBatteryLabelWithBatteryState:batteryState];
+}
 
+- (void)remoteController:(DJIRemoteController *)rc didUpdateHardwareState:(DJIRCHardwareState)state{
+    // based on state.leftHorizontal / state.leftVertical /state.rightHorizontal / state.rightVertical
+    // send commands to override automatic mode !! and more
+}
 
+- (void)camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
+    
+    
+    if (testC%100) {
+        DVLog(@"test %d %@",testC,[VideoPreviewer instance]);
+    }
+    
+    
+    lastCameraUpdateDate = [[NSDate alloc]init];
+    testC++;
+    isReceivingVideoData = YES;
+    if (testC%10) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (lastCameraUpdateDate) {
+                float timeSinceLastUpdate = -[lastCameraUpdateDate timeIntervalSinceNow];
+                
+                if (timeSinceLastUpdate > 0.1) {
+                    DVLog(@"camera feed stopped");
+                    isReceivingVideoData = NO;
+                    // Notification
+                    lastCameraUpdateDate = nil;
+                    testC = 0;
+                    return;
+                }
+            }
+        });
+    }
+    
+    
+}
 @end

@@ -353,6 +353,7 @@ typedef enum
 // Implement this to return NO when you want the pan gesture recognizer to be ignored
 - (BOOL)revealControllerPanGestureShouldBegin:(SWRevealViewController *)revealController;
 
+-(void) revealControllerPanGestureWillSwipeLeft:(SWRevealViewController *)revealController;
 // Implement this to return NO when you want the tap gesture recognizer to be ignored
 - (BOOL)revealControllerTapGestureShouldBegin:(SWRevealViewController *)revealController;
 

@@ -18,9 +18,10 @@
 
 #import "VideoPreviewer/VideoPreviewer.h"
 #import "MapVC.h"
+#import "circuitsListFW.h"
+#import "MapView.h"
 
-
-@interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate,DJIBatteryDelegate,DJIRemoteControllerDelegate,DJICameraDelegate>
 {
     int attemptsToRegister;
     BOOL registered;
@@ -31,7 +32,12 @@
 //    BOOL isConnectedToDrone;
     BOOL isReceivingDroneStateUpdates;
     BOOL isReceivingVideoData;
+    BOOL isReceivingRCUpdates;
 //    BOOL isLocationsServicesEnabled;
+    
+    int testC;
+    
+    NSDate* lastCameraUpdateDate;
     
 }
 @property (strong, nonatomic) UIWindow *window;
@@ -39,6 +45,7 @@
 @property(nonatomic,strong) PermissionScope * locationPermission;
 @property BOOL isConnectedToDrone;
 @property BOOL isLocationsServicesEnabled;
+@property(nonatomic,strong) DJIBatteryState* batteryState;
 
 -(void) promptForLocationServices;
 

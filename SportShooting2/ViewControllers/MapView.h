@@ -14,7 +14,8 @@
 
 @interface MapView : MKMapView <MKMapViewDelegate>
 {
-    
+    UIButton* button;
+    UIImageView* selecTrackIV;
 }
 @property (weak) MapVC* mapVC;
 
@@ -26,5 +27,7 @@
 -(void) enableMapViewScroll;
 
 -(void) setMapViewMaskImage:(BOOL) set;
+//-(void) didEnlargeMapView;
+-(void) updateMaskImageAndButton;
 
 @end

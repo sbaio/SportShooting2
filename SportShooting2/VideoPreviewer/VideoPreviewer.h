@@ -10,6 +10,7 @@
 #import "MovieGLView.h"
 #import "DJILinkQueues.h"
 #import "Menu.h"
+#import "DVFloatingWindow.h"
 
 #define RENDER_FRAME_NUMBER (4)
 

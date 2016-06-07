@@ -27,8 +27,8 @@
                     <rect key="frame" x="0.0" y="108" width="600" height="492"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oxv-KV-dWZ">
-                    <rect key="frame" x="517" y="45" width="46" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oxv-KV-dWZ">
+                    <rect key="frame" x="523" y="36" width="34" height="36"/>
                     <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="17"/>
                     <state key="normal" title="Add">
                         <color key="titleColor" red="1.6996170869999999e-07" green="0.54942137000000002" blue="0.70689094070000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -38,7 +38,7 @@
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="0.52214608082405067" blue="0.59399817826004098" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="1" green="0.52214608082405067" blue="0.59399817826004098" alpha="0.50620567375886527" colorSpace="calibratedRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="Hsv-6p-3de" secondAttribute="bottom" id="BwN-e5-Irt"/>
                 <constraint firstItem="oxv-KV-dWZ" firstAttribute="centerX" secondItem="nd9-0z-bSR" secondAttribute="centerX" multiplier="1.8" id="Jtr-5P-dj5"/>

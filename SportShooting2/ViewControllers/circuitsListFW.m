@@ -16,13 +16,13 @@
     
     CGRect screenFrame = [[UIScreen mainScreen]bounds];
     
-    self.frame = CGRectMake(0, 0,0.35*screenFrame.size.width, 0.6*screenFrame.size.height);
+    self.frame = CGRectMake(self.superview.center.x, self.superview.center.y,screenFrame.size.width/3, 0.5*screenFrame.size.height);
     self.alpha = 0.95;
     self.layer.cornerRadius = 5.0;
 
     
     self.clipsToBounds = YES;
-    
+    self.alpha = 0;
     allCircuits = [self loadExistingCircuitsNames_coder];
     
     return self;
@@ -33,6 +33,7 @@
     
     _tableView.dataSource = self;
     _tableView.delegate = self;
+    _tableView.alpha = 0.7;
     
     UIPanGestureRecognizer *topPanGR = [[UIPanGestureRecognizer alloc]
                                         initWithTarget:self action:@selector(topBorderPanGesture:)];
@@ -51,7 +52,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    BOOL isSelected = ([tableView indexPathForSelectedRow] == indexPath);
     
     NSString *CellIdentifier = @"swipeableCellTrackSelection";
 
@@ -59,12 +59,6 @@
     
     MGSwipeTableCell *cell = [tvc.tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-//    UIButton* selectionButton = cell.contentView.subviews[1];
-//
-//    
-//    if (!isSelected) {
-//        [selectionButton setHidden:YES];
-//    }
     
     [tableView setBackgroundColor:cell.contentView.backgroundColor];
     
@@ -126,7 +120,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     // load concerned circuit and show it
-    
     MGSwipeTableCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     NSString* circuitName = [self txtOfCell:cell];
@@ -137,16 +130,15 @@
     circuitManager* cm = [circuitManager Instance];
     
     if (!mapVC.circuit || !mapVC.circuit.circuitName || ![mapVC.circuit.circuitName isEqualToString:circuitName]) {
-        NSLog(@"trying to load , '%@'",circuitName);
-        mapVC.circuit = [cm loadCircuitNamed_coder:circuitName];
+        loadedCircuit = [cm loadCircuitNamed_coder:circuitName];
     }
     
-    if (!mapVC.circuit || !mapVC.circuit.locations || !mapVC.circuit.locations.count) {
+    if (!loadedCircuit || !loadedCircuit.locations || !loadedCircuit.locations.count) {
         NSLog(@"empty circuit loaded");
         return;
     }
     
-    [[Calc Instance] map:mapView showCircuit:mapVC.circuit];
+    [[Calc Instance] map:mapView showCircuit:loadedCircuit];
 
     
     [self hideOrshowButtonAtIndexPath:indexPath hide:NO];
@@ -164,8 +156,12 @@
     if (hide) {
         duration = 0.1;
         alph = 0;
+        
     }
     UIButton* selectButton = cell.contentView.subviews[1];
+    if (hide && [selectButton.titleLabel.text isEqualToString:@"selected"]) {
+        return;
+    }
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
         selectButton.alpha = alph;
         [selectButton setHidden:hide];
@@ -179,10 +175,29 @@
 
 - (void) didSelectCircuitAtSelectedRow:(id) sender{
     NSLog(@"selected circuit , %d",(int)[_tableView indexPathForSelectedRow].row);
+    MapVC* mapVC = [[Menu instance] getMapVC];
+    if (loadedCircuit) {
+        mapVC.circuit = loadedCircuit;
+        NSLog(@"setting mapVC circuit: \"%@\"",loadedCircuit.circuitName);
+        
+        // inform that this circuit "circuitName" is selected
+        MGSwipeTableCell* cell = [_tableView cellForRowAtIndexPath:[_tableView indexPathForSelectedRow]];
+        UIButton* button = cell.contentView.subviews[1];
+        [button setTitle:@"selected" forState:UIControlStateNormal];
+        
+        for (MGSwipeTableCell* celli in [_tableView visibleCells]) {
+            if (celli != cell ) {
+                UIButton* buttoni = celli.contentView.subviews[1];
+
+                [buttoni setHidden:YES];
+                [buttoni setTitle:@"select" forState:UIControlStateNormal];
+            }
+        }
+    }
 }
 
 - (IBAction)onAddButtonClicked:(id)sender {
-    NSLog(@"addButton");
+    [self hideCircuitList:YES];
 }
 
 - (void)topBorderPanGesture:(UIPanGestureRecognizer *)recognizer
@@ -200,42 +215,56 @@
 
 #pragma mark - animations
 -(void) hideCircuitList:(BOOL)animated{
-    NSLog(@"%ld",[_tableView indexPathForSelectedRow].row);
+
+    POPBasicAnimation *opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    opacityAnimation.toValue = @(0.0);
+    
+    POPBasicAnimation *offscreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    offscreenAnimation.toValue = @(5*self.superview.center.x);
+    offscreenAnimation.duration = 0.5;
+    [offscreenAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
+         [self removeFromSuperview];
+        MapView* map = (MapView*)[[Menu instance] getMap];
+        [map updateMaskImageAndButton];
+       
+    }];
+    
+    [self.layer pop_addAnimation:offscreenAnimation forKey:@"offscreenAnimation"];
+    
+    
 }
 
 -(void) showCircuitList:(BOOL)animated{
-    MKMapView* mapView = [[Menu instance] getMap];
-    
-    for (UIView* subview in [mapView subviews]) {
-        if([subview.restorationIdentifier isEqualToString:@"selectTrack"]){
-            [subview removeFromSuperview];
-        }
-    }
+//    MKMapView* mapView = [[Menu instance] getMap];
+    MapView* mapView = (MapView*)[[Menu instance] getMap];
+    [mapView setMapViewMaskImage:NO];
     
     [[[UIApplication sharedApplication]keyWindow] addSubview:self];
-    CGSize frameSize = self.frame.size;
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionY];
-    positionAnimation.toValue = @(self.center.y/5 + frameSize.height/2);
-    positionAnimation.springBounciness = 10;
+
+//    positionAnimation.toValue = @(self.center.y*1.2/3 + frameSize.height/2);
+    positionAnimation.toValue = @(0.5*self.superview.center.y + self.superview.frame.size.height/10);
+    positionAnimation.springBounciness = 25;
     [positionAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
         
     }];
     POPSpringAnimation *positionAnimationX = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
-    positionAnimationX.toValue = @(frameSize.width/2);
-    positionAnimationX.springBounciness = 10;
+//    positionAnimationX.toValue = @(frameSize.width*1.2/2);
+    positionAnimationX.toValue = @(self.superview.center.x*0.4);
+    positionAnimationX.springBounciness = 20;
     [positionAnimationX setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
         
     }];
-    POPSpringAnimation *scaleAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerScaleXY];
-    scaleAnimation.springBounciness = 20;
-    scaleAnimation.fromValue = [NSValue valueWithCGPoint:CGPointMake(0.5, 1)];
+
     
-    
+    POPBasicAnimation *fadeAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    fadeAnimation.duration = 1.0;
+    fadeAnimation.toValue = @1;
     
     [self.layer pop_addAnimation:positionAnimation forKey:@"positionAnimation"];
     [self.layer pop_addAnimation:positionAnimationX forKey:@"positionAnimationX"];
-//    [self.layer pop_addAnimation:scaleAnimation forKey:@"scaleAnimation"];
+    [self.layer pop_addAnimation:fadeAnimation forKey:@"fadeAnimation"];
 }
 
 

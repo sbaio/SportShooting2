@@ -1194,7 +1194,13 @@ const int FrontViewPositionNone = 0xff;
     // forbid gesture if the initial translation is not horizontal
     UIView *recognizerView = _panGestureRecognizer.view;
     CGPoint translation = [_panGestureRecognizer translationInView:recognizerView];
-//        NSLog( @"translation:%@", NSStringFromCGPoint(translation) );
+        
+    if (translation.x < 0) {
+        if ( [_delegate respondsToSelector:@selector(revealControllerPanGestureWillSwipeLeft:)] )
+            [_delegate revealControllerPanGestureWillSwipeLeft:self];
+        
+    }
+    
 //    if ( fabs(translation.y/translation.x) > 1 )
 //        return NO;
 
