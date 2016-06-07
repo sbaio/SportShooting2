@@ -8,6 +8,7 @@
 #import "VideoPreviewer.h"
 #import "DJIVTH264DecoderPublic.h"
 #import "MovieWriter.h"
+
 #define BEGIN_DISPATCH_QUEUE dispatch_async(_dispatchQueue, ^{
 #define END_DISPATCH_QUEUE   });
 
@@ -27,6 +28,7 @@
 @implementation VideoPreviewer
 
 static VideoPreviewer* previewer = nil;
+
 -(id)init
 {
     self= [super init];
@@ -320,6 +322,7 @@ static VideoPreviewer* previewer = nil;
             uint8_t *inputData = [_dataQueue pull:&inputDataSize];
             
             
+            
             if(inputData == NULL)
             {
                     [self.glView adjustSize];
@@ -344,7 +347,7 @@ static VideoPreviewer* previewer = nil;
             }
             
             if(!_status.hasImage){
-
+                
                 _status.hasImage = YES;
                 if(self.delegate !=nil && [self.delegate respondsToSelector:@selector(previewDidReceiveEvent:)]){
                     [self.delegate previewDidReceiveEvent:VideoPreviewerEventHasImage];
@@ -373,6 +376,9 @@ static VideoPreviewer* previewer = nil;
                                 }
                             }
                         }
+                        
+            
+
                         if (sizeChanged) {
                             [self.hwDecoder resetLater];
                         }
@@ -560,7 +566,9 @@ static VideoPreviewer* previewer = nil;
 -(void) handleNotification:(NSNotification*) notification{
     if ([notification.name isEqualToString:@"InUseLocEnabled"] || [notification.name isEqualToString:@"InUseLocNotEnabled"] || [notification.name isEqualToString:@"droneConnected"] || [notification.name isEqualToString:@"droneDisconnected"] ) {
 
-        DVLog(@"handle notification");
+        
+        [[DVFloatingWindow sharedInstance] loggerLogToLogger:@"Default" log:notification.name];
+
         [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
     }
     

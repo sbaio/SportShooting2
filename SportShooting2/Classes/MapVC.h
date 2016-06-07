@@ -35,7 +35,7 @@
 @class circuitsListFW;
 @class TopMenu;
 
-@interface MapVC : UIViewController<DJIFlightControllerDelegate,DJICameraDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
+@interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
     __weak SWRevealViewController* mainRevealVC;
     __weak SWRevealViewController* menuRevealVC;
@@ -88,7 +88,7 @@
     __weak IBOutlet UILabel *satteliteCountLabel;
     
     
-    NSDate* dateOfLastCameraUpdate;
+//    NSDate* dateOfLastCameraUpdate;
     int freqCutterCameraFeed;
 }
 @property (weak, nonatomic) IBOutlet MapView *mapView;

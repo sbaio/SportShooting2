@@ -1393,7 +1393,7 @@ exit:
 //    [[MovieWriter instance] newFrame:distorsionRenderTarget ReadyAtTime:presentTime atIndex:0];
 //        [[MovieWriter instance] newFrame:zoomRenderTarget ReadyAtTime:presentTime atIndex:0];
     if (!_isMovieWritingPaused) {
-        [[MovieWriter instance] newFrame:trackingRenderTarget ReadyAtTime:presentTime atIndex:0];
+//        [[MovieWriter instance] newFrame:trackingRenderTarget ReadyAtTime:presentTime atIndex:0];
     }
     
 //    frameNumber ++;
@@ -1459,7 +1459,7 @@ exit:
     
     
     
-
+    
     
     
     

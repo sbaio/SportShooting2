@@ -7,6 +7,7 @@
 
 #import "DJILinkQueues.h"
 #import <sys/time.h>
+#import "DVFloatingWindow.h"
 
 /**
  *  Node of the queue
@@ -89,6 +90,7 @@ typedef struct{
 
 //It means the queue is empty if the return value is NULL )
 - (uint8_t *)pull:(int *)len{
+    
     pthread_mutex_lock(&_mutex);
     if(_count == 0)
     {

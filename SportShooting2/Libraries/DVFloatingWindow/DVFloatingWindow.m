@@ -409,6 +409,10 @@ typedef enum
     }
 }
 
+-(void) log:(NSString*) log{
+    [self loggerLogToLogger:@"Default" log:log];
+}
+
 #pragma mark -  Methods button
 
 - (void)buttonAddWithTitle:(NSString *)title

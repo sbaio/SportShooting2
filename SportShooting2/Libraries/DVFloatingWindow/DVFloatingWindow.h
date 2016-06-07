@@ -27,6 +27,7 @@
  */
 - (void)windowShow;
 
+-(void) log:(NSString*) log;
 /**
  * Hide the window if it's visible.
  *

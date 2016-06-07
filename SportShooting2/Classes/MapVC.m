@@ -320,42 +320,42 @@
 }
 
 #pragma mark - Camera -recording delegate methods
--(void) camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
-   
-}
+//-(void) camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
+//   
+//}
 
--(void) camera:(DJICamera *)camera didUpdateSystemState:(DJICameraSystemState *)systemState{
-    
-    if (systemState.isRecording) {
-        
-        if (!_isDroneRecording) {
-            [_recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
-        }
-        _isDroneRecording = YES;
-        
-    }
-    else{
-        if (_isDroneRecording) {
-            [_recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
-        }
-        _isDroneRecording = NO;
-        
-    }
-    
-    if (_isDroneRecording) {
-        if ([_recordingTimeLabel isHidden]) {
-            [_recordingTimeLabel setHidden:NO];
-        }
-        int recordingTime = systemState.currentVideoRecordingTimeInSeconds;
-        int minute = (recordingTime % 3600) / 60;
-        int second = (recordingTime % 3600) % 60;
-        NSString* timeString = [NSString stringWithFormat:@"%02d:%02d",minute,second];
-        [_recordingTimeLabel setText:timeString];
-    }
-    else{
-        [_recordingTimeLabel setText:@"Rec"];
-    }
-}
+//-(void) camera:(DJICamera *)camera didUpdateSystemState:(DJICameraSystemState *)systemState{
+//    
+//    if (systemState.isRecording) {
+//        
+//        if (!_isDroneRecording) {
+//            [_recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
+//        }
+//        _isDroneRecording = YES;
+//        
+//    }
+//    else{
+//        if (_isDroneRecording) {
+//            [_recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
+//        }
+//        _isDroneRecording = NO;
+//        
+//    }
+//    
+//    if (_isDroneRecording) {
+//        if ([_recordingTimeLabel isHidden]) {
+//            [_recordingTimeLabel setHidden:NO];
+//        }
+//        int recordingTime = systemState.currentVideoRecordingTimeInSeconds;
+//        int minute = (recordingTime % 3600) / 60;
+//        int second = (recordingTime % 3600) % 60;
+//        NSString* timeString = [NSString stringWithFormat:@"%02d:%02d",minute,second];
+//        [_recordingTimeLabel setText:timeString];
+//    }
+//    else{
+//        [_recordingTimeLabel setText:@"Rec"];
+//    }
+//}
 
 -(void) setCameraRecordMode{
     WeakRef(target);

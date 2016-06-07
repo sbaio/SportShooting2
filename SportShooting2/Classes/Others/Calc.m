@@ -595,4 +595,8 @@
     [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
     [[Calc Instance] map:mapView drawCircuitPolyline:circuit.locations withTitle:@"circuitPolyline" andColor:@"RGB 212 175 55"];
 }
+
+-(void) log:(NSString*) log{
+    [[DVFloatingWindow sharedInstance] loggerLogToLogger:@"Default" log:log];
+}
 @end

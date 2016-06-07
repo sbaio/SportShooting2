@@ -267,10 +267,18 @@
 - (void)camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
     
     
-    if (testC%100) {
-        DVLog(@"test %d %@",testC,[VideoPreviewer instance]);
+    if (testC%10) {
+//        [[DVFloatingWindow sharedInstance] log:[NSString stringWithFormat:@"test %d ,%@",testC,[VideoPreviewer instance]]];
+
+//        DVLog(@"test %d %d",testC,[VideoPreviewer instance].status.isRunning);
     }
     
+    if ([VideoPreviewer instance].status.isRunning) {
+        
+        uint8_t* pBuffer = (uint8_t*)malloc(size);
+        memcpy(pBuffer, videoBuffer, size);
+        [[VideoPreviewer instance].dataQueue push:pBuffer length:(int)size];
+    }
     
     lastCameraUpdateDate = [[NSDate alloc]init];
     testC++;
@@ -285,7 +293,7 @@
                     isReceivingVideoData = NO;
                     // Notification
                     lastCameraUpdateDate = nil;
-                    testC = 0;
+//                    testC = 0;
                     return;
                 }
             }
