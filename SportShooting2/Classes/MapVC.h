@@ -27,6 +27,7 @@
 #import "CircuitsTVC.h"
 #import "circuitsListFW.h"
 #import "TopMenu.h"
+#import "BottomStatusBar.h"
 
 #import "POP.h"
 
@@ -34,6 +35,7 @@
 @class Drone;
 @class circuitsListFW;
 @class TopMenu;
+@class BottomStatusBar;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -88,7 +90,7 @@
     __weak IBOutlet UILabel *satteliteCountLabel;
     
     
-//    NSDate* dateOfLastCameraUpdate;
+    NSDate* lastFCUpdateDate;
     int freqCutterCameraFeed;
 }
 @property (weak, nonatomic) IBOutlet MapView *mapView;
@@ -100,6 +102,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *recordingTimeLabel;
 @property (weak, nonatomic) IBOutlet circuitsListFW *circuitsList;
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
+
+@property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
 
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;

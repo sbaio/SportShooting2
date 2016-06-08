@@ -91,7 +91,7 @@
 }
 
 - (IBAction)onMenuButtonClicked:(id)sender {
-    NSLog(@"open menu");
+    [[[Menu instance]getMainRevealVC] setFrontViewPosition:FrontViewPositionRightMost animated:YES];
 }
 
 -(void) updateGPSLabel:(int) satelliteCount{
@@ -110,11 +110,15 @@
     DJIBattery* battery = [ComponentHelper fetchBattery];
     
     if (!battery) {
-        NSLog(@"no battery found");
         [_batteryLabel setText:@"N/A"];
     }else{
         [_batteryLabel setText:[NSString stringWithFormat:@"%ld%%",(long)appD.batteryState.batteryEnergyRemainingPercent]];
     }
 }
+
+-(void) setStatusLabelText:(NSString*) textStatus{
+    [_statusLabel setText:textStatus];
+}
+
 
 @end

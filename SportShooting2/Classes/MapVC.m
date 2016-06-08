@@ -242,6 +242,27 @@
         [realDrone updateDroneStateWithFlightControllerState:state];
     }
     
+    AppDelegate* appD = [[Menu instance] getAppDelegate];
+    lastFCUpdateDate = [[NSDate alloc] init];
+    if (!appD.isReceivingFlightControllerStatus) {
+        [appD setIsReceivingFlightControllerStatus:YES];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStarted" object:self];
+    }
+    [appD setIsReceivingFlightControllerStatus:YES];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (lastFCUpdateDate) {
+            float timeSinceLastUpdate = -[lastFCUpdateDate timeIntervalSinceNow];
+            
+            if (timeSinceLastUpdate > 1) {
+                [appD setIsReceivingFlightControllerStatus:NO];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStopped" object:self];
+                // Notification
+                lastFCUpdateDate = nil;
+                return;
+            }
+        }
+    });
 }
 
 

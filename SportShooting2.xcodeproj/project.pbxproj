@@ -26,6 +26,10 @@
 		D6218CC41D07367F00DF1E55 /* topMenu.psd in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC21D07367F00DF1E55 /* topMenu.psd */; };
 		D6218CC51D07367F00DF1E55 /* topmenuBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC31D07367F00DF1E55 /* topmenuBackground.png */; };
 		D6218CC71D07425F00DF1E55 /* GeneralMenuLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC61D07425F00DF1E55 /* GeneralMenuLogo.png */; };
+		D6218CCA1D07A2B300DF1E55 /* Zenmuse_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC81D07A2B200DF1E55 /* Zenmuse_green.png */; };
+		D6218CCB1D07A2B300DF1E55 /* Zenmuse_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */; };
+		D6218CCE1D07EF9800DF1E55 /* BottomStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CCD1D07EF9800DF1E55 /* BottomStatusBar.m */; };
+		D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -185,6 +189,11 @@
 		D6218CC21D07367F00DF1E55 /* topMenu.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = topMenu.psd; sourceTree = "<group>"; };
 		D6218CC31D07367F00DF1E55 /* topmenuBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topmenuBackground.png; sourceTree = "<group>"; };
 		D6218CC61D07425F00DF1E55 /* GeneralMenuLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GeneralMenuLogo.png; sourceTree = "<group>"; };
+		D6218CC81D07A2B200DF1E55 /* Zenmuse_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Zenmuse_green.png; sourceTree = "<group>"; };
+		D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Zenmuse_red.png; sourceTree = "<group>"; };
+		D6218CCC1D07EF9800DF1E55 /* BottomStatusBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BottomStatusBar.h; path = BottomStatusBar/BottomStatusBar.h; sourceTree = "<group>"; };
+		D6218CCD1D07EF9800DF1E55 /* BottomStatusBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BottomStatusBar.m; path = BottomStatusBar/BottomStatusBar.m; sourceTree = "<group>"; };
+		D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BottomStatusBar.xib; path = BottomStatusBar/BottomStatusBar.xib; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -513,6 +522,16 @@
 				D6218CC31D07367F00DF1E55 /* topmenuBackground.png */,
 			);
 			path = Topmenu;
+			sourceTree = "<group>";
+		};
+		D6218CCF1D07EF9F00DF1E55 /* BottomStatusBar */ = {
+			isa = PBXGroup;
+			children = (
+				D6218CCC1D07EF9800DF1E55 /* BottomStatusBar.h */,
+				D6218CCD1D07EF9800DF1E55 /* BottomStatusBar.m */,
+				D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */,
+			);
+			name = BottomStatusBar;
 			sourceTree = "<group>";
 		};
 		D632D4031D03F5CB00B12946 = {
@@ -1030,6 +1049,7 @@
 				D6218CBC1D069BB400DF1E55 /* TopMenu.h */,
 				D6218CBD1D069BB400DF1E55 /* TopMenu.m */,
 				D6218CBF1D069BCA00DF1E55 /* TopMenu.xib */,
+				D6218CCF1D07EF9F00DF1E55 /* BottomStatusBar */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1072,6 +1092,8 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CC81D07A2B200DF1E55 /* Zenmuse_green.png */,
+				D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */,
 				D6218CC11D07367F00DF1E55 /* Topmenu */,
 				D6218CB21D05400E00DF1E55 /* mapView layers */,
 				D6218CB01D04DF7100DF1E55 /* phone.png */,
@@ -1177,6 +1199,7 @@
 				D69902801D0408110038D05B /* reveal-icon@2x.png in Resources */,
 				D6218CA81D04D4CC00DF1E55 /* GPS_red.png in Resources */,
 				D632D41F1D03F5CB00B12946 /* LaunchScreen.storyboard in Resources */,
+				D6218CCB1D07A2B300DF1E55 /* Zenmuse_red.png in Resources */,
 				D69902731D0408110038D05B /* inspire_drone.png in Resources */,
 				D69902561D0407850038D05B /* LUT_YR.png in Resources */,
 				D632D5641D04042200B12946 /* droneTargetLocation50.png in Resources */,
@@ -1197,6 +1220,7 @@
 				D69902811D0408110038D05B /* video.png in Resources */,
 				D6218CC71D07425F00DF1E55 /* GeneralMenuLogo.png in Resources */,
 				D632D56D1D04042200B12946 /* targetDronePosition.png in Resources */,
+				D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */,
 				D6218CAE1D04D82C00DF1E55 /* Cable_green.png in Resources */,
 				D632D5631D04042200B12946 /* droneTargetLocation.png in Resources */,
 				D632D55F1D04042200B12946 /* aircraft.png in Resources */,
@@ -1229,6 +1253,7 @@
 				D6218CC41D07367F00DF1E55 /* topMenu.psd in Resources */,
 				D69902721D0408110038D05B /* images.jpeg in Resources */,
 				D632D5621D04042200B12946 /* danger.png in Resources */,
+				D6218CCA1D07A2B300DF1E55 /* Zenmuse_green.png in Resources */,
 				D632D5691D04042200B12946 /* MeGPS.png in Resources */,
 				D699027C1D0408110038D05B /* recButton_off.png in Resources */,
 				D632D52C1D04019800B12946 /* Storyboard.storyboard in Resources */,
@@ -1261,6 +1286,7 @@
 				D632D4F81D03F6A200B12946 /* POPGeometry.mm in Sources */,
 				D632D4FE1D03F6A200B12946 /* TransformationMatrix.cpp in Sources */,
 				D632D5401D04033300B12946 /* Vec.m in Sources */,
+				D6218CCE1D07EF9800DF1E55 /* BottomStatusBar.m in Sources */,
 				D632D51C1D03F71900B12946 /* DJILinkQueues.m in Sources */,
 				D69902421D0405770038D05B /* MGSwipeTableCell.m in Sources */,
 				D69902871D0410540038D05B /* MapVC.m in Sources */,

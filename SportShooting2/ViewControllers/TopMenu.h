@@ -26,6 +26,7 @@
 -(void) updateBatteryLabel;
 -(void) updateBatteryLabelWithBatteryState:(DJIBatteryState*) batteryState;
 -(void) updateGPSLabel:(int) satelliteCount;
+-(void) setStatusLabelText:(NSString*) textStatus;
 
 @property (weak, nonatomic) IBOutlet UIButton *menuButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;

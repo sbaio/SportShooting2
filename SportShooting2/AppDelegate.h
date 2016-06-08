@@ -31,19 +31,22 @@
     
 //    BOOL isConnectedToDrone;
     BOOL isReceivingDroneStateUpdates;
-    BOOL isReceivingVideoData;
-    BOOL isReceivingRCUpdates;
 //    BOOL isLocationsServicesEnabled;
     
-    int testC;
-    
+    int freqCutterCameraVideoCallback;
     NSDate* lastCameraUpdateDate;
+    NSDate* lastRCUpdateDate;
     
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
 @property(nonatomic,strong) PermissionScope * locationPermission;
 @property BOOL isConnectedToDrone;
+
+@property BOOL isReceivingVideoData;
+@property BOOL isReceivingRCUpdates;
+@property BOOL isReceivingFlightControllerStatus;
+
 @property BOOL isLocationsServicesEnabled;
 @property(nonatomic,strong) DJIBatteryState* batteryState;
 

@@ -41,12 +41,21 @@
     [[Menu instance] setSubmenu:0];
     
     
+    self.isReceivingVideoData = NO;
+    self.isReceivingRCUpdates = NO;
+    
+    [self addObserver:self forKeyPath:@"isReceivingVideoData" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [self addObserver:self forKeyPath:@"isReceivingRCUpdates" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+//    [self addObserver:self forKeyPath:@"isReceivingFlightControllerStatus" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    
     isConnectedToDrone = NO;
     
-    testC = 0;
+    
+    freqCutterCameraVideoCallback = 0;
     
     [self registerApp];
     [self initPermissionLocationWhileInUse];
+    
     
     DVWindowShow();
 
@@ -125,6 +134,7 @@
     _realDrone = [ComponentHelper fetchAircraft];
     
     if (_realDrone) {
+        
         DVLog(@"Agumon : I'm here");
         
         //setting delegates
@@ -133,7 +143,6 @@
         fc.delegate = [[Menu instance] getMapVC];
 
         DJICamera* cam = (DJICamera*)[ComponentHelper fetchCamera];
-        DVLog(@"%@",cam);
         [[Menu instance] getMapVC].camera = cam;
         cam.delegate = self;
 //        cam.delegate = [[Menu instance] getMapVC];
@@ -256,22 +265,30 @@
 }
 
 - (void)battery:(DJIBattery *)battery didUpdateState:(DJIBatteryState *)batteryState{
+    [[[Menu instance] getTopMenu] setStatusLabelText:@"Connected"];
     [[[Menu instance] getTopMenu] updateBatteryLabelWithBatteryState:batteryState];
 }
 
 - (void)remoteController:(DJIRemoteController *)rc didUpdateHardwareState:(DJIRCHardwareState)state{
     // based on state.leftHorizontal / state.leftVertical /state.rightHorizontal / state.rightVertical
     // send commands to override automatic mode !! and more
+    lastRCUpdateDate = [[NSDate alloc] init];
+    self.isReceivingRCUpdates = YES;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (lastRCUpdateDate) {
+            float timeSinceLastUpdate = -[lastRCUpdateDate timeIntervalSinceNow];
+            
+            if (timeSinceLastUpdate > 0.4) {
+                self.isReceivingRCUpdates = NO;
+                // Notification
+                lastRCUpdateDate = nil;
+                return;
+            }
+        }
+    });
 }
 
 - (void)camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
-    
-    
-    if (testC%10) {
-//        [[DVFloatingWindow sharedInstance] log:[NSString stringWithFormat:@"test %d ,%@",testC,[VideoPreviewer instance]]];
-
-//        DVLog(@"test %d %d",testC,[VideoPreviewer instance].status.isRunning);
-    }
     
     if ([VideoPreviewer instance].status.isRunning) {
         
@@ -281,19 +298,18 @@
     }
     
     lastCameraUpdateDate = [[NSDate alloc]init];
-    testC++;
-    isReceivingVideoData = YES;
-    if (testC%10) {
+    freqCutterCameraVideoCallback++;
+    
+    self.isReceivingVideoData = YES;
+    if (freqCutterCameraVideoCallback%10) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (lastCameraUpdateDate) {
                 float timeSinceLastUpdate = -[lastCameraUpdateDate timeIntervalSinceNow];
                 
                 if (timeSinceLastUpdate > 0.1) {
-                    DVLog(@"camera feed stopped");
-                    isReceivingVideoData = NO;
+                    self.isReceivingVideoData = NO;
                     // Notification
                     lastCameraUpdateDate = nil;
-//                    testC = 0;
                     return;
                 }
             }
@@ -302,4 +318,53 @@
     
     
 }
+
+#pragma mark - add observer methods
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    
+    if (([keyPath isEqual:@"isReceivingVideoData"] ||[keyPath isEqual:@"isReceivingRCUpdates"]) && object == self) {
+        BOOL oldBool = [[change objectForKey:@"old"] boolValue];
+        BOOL newBool = [[change objectForKey:@"new"] boolValue];
+        
+        if (oldBool != newBool) {
+            if ([keyPath isEqual:@"isReceivingVideoData"]) {
+                if (newBool) {
+                    DVLog(@"isReceiving video Data");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"cameraFeedStarted" object:self];
+                }
+                else{
+                    DVLog(@"camera feed stopped");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"cameraFeedStopped" object:self];
+                }
+            }
+            else if ([keyPath isEqual:@"isReceivingRCUpdates"]){
+                if (newBool) {
+                    DVLog(@"isReceiving RC Data");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCFeedStarted" object:self];
+                }
+                else{
+                    DVLog(@"RC feed stopped");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCFeedStopped" object:self];
+                }
+            }
+            else if ([keyPath isEqual:@"isReceivingFlightControllerStatus"]){
+                if (newBool) {
+                    DVLog(@"isReceiving FC Status");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStarted" object:self];
+                }
+                else{
+                    DVLog(@"FC feed stopped");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStopped" object:self];
+                }
+            }
+            
+            
+            
+    
+        }
+    }
+}
+
+
+
 @end
