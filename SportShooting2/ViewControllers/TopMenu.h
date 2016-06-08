@@ -11,13 +11,18 @@
 #import "AppDelegate.h"
 #import "Menu.h"
 #import "ComponentHelper.h"
+#import "MapVC.h"
 
 @class AppDelegate;
+@class MapVC;
 
 @interface TopMenu : UIView
 {
     __weak AppDelegate* appD;
+    __weak MapVC* mapVC;
     __weak DJIFlightControllerCurrentState* FCcurrentState;
+    
+    CGRect takeOffButtonFrame;
 }
 
 -(void) showOn:(UIView*) superview;
@@ -27,6 +32,11 @@
 -(void) updateBatteryLabelWithBatteryState:(DJIBatteryState*) batteryState;
 -(void) updateGPSLabel:(int) satelliteCount;
 -(void) setStatusLabelText:(NSString*) textStatus;
+
+
+// other buttons management
+-(void)showTakeOffButton;
+-(void) hideTakeOffButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *menuButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;

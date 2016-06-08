@@ -26,9 +26,10 @@
     
     [self addSubview:backgroundImage];
     [self sendSubviewToBack:backgroundImage];
-    NSLog(@"%@",[self subviews]);
     
+    self.clipsToBounds =  YES;
     appD = [[Menu instance] getAppDelegate];
+    mapVC = [[Menu instance] getMapVC];
     
     Menu* menu = [Menu instance];
     menu.topMenu = self;
@@ -119,6 +120,67 @@
 -(void) setStatusLabelText:(NSString*) textStatus{
     [_statusLabel setText:textStatus];
 }
+
+
+-(void)showTakeOffButton{
+    
+    takeOffButtonFrame = mapVC.takeOffButton.frame;
+    CGRect modifiedFrame = takeOffButtonFrame;
+    
+    modifiedFrame.origin.x = -200;
+    mapVC.takeOffButton.frame = modifiedFrame;
+    [mapVC.takeOffButton setHidden:NO];
+    [mapVC.takeOffButton setAlpha:1.0];
+    
+    POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    positionAnimation.toValue = @(takeOffButtonFrame.origin.x + takeOffButtonFrame.size.width/2);
+    positionAnimation.springBounciness = 20;
+    
+    [mapVC.takeOffButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
+}
+
+-(void) hideTakeOffButton{
+
+    CGRect initialRect = mapVC.takeOffButton.frame;
+    
+    POPBasicAnimation *opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    opacityAnimation.toValue = @(0);
+    
+    POPBasicAnimation *X_Animation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    X_Animation.toValue = @(0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
+        [mapVC.takeOffButton setHidden:YES];
+        mapVC.takeOffButton.frame = initialRect;
+    }];
+    
+    [mapVC.takeOffButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
+    [mapVC.takeOffButton.layer pop_addAnimation:opacityAnimation forKey:@"takeOffButtonDismissingOpacity"];
+    
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @end

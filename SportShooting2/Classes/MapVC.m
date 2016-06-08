@@ -32,31 +32,27 @@
     
     mainRevealVC = [[Menu instance] getMainRevealVC];
     menuRevealVC = [[Menu instance] getMenuRevealVC];
-
-    
-    [MenuButton addTarget:mainRevealVC action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     
     [self initMapView];
     [self initVideoPreviewerView];
     
-    [self showTopMenu];
+    [self showTopMenu]; // and bottom
     
-    _isDroneRecording = NO;
+    
+    
+    
+    
     
 }
 
 -(void) showTopMenu{
     [[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil];
-//    CGRect frame = _topMenu.frame;
-//    CGRect modifiedFrame = CGRectMake(frame.origin.x, frame.origin.y-3*frame.size.height, frame.size.width, frame.size.height);
-//    _topMenu.frame = modifiedFrame;
-    
 
     [_topMenu showOn:self.view];
     
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [_topMenu hideFrom:self.view];
-//    });
+    [[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil];
+    [_bottomStatusBar showOn:self.view];
+
     
 }
 - (void)didReceiveMemoryWarning {
@@ -90,7 +86,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     phoneLocation = _locationManager.location;
-    _autopilot.userLocation = _locationManager.location;
+    
 
     if(phoneLocation.coordinate.longitude && phoneLocation.coordinate.latitude){
         if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:phoneLocation.coordinate] > 10000) {
@@ -98,11 +94,11 @@
         }
         
     }
-//
-//    else if(!phoneLocation.coordinate.latitude && !phoneLocation.coordinate.longitude && isPhoneLocationValid){
-//        isPhoneLocationValid = NO;
-//        DVLog(@"phoneLocation not valid");
-//    }
+    else{
+        phoneLocation = nil;
+    }
+    
+    _autopilot.userLocation = phoneLocation;
     
 }
 
@@ -232,7 +228,6 @@
     _FCcurrentState = state;
     _autopilot.FCcurrentState = state;
     
-//    [satteliteCountLabel setText:[NSString stringWithFormat:@"%d",state.satelliteCount]];
     [[[Menu instance] getTopMenu] updateGPSLabel:state.satelliteCount];
     if (!realDrone) {
         realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
@@ -250,12 +245,13 @@
     }
     [appD setIsReceivingFlightControllerStatus:YES];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (lastFCUpdateDate) {
             float timeSinceLastUpdate = -[lastFCUpdateDate timeIntervalSinceNow];
             
-            if (timeSinceLastUpdate > 1) {
+            if (timeSinceLastUpdate > 0.7) {
                 [appD setIsReceivingFlightControllerStatus:NO];
+                DVLog(@"FC feed stopped");
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStopped" object:self];
                 // Notification
                 lastFCUpdateDate = nil;
@@ -263,6 +259,13 @@
             }
         }
     });
+    
+//    if (phoneLocation) {
+//        [_bottomStatusBar updateDistanceToRCLabelWithDistance:[[Calc Instance] distanceFromCoords2D:phoneLocation.coordinate toCoords2D:state.aircraftLocation]];
+//    }
+//    [_bottomStatusBar updateAltitudeLabelWithAltitude:state.altitude];
+    
+    [_bottomStatusBar updateWith:state andPhoneLocation:phoneLocation];
 }
 
 
@@ -284,8 +287,6 @@
     else{
         [mapView enableMapViewScroll];
     }
-    
-//    [[[Menu instance] getAppDelegate] promptForLocationServices]; // to see when to send it !!!
 }
 
 -(void) didSwipeOnScreen:(UIPanGestureRecognizer*) pan{
@@ -340,43 +341,7 @@
     }
 }
 
-#pragma mark - Camera -recording delegate methods
-//-(void) camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
-//   
-//}
 
-//-(void) camera:(DJICamera *)camera didUpdateSystemState:(DJICameraSystemState *)systemState{
-//    
-//    if (systemState.isRecording) {
-//        
-//        if (!_isDroneRecording) {
-//            [_recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
-//        }
-//        _isDroneRecording = YES;
-//        
-//    }
-//    else{
-//        if (_isDroneRecording) {
-//            [_recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
-//        }
-//        _isDroneRecording = NO;
-//        
-//    }
-//    
-//    if (_isDroneRecording) {
-//        if ([_recordingTimeLabel isHidden]) {
-//            [_recordingTimeLabel setHidden:NO];
-//        }
-//        int recordingTime = systemState.currentVideoRecordingTimeInSeconds;
-//        int minute = (recordingTime % 3600) / 60;
-//        int second = (recordingTime % 3600) % 60;
-//        NSString* timeString = [NSString stringWithFormat:@"%02d:%02d",minute,second];
-//        [_recordingTimeLabel setText:timeString];
-//    }
-//    else{
-//        [_recordingTimeLabel setText:@"Rec"];
-//    }
-//}
 
 -(void) setCameraRecordMode{
     WeakRef(target);
@@ -425,17 +390,24 @@
 }
 
 - (IBAction)didClickOnRecButton:(id)sender {
-//    if (!_isDroneRecording) {
-//        [self startRecord];
-//    }
-//    else{
-//        [self stopRecord];
-//    }
+    AppDelegate* appD = [[Menu instance] getAppDelegate];
+    
+    if (!appD.isDroneRecording) {
+        [self startRecord];
+    }
+    else{
+        [self stopRecord];
+    }
+    if (![_takeOffButton isHidden]) {
+        [_topMenu hideTakeOffButton];
+    }
+    else{
+        [_topMenu showTakeOffButton];
+    }
+    
 }
 
-- (IBAction)didClickOnBatteryButton:(id)sender {
-    [batteryLevelLabel setText:@"86%"];
-}
+
 
 -(void) showCircuitListView{
     

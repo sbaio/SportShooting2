@@ -11,6 +11,7 @@
 #import "DJILinkQueues.h"
 #import "Menu.h"
 #import "DVFloatingWindow.h"
+#import "AppDelegate.h"
 
 #define RENDER_FRAME_NUMBER (4)
 
@@ -18,6 +19,8 @@
 #define kDJIDecoderDataSoureInspire                 (1)
 #define kDJIDecoderDataSourePhantom3Advanced        (4)
 #define kDJIDecoderDataSourePhantom3Professional    (5)
+
+@class AppDelegate;
 
 typedef struct{
     BOOL isInit:1;      // The initialized status
@@ -54,6 +57,8 @@ typedef NS_ENUM(NSUInteger, VideoPreviewerEvent){
     int _renderFrameIndex;
     
     dispatch_queue_t _dispatchQueue;
+    
+    __weak AppDelegate* appD;
     
 }
 
@@ -141,6 +146,6 @@ typedef NS_ENUM(NSUInteger, VideoPreviewerEvent){
 
 
 
--(void) setGLviewMaskImage:(BOOL) set isDroneConnected:(BOOL) isDroneConnected isLocEnabled:(BOOL) isLocationServicesAuth;
+-(void) setGLviewMaskImage:(BOOL) set isReceivingFlightControllerStatus:(BOOL) isReceivingFlightControllerStatus isLocEnabled:(BOOL) isLocationServicesAuth isReceivingCameraFeed:(BOOL) isReceivingCameraFeed isRCConnected:(BOOL) isRCConnected;
 
 @end

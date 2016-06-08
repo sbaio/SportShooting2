@@ -28,12 +28,9 @@
     [super viewDidLoad];
     
     rowsArray = [@[@"Track",@"Video",@"Drone",@"Car"] mutableCopy];
-    
 
-//    _realDrone = NO;
-//    _isDroneRecordingVideo = NO;
 }
-//
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -30,6 +30,8 @@
 		D6218CCB1D07A2B300DF1E55 /* Zenmuse_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */; };
 		D6218CCE1D07EF9800DF1E55 /* BottomStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CCD1D07EF9800DF1E55 /* BottomStatusBar.m */; };
 		D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */; };
+		D6218CD31D07F9C900DF1E55 /* BottomStatusBar.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD21D07F9C900DF1E55 /* BottomStatusBar.png */; };
+		D6218CD51D08C7D000DF1E55 /* takeOffButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD41D08C7D000DF1E55 /* takeOffButton.png */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -194,6 +196,8 @@
 		D6218CCC1D07EF9800DF1E55 /* BottomStatusBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BottomStatusBar.h; path = BottomStatusBar/BottomStatusBar.h; sourceTree = "<group>"; };
 		D6218CCD1D07EF9800DF1E55 /* BottomStatusBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BottomStatusBar.m; path = BottomStatusBar/BottomStatusBar.m; sourceTree = "<group>"; };
 		D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BottomStatusBar.xib; path = BottomStatusBar/BottomStatusBar.xib; sourceTree = "<group>"; };
+		D6218CD21D07F9C900DF1E55 /* BottomStatusBar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BottomStatusBar.png; sourceTree = "<group>"; };
+		D6218CD41D08C7D000DF1E55 /* takeOffButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = takeOffButton.png; path = Buttons/takeOffButton.png; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -517,6 +521,7 @@
 		D6218CC11D07367F00DF1E55 /* Topmenu */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CD21D07F9C900DF1E55 /* BottomStatusBar.png */,
 				D6218CC61D07425F00DF1E55 /* GeneralMenuLogo.png */,
 				D6218CC21D07367F00DF1E55 /* topMenu.psd */,
 				D6218CC31D07367F00DF1E55 /* topmenuBackground.png */,
@@ -1092,6 +1097,7 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CD41D08C7D000DF1E55 /* takeOffButton.png */,
 				D6218CC81D07A2B200DF1E55 /* Zenmuse_green.png */,
 				D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */,
 				D6218CC11D07367F00DF1E55 /* Topmenu */,
@@ -1234,6 +1240,7 @@
 				D699026E1D0408110038D05B /* carSpeed.png in Resources */,
 				D632D4EC1D03F6A200B12946 /* pop-Info.plist in Resources */,
 				D632D5601D04042200B12946 /* cameraAnnView.png in Resources */,
+				D6218CD51D08C7D000DF1E55 /* takeOffButton.png in Resources */,
 				D69902711D0408110038D05B /* gpsIcon.png in Resources */,
 				D632D56A1D04042200B12946 /* mvtVector.png in Resources */,
 				D69902521D0407850038D05B /* LUT_XG.png in Resources */,
@@ -1248,6 +1255,7 @@
 				D632D5671D04042200B12946 /* home.png in Resources */,
 				D699026D1D0408110038D05B /* batteryicon.png in Resources */,
 				D69902511D0407850038D05B /* LUT_XB.png in Resources */,
+				D6218CD31D07F9C900DF1E55 /* BottomStatusBar.png in Resources */,
 				D6218CAF1D04D82C00DF1E55 /* Cable_red.png in Resources */,
 				D632D5651D04042200B12946 /* flagCamera.png in Resources */,
 				D6218CC41D07367F00DF1E55 /* topMenu.psd in Resources */,

@@ -41,6 +41,8 @@ static VideoPreviewer* previewer = nil;
     _glView = nil;
     _delegate = nil;
     
+    appD = [[Menu instance] getAppDelegate];
+    
     _dataQueue = [[DJILinkQueues alloc] initWithSize:10000];
     _videoExtractor = [[VideoFrameExtractor alloc] initExtractor];
     
@@ -152,9 +154,7 @@ static VideoPreviewer* previewer = nil;
             [_glView setFrame:CGRectMake(0.0f, 0.0f, view.frame.size.width, view.frame.size.height)];
             [view addSubview:_glView];
             [view sendSubviewToBack:_glView];
-//            [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
             
-            AppDelegate* appD = [[Menu instance] getAppDelegate];
             BOOL set = !appD.isReceivingFlightControllerStatus|| appD.isLocationsServicesEnabled || appD.isReceivingVideoData || appD.isReceivingRCUpdates;
             
             [self setGLviewMaskImage:set isReceivingFlightControllerStatus:appD.isReceivingFlightControllerStatus isLocEnabled:appD.isLocationsServicesEnabled isReceivingCameraFeed:appD.isReceivingVideoData isRCConnected:appD.isReceivingRCUpdates];
@@ -473,64 +473,6 @@ static VideoPreviewer* previewer = nil;
 #pragma mark - app stuff
 
 
--(void) setGLviewMaskImage:(BOOL) set isDroneConnected:(BOOL) isDroneConnected isLocEnabled:(BOOL) isLocationServicesAuth{
-    if (!set) {
-        // remove maskImage if existant
-        for (UIView* subview in [_glView subviews]) {
-            [UIView animateWithDuration:2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                subview.alpha = 0;
-            } completion:^(BOOL finished){
-                [subview removeFromSuperview];
-            }];
-            
-        }
-    }
-    else{
-        for (UIView* subview in [_glView subviews]) {
-            [subview removeFromSuperview];
-        }
-        
-        UIImageView* droneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Inspire_red.png"]];
-        UIImageView* RCView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"RC_red.png"]];
-        UIImageView* GPSView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"GPS_red.png"]];
-        UIImageView* cableView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Cable_red.png"]];
-        UIImageView* phoneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"phone"]];
-        _tapGROnLargeView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-        
-        if (isDroneConnected) {
-            [droneView setImage:[UIImage imageNamed:@"Inspire_green.png"]];
-            [RCView setImage:[UIImage imageNamed:@"RC_green.png"]];
-            [cableView setImage:[UIImage imageNamed:@"Cable_green"]];
-        }
-        
-        if (isLocationServicesAuth) {
-            [GPSView setImage:[UIImage imageNamed:@"GPS_green.png"]];
-        }
-        
-        
-        [_glView addSubview:droneView];
-        [_glView addSubview:RCView];
-        [_glView addSubview:GPSView];
-        [_glView addSubview:cableView];
-        [_glView addSubview:phoneView];
-        
-        
-        for (UIView* subview in [_glView subviews]) {
-            subview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-            subview.frame = _glView.bounds;
-        }
-        
-        if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
-                    [self setGLviewMaskImage:NO isDroneConnected:NO isLocEnabled:NO];
-                }
-            });
-        }
-    
-    }
-}
-
 -(void) setGLviewMaskImage:(BOOL) set isReceivingFlightControllerStatus:(BOOL) isReceivingFlightControllerStatus isLocEnabled:(BOOL) isLocationServicesAuth isReceivingCameraFeed:(BOOL) isReceivingCameraFeed isRCConnected:(BOOL) isRCConnected {
     if (!set) {
         // remove maskImage if existant
@@ -555,6 +497,8 @@ static VideoPreviewer* previewer = nil;
         UIImageView* cableView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Cable_red.png"]];
         UIImageView* phoneView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"phone"]];
         _tapGROnLargeView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
+
+        [_glView.superview addGestureRecognizer:_tapGROnLargeView];
         
         if (isReceivingFlightControllerStatus) {
             [droneView setImage:[UIImage imageNamed:@"Inspire_green.png"]];
@@ -568,9 +512,13 @@ static VideoPreviewer* previewer = nil;
         if (isLocationServicesAuth) {
             [GPSView setImage:[UIImage imageNamed:@"GPS_green.png"]];
         }
+        else{
+            
+        }
         
         if (isReceivingCameraFeed) {
             [cameraView setImage:[UIImage imageNamed:@"Zenmuse_green.png"]];
+            [droneView setImage:[UIImage imageNamed:@"Inspire_green.png"]];
         }
         
         [_glView addSubview:droneView];
@@ -586,20 +534,35 @@ static VideoPreviewer* previewer = nil;
             subview.frame = _glView.bounds;
         }
         
-//        if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                if ([[Menu instance]getAppDelegate].isConnectedToDrone && [[Menu instance]getAppDelegate].isLocationsServicesEnabled) {
-//                    [self setGLviewMaskImage:NO isDroneConnected:NO isLocEnabled:NO];
-//                }
-//            });
-//        }
+        if (isReceivingFlightControllerStatus && isReceivingCameraFeed && isLocationServicesAuth) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+                BOOL set = !appD.isReceivingFlightControllerStatus|| !appD.isLocationsServicesEnabled || !appD.isReceivingVideoData || !appD.isReceivingRCUpdates;
+                
+//
+                [[DVFloatingWindow sharedInstance] log:[NSString stringWithFormat:@"setting , %d , FC , %d , loc , %d , vid , %d ,rc , %d",set,appD.isReceivingFlightControllerStatus,appD.isLocationsServicesEnabled,appD.isReceivingVideoData,appD.isReceivingRCUpdates]];
+                NSLog(@"setting , %d , FC , %d , loc , %d , vid , %d ,rc , %d",set,appD.isReceivingFlightControllerStatus,appD.isLocationsServicesEnabled,appD.isReceivingVideoData,appD.isReceivingRCUpdates);
+                
+                [self setGLviewMaskImage:set isReceivingFlightControllerStatus:appD.isReceivingFlightControllerStatus isLocEnabled:appD.isLocationsServicesEnabled isReceivingCameraFeed:appD.isReceivingVideoData isRCConnected:appD.isReceivingRCUpdates];
+            });
+        }
         
     }
 }
 
 -(void) onTap:(UITapGestureRecognizer*) tapGR{
+    // assuming video view is large
+    
     CGPoint loc = [tapGR locationInView:tapGR.view];
-    NSLog(@"tap , %@",NSStringFromCGPoint(loc));
+    
+    if (!appD.isLocationsServicesEnabled) {
+        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+        if (CGRectContainsPoint(CGRectMake(0, screenSize.height/10, screenSize.width/3, screenSize.height/5), loc)) {
+            [appD promptForLocationServices];
+            return;
+        }
+    }
+    [[DVFloatingWindow sharedInstance] log:[NSString stringWithFormat:@"tap , %@",NSStringFromCGPoint(loc)]];
 }
 
 
@@ -654,18 +617,12 @@ static VideoPreviewer* previewer = nil;
     }
     if (respond) {
         
-//        [self setGLviewMaskImage:YES isDroneConnected:[[Menu instance]getAppDelegate].isConnectedToDrone isLocEnabled:[[Menu instance]getAppDelegate].isLocationsServicesEnabled];
-        
-        
-        AppDelegate* appD = [[Menu instance] getAppDelegate];
         BOOL set = !appD.isReceivingFlightControllerStatus|| appD.isLocationsServicesEnabled || appD.isReceivingVideoData || appD.isReceivingRCUpdates;
         
-        
+    DVLog(@"handle setting , %d , FC , %d , loc , %d , vid , %d ,rc , %d",set,appD.isReceivingFlightControllerStatus,appD.isLocationsServicesEnabled,appD.isReceivingVideoData,appD.isReceivingRCUpdates);
         
         [self setGLviewMaskImage:set isReceivingFlightControllerStatus:appD.isReceivingFlightControllerStatus isLocEnabled:appD.isLocationsServicesEnabled isReceivingCameraFeed:appD.isReceivingVideoData isRCConnected:appD.isReceivingRCUpdates];
     }
-    
-    // should also check for camera video updates !!
 }
 
 

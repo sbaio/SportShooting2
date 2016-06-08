@@ -21,6 +21,8 @@
 #import "circuitsListFW.h"
 #import "MapView.h"
 
+@class MapVC;
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate,DJIBatteryDelegate,DJIRemoteControllerDelegate,DJICameraDelegate>
 {
     int attemptsToRegister;
@@ -37,6 +39,8 @@
     NSDate* lastCameraUpdateDate;
     NSDate* lastRCUpdateDate;
     
+    __weak MapVC* mapVC;
+    
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
@@ -46,6 +50,7 @@
 @property BOOL isReceivingVideoData;
 @property BOOL isReceivingRCUpdates;
 @property BOOL isReceivingFlightControllerStatus;
+@property BOOL isDroneRecording;
 
 @property BOOL isLocationsServicesEnabled;
 @property(nonatomic,strong) DJIBatteryState* batteryState;

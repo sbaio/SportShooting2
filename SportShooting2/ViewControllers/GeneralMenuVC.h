@@ -22,7 +22,6 @@
 
 @property BOOL realDrone;
 @property BOOL isCameraConnected;
-@property BOOL isDroneRecordingVideo;
 
 
 -(void) mapWentRightMost;

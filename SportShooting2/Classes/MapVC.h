@@ -57,7 +57,6 @@
     
     UITapGestureRecognizer* mapVCTapGR;
     
-    __weak IBOutlet UIButton *MenuButton;
     __weak IBOutlet UIView *videoPreviewerView;
     
 
@@ -85,9 +84,6 @@
     __weak IBOutlet NSLayoutConstraint *videoLargeX;
     __weak IBOutlet NSLayoutConstraint *videoLargeY;
     
-    __weak IBOutlet UILabel *batteryLevelLabel;
-    
-    __weak IBOutlet UILabel *satteliteCountLabel;
     
     
     NSDate* lastFCUpdateDate;
@@ -104,6 +100,7 @@
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
+@property (weak, nonatomic) IBOutlet UIButton *takeOffButton;
 
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
@@ -111,7 +108,6 @@
 @property(nonatomic,strong) DJICamera* camera;
 
 @property BOOL isPathDrawingEnabled;
-@property BOOL isDroneRecording;
 
 
 -(void) enableMainMenuPan;

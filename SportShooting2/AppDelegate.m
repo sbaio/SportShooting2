@@ -25,7 +25,7 @@
     mainRevealController = (SWRevealViewController*)[mainStoryboard instantiateInitialViewController];
     [self.window setRootViewController:mainRevealController];
     
-    MapVC* mapVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
+    mapVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
     
     menuRevealController = (SWRevealViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"mainBackVC"];
     [mainRevealController setFrontVC:mapVC rearVC:menuRevealController];
@@ -46,9 +46,9 @@
     
     [self addObserver:self forKeyPath:@"isReceivingVideoData" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self addObserver:self forKeyPath:@"isReceivingRCUpdates" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
-//    [self addObserver:self forKeyPath:@"isReceivingFlightControllerStatus" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     
     isConnectedToDrone = NO;
+    _isDroneRecording = NO;
     
     
     freqCutterCameraVideoCallback = 0;
@@ -269,6 +269,8 @@
     [[[Menu instance] getTopMenu] updateBatteryLabelWithBatteryState:batteryState];
 }
 
+#pragma mark - RC delegate methods
+
 - (void)remoteController:(DJIRemoteController *)rc didUpdateHardwareState:(DJIRCHardwareState)state{
     // based on state.leftHorizontal / state.leftVertical /state.rightHorizontal / state.rightVertical
     // send commands to override automatic mode !! and more
@@ -287,6 +289,8 @@
         }
     });
 }
+
+#pragma mark - Camera delegate methods
 
 - (void)camera:(DJICamera *)camera didReceiveVideoData:(uint8_t *)videoBuffer length:(size_t)size{
     
@@ -319,6 +323,38 @@
     
 }
 
+-(void) camera:(DJICamera *)camera didUpdateSystemState:(DJICameraSystemState *)systemState{
+
+    if (systemState.isRecording) {
+
+        if (!_isDroneRecording) {
+            [mapVC.recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
+        }
+        _isDroneRecording = YES;
+
+    }
+    else{
+        if (_isDroneRecording) {
+            [mapVC.recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
+        }
+        _isDroneRecording = NO;
+
+    }
+
+    if (_isDroneRecording) {
+        if ([mapVC.recordingTimeLabel isHidden]) {
+            [mapVC.recordingTimeLabel setHidden:NO];
+        }
+        int recordingTime = systemState.currentVideoRecordingTimeInSeconds;
+        int minute = (recordingTime % 3600) / 60;
+        int second = (recordingTime % 3600) % 60;
+        NSString* timeString = [NSString stringWithFormat:@"%02d:%02d",minute,second];
+        [mapVC.recordingTimeLabel setText:timeString];
+    }
+    else{
+        [mapVC.recordingTimeLabel setText:@"Rec"];
+    }
+}
 #pragma mark - add observer methods
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
