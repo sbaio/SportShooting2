@@ -535,7 +535,7 @@ static VideoPreviewer* previewer = nil;
         }
         
         if (isReceivingFlightControllerStatus && isReceivingCameraFeed && isLocationServicesAuth) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
                 BOOL set = !appD.isReceivingFlightControllerStatus|| !appD.isLocationsServicesEnabled || !appD.isReceivingVideoData || !appD.isReceivingRCUpdates;
                 
@@ -605,7 +605,6 @@ static VideoPreviewer* previewer = nil;
 }
 
 -(void) handleNotification:(NSNotification*) notification{
-    [[DVFloatingWindow sharedInstance] log:[NSString stringWithFormat:@"responding to %@",notification.name]];
     
     
     BOOL respond = NO;

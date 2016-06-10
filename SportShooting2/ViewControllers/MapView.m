@@ -7,6 +7,7 @@
 //
 
 #import "MapView.h"
+#import "UIColor+CustomColors.h"
 
 @interface MapView (){
 
@@ -31,7 +32,12 @@
     selecTrackIV.frame = self.bounds;
     selecTrackIV.restorationIdentifier = @"selectTrack";
     selecTrackIV.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    selecTrackIV.backgroundColor = [UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.1];
+    selecTrackIV.backgroundColor = [[UIColor customYellowColor] colorWithAlphaComponent:0.1];
+    
+    self.layer.borderWidth = 1;
+    self.layer.borderColor = [[UIColor colorWithHue:0.125 saturation:0.93 brightness:0.95 alpha:0.5] CGColor];
+    self.layer.cornerRadius = 2;
+    
     
 }
 

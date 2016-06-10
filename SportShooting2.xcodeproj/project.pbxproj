@@ -32,6 +32,12 @@
 		D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */; };
 		D6218CD31D07F9C900DF1E55 /* BottomStatusBar.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD21D07F9C900DF1E55 /* BottomStatusBar.png */; };
 		D6218CD51D08C7D000DF1E55 /* takeOffButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD41D08C7D000DF1E55 /* takeOffButton.png */; };
+		D6218CD71D09459100DF1E55 /* antenna.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD61D09459100DF1E55 /* antenna.png */; };
+		D6218CD91D09527E00DF1E55 /* landButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD81D09527E00DF1E55 /* landButton.png */; };
+		D6218CDC1D0A0A2E00DF1E55 /* UIColor+CustomColors.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CDB1D0A0A2E00DF1E55 /* UIColor+CustomColors.m */; };
+		D6218CDF1D0A0C4300DF1E55 /* closeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CDE1D0A0C4300DF1E55 /* closeButton.m */; };
+		D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */; };
+		D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -198,6 +204,15 @@
 		D6218CD01D07EFBC00DF1E55 /* BottomStatusBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BottomStatusBar.xib; path = BottomStatusBar/BottomStatusBar.xib; sourceTree = "<group>"; };
 		D6218CD21D07F9C900DF1E55 /* BottomStatusBar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BottomStatusBar.png; sourceTree = "<group>"; };
 		D6218CD41D08C7D000DF1E55 /* takeOffButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = takeOffButton.png; path = Buttons/takeOffButton.png; sourceTree = "<group>"; };
+		D6218CD61D09459100DF1E55 /* antenna.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = antenna.png; sourceTree = "<group>"; };
+		D6218CD81D09527E00DF1E55 /* landButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = landButton.png; path = Buttons/landButton.png; sourceTree = "<group>"; };
+		D6218CDA1D0A0A2E00DF1E55 /* UIColor+CustomColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+CustomColors.h"; sourceTree = "<group>"; };
+		D6218CDB1D0A0A2E00DF1E55 /* UIColor+CustomColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+CustomColors.m"; sourceTree = "<group>"; };
+		D6218CDD1D0A0C4300DF1E55 /* closeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = closeButton.h; sourceTree = "<group>"; };
+		D6218CDE1D0A0C4300DF1E55 /* closeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = closeButton.m; sourceTree = "<group>"; };
+		D6218CE71D0A395400DF1E55 /* takeOffAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = takeOffAlertView.h; sourceTree = "<group>"; };
+		D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = takeOffAlertView.m; sourceTree = "<group>"; };
+		D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = takeOffAlertView.xib; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -539,6 +554,24 @@
 			name = BottomStatusBar;
 			sourceTree = "<group>";
 		};
+		D6218CE51D0A395400DF1E55 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				D6218CE61D0A395400DF1E55 /* takeOffAlertView */,
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
+		D6218CE61D0A395400DF1E55 /* takeOffAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				D6218CE71D0A395400DF1E55 /* takeOffAlertView.h */,
+				D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */,
+				D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */,
+			);
+			path = takeOffAlertView;
+			sourceTree = "<group>";
+		};
 		D632D4031D03F5CB00B12946 = {
 			isa = PBXGroup;
 			children = (
@@ -560,6 +593,7 @@
 			children = (
 				D632D5111D03F71900B12946 /* VideoPreviewer */,
 				D632D4261D03F60800B12946 /* Libraries */,
+				D6218CE51D0A395400DF1E55 /* views */,
 				D632D4121D03F5CB00B12946 /* AppDelegate.h */,
 				D632D4131D03F5CB00B12946 /* AppDelegate.m */,
 				D69902261D0404A10038D05B /* Menu.h */,
@@ -976,7 +1010,11 @@
 		D632D5371D04033300B12946 /* Others */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CDD1D0A0C4300DF1E55 /* closeButton.h */,
+				D6218CDE1D0A0C4300DF1E55 /* closeButton.m */,
 				D632D5481D04042200B12946 /* Anno */,
+				D6218CDA1D0A0A2E00DF1E55 /* UIColor+CustomColors.h */,
+				D6218CDB1D0A0A2E00DF1E55 /* UIColor+CustomColors.m */,
 				D632D5381D04033300B12946 /* Calc.h */,
 				D632D5391D04033300B12946 /* Calc.m */,
 				D632D53A1D04033300B12946 /* KalmanFilter1D.h */,
@@ -1097,6 +1135,8 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CD81D09527E00DF1E55 /* landButton.png */,
+				D6218CD61D09459100DF1E55 /* antenna.png */,
 				D6218CD41D08C7D000DF1E55 /* takeOffButton.png */,
 				D6218CC81D07A2B200DF1E55 /* Zenmuse_green.png */,
 				D6218CC91D07A2B200DF1E55 /* Zenmuse_red.png */,
@@ -1196,6 +1236,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6218CD71D09459100DF1E55 /* antenna.png in Resources */,
 				D69902791D0408110038D05B /* pan_50.png in Resources */,
 				D69902751D0408110038D05B /* Logo.png in Resources */,
 				D699027E1D0408110038D05B /* renault sport logo.png in Resources */,
@@ -1231,6 +1272,8 @@
 				D632D5631D04042200B12946 /* droneTargetLocation.png in Resources */,
 				D632D55F1D04042200B12946 /* aircraft.png in Resources */,
 				D6218CAA1D04D4CC00DF1E55 /* GPS_green.png in Resources */,
+				D6218CD91D09527E00DF1E55 /* landButton.png in Resources */,
+				D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */,
 				D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */,
 				D69902551D0407850038D05B /* LUT_YG.png in Resources */,
 				D699027D1D0408110038D05B /* recButton_on.png in Resources */,
@@ -1276,6 +1319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6218CDF1D0A0C4300DF1E55 /* closeButton.m in Sources */,
 				D632D4F11D03F6A200B12946 /* POPAnimationRuntime.mm in Sources */,
 				D632D50C1D03F6D900B12946 /* DVButtonObject.m in Sources */,
 				D632D51E1D03F71900B12946 /* MovieWriter.m in Sources */,
@@ -1291,6 +1335,7 @@
 				D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */,
 				D632D52A1D03FD2900B12946 /* SWRevealViewController.m in Sources */,
 				D632D5351D04030700B12946 /* Autopilot.m in Sources */,
+				D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */,
 				D632D4F81D03F6A200B12946 /* POPGeometry.mm in Sources */,
 				D632D4FE1D03F6A200B12946 /* TransformationMatrix.cpp in Sources */,
 				D632D5401D04033300B12946 /* Vec.m in Sources */,
@@ -1303,6 +1348,7 @@
 				D632D50F1D03F6D900B12946 /* DVLogger.m in Sources */,
 				D69902321D04050A0038D05B /* circuitDefinitionTVC.m in Sources */,
 				D69902351D04050A0038D05B /* GeneralMenuVC.m in Sources */,
+				D6218CDC1D0A0A2E00DF1E55 /* UIColor+CustomColors.m in Sources */,
 				D632D4F01D03F6A200B12946 /* POPAnimationExtras.mm in Sources */,
 				D632D4EF1D03F6A200B12946 /* POPAnimationEvent.mm in Sources */,
 				D69902491D0406330038D05B /* PresentingAnimationController.m in Sources */,

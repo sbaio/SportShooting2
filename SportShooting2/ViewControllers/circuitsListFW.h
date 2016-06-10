@@ -16,6 +16,8 @@
 #import "Menu.h"
 #import "MapView.h"
 
+#import "closeButton.h"
+
 
 @interface circuitsListFW : UIView <UITableViewDataSource, UITableViewDelegate,MGSwipeTableCellDelegate>
 {
@@ -29,7 +31,11 @@
 
 -(void) initWithDefaultsProperties;
 
+
+
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet closeButton *closeBut;
+@property (weak, nonatomic) IBOutlet closeButton *addBut;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *addButton;

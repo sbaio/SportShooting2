@@ -9,6 +9,11 @@
 #import "TopMenu.h"
 
 #import "POP.h"
+@interface TopMenu ()
+{
+    NSArray* arrayOfNotifsNames;
+}
+@end
 
 @implementation TopMenu
 
@@ -33,14 +38,23 @@
     
     Menu* menu = [Menu instance];
     menu.topMenu = self;
-    
-    [_batteryLabel setText:@"N/A"];
-    [_gpsLabel setText:@"N/A"];
 
+    arrayOfNotifsNames = [NSArray arrayWithObjects:@"RCFeedStarted",@"RCFeedStopped",@"FCFeedStarted",@"FCFeedStopped", nil];
+    
+    for (NSString* notifName in arrayOfNotifsNames) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:notifName object:nil];
+    }
+    
+    
     return self;
 }
 
+
+
 -(void) showOn:(UIView*) superview{
+    
+    [self updateBatteryLabel];
+    [self updateGPSLabel:0];
     BOOL alreadyExists = NO;
     
     for (UIView* subview in [superview subviews]) {
@@ -96,7 +110,7 @@
 }
 
 -(void) updateGPSLabel:(int) satelliteCount{
-    if (appD.isConnectedToDrone) {
+    if (appD.isReceivingFlightControllerStatus) {
         [_gpsLabel setText:[NSString stringWithFormat:@"%d",satelliteCount]];
     }
     else{
@@ -105,7 +119,12 @@
 }
 
 -(void) updateBatteryLabelWithBatteryState:(DJIBatteryState*) batteryState{
-    [_batteryLabel setText:[NSString stringWithFormat:@"%ld%%",(long)batteryState.batteryEnergyRemainingPercent]];
+    if (batteryState) {
+        [_batteryLabel setText:[NSString stringWithFormat:@"%ld%%",(long)batteryState.batteryEnergyRemainingPercent]];
+    }else{
+        [_batteryLabel setText:@"N/A"];
+    }
+    
 }
 -(void) updateBatteryLabel{
     DJIBattery* battery = [ComponentHelper fetchBattery];
@@ -116,6 +135,7 @@
         [_batteryLabel setText:[NSString stringWithFormat:@"%ld%%",(long)appD.batteryState.batteryEnergyRemainingPercent]];
     }
 }
+
 
 -(void) setStatusLabelText:(NSString*) textStatus{
     [_statusLabel setText:textStatus];
@@ -134,7 +154,7 @@
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     positionAnimation.toValue = @(takeOffButtonFrame.origin.x + takeOffButtonFrame.size.width/2);
-    positionAnimation.springBounciness = 20;
+    positionAnimation.springBounciness = 10;
     
     [mapVC.takeOffButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
 }
@@ -161,10 +181,77 @@
 }
 
 
+-(void)showLandButton{
+    
+    landButtonFrame = mapVC.landButton.frame;
+    CGRect modifiedFrame = landButtonFrame;
+    
+    modifiedFrame.origin.x = -100;
+    mapVC.landButton.frame = modifiedFrame;
+    [mapVC.landButton setHidden:NO];
+    [mapVC.landButton setAlpha:1.0];
+    
+    POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    positionAnimation.toValue = @(landButtonFrame.origin.x + landButtonFrame.size.width/2);
+    positionAnimation.springBounciness = 20;
+    
+    [mapVC.landButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
+}
+
+-(void) hideLandButton{
+    
+    CGRect initialRect = mapVC.landButton.frame;
+    
+    POPBasicAnimation *opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    opacityAnimation.toValue = @(0);
+    
+    POPBasicAnimation *X_Animation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    X_Animation.toValue = @(0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
+        [mapVC.landButton setHidden:YES];
+        mapVC.landButton.frame = initialRect;
+    }];
+    
+    [mapVC.landButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
+    [mapVC.landButton.layer pop_addAnimation:opacityAnimation forKey:@"landButtonDismissingOpacity"];
+    
+    
+    
+}
 
 
 
 
+
+
+-(void) handleNotification:(NSNotification*) notification{
+    BOOL respond = NO;
+    for (NSString* notifName  in arrayOfNotifsNames) {
+        if ([notifName isEqualToString:notification.name]) {
+            respond = YES;
+            DVLog(@"responding to %@",notification.name);
+        }
+    }
+    
+    if (respond) {
+        if ([notification.name isEqualToString:@"FCFeedStopped"]) {
+            // update battery label
+            [self updateBatteryLabelWithBatteryState:nil];
+            [self updateGPSLabel:0];
+            [self hideLandButton];
+            [self hideTakeOffButton];
+            [self setStatusLabelText:@"Disconnected"];
+        }
+        if ([notification.name isEqualToString:@"FCFeedStarted"]) {
+            [self setStatusLabelText:@"Connected"];
+            [self showTakeOffButton];
+            [self showLandButton];
+        }
+        if ([notification.name isEqualToString:@"RCFeedStopped"]) {
+            // update RC signal strength label
+        }
+    }
+}
 
 
 

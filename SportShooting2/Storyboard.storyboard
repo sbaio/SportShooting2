@@ -585,11 +585,24 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wbE-7L-qJF" userLabel="TakeOff button">
-                                <rect key="frame" x="11" y="90" width="60" height="60"/>
+                                <rect key="frame" x="20" y="99" width="42" height="42"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="wbE-7L-qJF" secondAttribute="height" id="1HO-bf-hnW"/>
                                 </constraints>
                                 <state key="normal" image="takeOffButton.png"/>
+                                <connections>
+                                    <action selector="onTakeOffButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="GwU-6A-wBw"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YX9-DI-MBI" userLabel="land button">
+                                <rect key="frame" x="20" y="318" width="42" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="YX9-DI-MBI" secondAttribute="height" id="OrI-z2-ACC"/>
+                                </constraints>
+                                <state key="normal" image="landButton.png"/>
+                                <connections>
+                                    <action selector="onLandButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="81l-sb-yxs"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rec" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XkK-et-AV6">
                                 <rect key="frame" x="526" y="288" width="29" height="24"/>
@@ -604,6 +617,10 @@
                                     <constraint firstAttribute="width" secondItem="EKw-wZ-Mbl" secondAttribute="height" multiplier="1/0.562219" id="0Il-OZ-8Wm"/>
                                 </constraints>
                             </mapView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SqK-I4-71t">
+                                <rect key="frame" x="180" y="236" width="240" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -613,6 +630,7 @@
                             <constraint firstItem="XkK-et-AV6" firstAttribute="centerY" secondItem="pOP-eU-x5U" secondAttribute="centerY" id="6qv-s0-Dkq"/>
                             <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="956-zp-XNb"/>
                             <constraint firstItem="UYW-Hy-ilc" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" multiplier="0.33" id="9qn-Ke-ngy"/>
+                            <constraint firstItem="YX9-DI-MBI" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="1.13" id="DYT-lg-ygj"/>
                             <constraint firstItem="pOP-eU-x5U" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.18" id="Dqr-xZ-v91"/>
                             <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.4" id="J6F-Ug-X8u"/>
                             <constraint firstItem="EKw-wZ-Mbl" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" multiplier="0.33" id="Kzg-Gx-e5F"/>
@@ -623,10 +641,12 @@
                             <constraint firstItem="wbE-7L-qJF" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="0.4" id="cx3-mu-6Je"/>
                             <constraint firstItem="UYW-Hy-ilc" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" id="eyX-du-XVz"/>
                             <constraint firstItem="pOP-eU-x5U" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="1.8" id="gah-JZ-RBy"/>
+                            <constraint firstItem="YX9-DI-MBI" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.135" id="kAn-2W-nO2"/>
                             <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="1.6" id="mIu-JW-Rh9"/>
-                            <constraint firstItem="wbE-7L-qJF" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.1" id="neQ-vB-wWT"/>
+                            <constraint firstItem="wbE-7L-qJF" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.07" id="neQ-vB-wWT"/>
                             <constraint firstItem="XkK-et-AV6" firstAttribute="centerX" secondItem="pOP-eU-x5U" secondAttribute="centerX" id="ooE-pN-UVr"/>
                             <constraint firstAttribute="trailingMargin" secondItem="YTl-Wz-E78" secondAttribute="trailing" constant="15" id="pKZ-w5-2X4"/>
+                            <constraint firstItem="YX9-DI-MBI" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.07" id="toy-o5-HLs"/>
                             <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.4" id="ucM-PS-Ckj"/>
                             <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" id="wrx-t2-asi"/>
                         </constraints>
@@ -645,6 +665,7 @@
                     <navigationItem key="navigationItem" id="3Ks-Zb-zo7"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="landButton" destination="YX9-DI-MBI" id="OMS-38-ztJ"/>
                         <outlet property="mapLargeHeight" destination="PNj-V4-MxR" id="aMJ-Aj-gC6"/>
                         <outlet property="mapLargeX" destination="wrx-t2-asi" id="PYS-sq-YQq"/>
                         <outlet property="mapLargeY" destination="YL1-0g-iRo" id="Ob7-tW-gSA"/>
@@ -715,8 +736,9 @@
         <image name="circuit.png" width="200" height="200"/>
         <image name="inspireCamera.png" width="163" height="163"/>
         <image name="inspire_drone.png" width="251" height="118"/>
+        <image name="landButton.png" width="200" height="200"/>
         <image name="pan_50.png" width="50" height="50"/>
         <image name="recButton_off.png" width="512" height="512"/>
-        <image name="takeOffButton.png" width="77" height="79"/>
+        <image name="takeOffButton.png" width="200" height="200"/>
     </resources>
 </document>

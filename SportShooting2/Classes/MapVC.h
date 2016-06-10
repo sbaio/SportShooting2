@@ -6,6 +6,8 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
+#define DV_FLOATING_WINDOW_ENABLE 1
+
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CLLocation.h>
 #import <MapKit/MapKit.h>
@@ -100,7 +102,10 @@
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
+@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
+
 @property (weak, nonatomic) IBOutlet UIButton *takeOffButton;
+@property (weak, nonatomic) IBOutlet UIButton *landButton;
 
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;

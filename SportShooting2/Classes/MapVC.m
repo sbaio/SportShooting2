@@ -30,6 +30,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self loadNibs];
+    
+    
+    
     mainRevealVC = [[Menu instance] getMainRevealVC];
     menuRevealVC = [[Menu instance] getMenuRevealVC];
     
@@ -45,12 +49,19 @@
     
 }
 
--(void) showTopMenu{
+-(void) loadNibs{
     [[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil];
+    [[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil];
+    [[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil];
+    [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
+}
+
+-(void) showTopMenu{
+    
 
     [_topMenu showOn:self.view];
     
-    [[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil];
+    
     [_bottomStatusBar showOn:self.view];
 
     
@@ -259,13 +270,15 @@
             }
         }
     });
-    
-//    if (phoneLocation) {
-//        [_bottomStatusBar updateDistanceToRCLabelWithDistance:[[Calc Instance] distanceFromCoords2D:phoneLocation.coordinate toCoords2D:state.aircraftLocation]];
+//    
+//    if (state.isUltrasonicBeingUsed) {
+//        [_bottomStatusBar updateAltitudeLabelWithAltitude:state.ultrasonicHeight];
 //    }
-//    [_bottomStatusBar updateAltitudeLabelWithAltitude:state.altitude];
+//    else{
+        [_bottomStatusBar updateWith:state andPhoneLocation:phoneLocation];
+//        [_bottomStatusBar updateDistanceToRCLabelWithDistance:-1];
+//    }
     
-    [_bottomStatusBar updateWith:state andPhoneLocation:phoneLocation];
 }
 
 
@@ -369,7 +382,6 @@
         [camera startRecordVideoWithCompletion:^(NSError * _Nullable error) {
             if (error) {
                 DVLog(@"ERROR: startRecordVideoWithCompletion:. %@", error.description);
-//                [videoRecordingSwitch setOn:NO];
             }
         }];
     }else{
@@ -390,20 +402,19 @@
 }
 
 - (IBAction)didClickOnRecButton:(id)sender {
-    AppDelegate* appD = [[Menu instance] getAppDelegate];
+//    AppDelegate* appD = [[Menu instance] getAppDelegate];
+//    
+//    if (!appD.isDroneRecording) {
+//        [self startRecord];
+//    }
+//    else{
+//        [self stopRecord];
+//    }
+
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    [_takeOffAlertView setFrame:CGRectMake(<#CGFloat x#>, <#CGFloat y#>, screenSize.width/2, screenSize.height*0.75)];
+    [self.view addSubview:_takeOffAlertView];
     
-    if (!appD.isDroneRecording) {
-        [self startRecord];
-    }
-    else{
-        [self stopRecord];
-    }
-    if (![_takeOffButton isHidden]) {
-        [_topMenu hideTakeOffButton];
-    }
-    else{
-        [_topMenu showTakeOffButton];
-    }
     
 }
 
@@ -411,10 +422,8 @@
 
 -(void) showCircuitListView{
     
-    [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
     [_circuitsList initWithDefaultsProperties];
 
-    NSLog(@"circuits list %@",self.circuitsList);
     
     
     mapVCTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnMapVC:)];
@@ -437,4 +446,13 @@
 {
     return [[DismissingAnimationController alloc] init];
 }
+
+- (IBAction)onTakeOffButtonClicked:(id)sender {
+    
+}
+- (IBAction)onLandButtonClicked:(id)sender {
+}
+
+
+
 @end

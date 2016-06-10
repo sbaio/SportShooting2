@@ -30,10 +30,8 @@
     SWRevealViewController *menuRevealController;
     SWRevealViewController *mainRevealController;
     
-    
-//    BOOL isConnectedToDrone;
     BOOL isReceivingDroneStateUpdates;
-//    BOOL isLocationsServicesEnabled;
+
     
     int freqCutterCameraVideoCallback;
     NSDate* lastCameraUpdateDate;
@@ -45,7 +43,6 @@
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
 @property(nonatomic,strong) PermissionScope * locationPermission;
-@property BOOL isConnectedToDrone;
 
 @property BOOL isReceivingVideoData;
 @property BOOL isReceivingRCUpdates;

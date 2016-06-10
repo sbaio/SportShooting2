@@ -16,7 +16,7 @@
 @end
 
 @implementation AppDelegate
-@synthesize window = _window , isLocationsServicesEnabled,isConnectedToDrone;
+@synthesize window = _window , isLocationsServicesEnabled;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
@@ -47,7 +47,6 @@
     [self addObserver:self forKeyPath:@"isReceivingVideoData" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self addObserver:self forKeyPath:@"isReceivingRCUpdates" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     
-    isConnectedToDrone = NO;
     _isDroneRecording = NO;
     
     
@@ -145,7 +144,6 @@
         DJICamera* cam = (DJICamera*)[ComponentHelper fetchCamera];
         [[Menu instance] getMapVC].camera = cam;
         cam.delegate = self;
-//        cam.delegate = [[Menu instance] getMapVC];
         
         [ComponentHelper fetchRemoteController].delegate = self;
         
@@ -153,13 +151,12 @@
         battery.delegate = self;
         
         // post notification
-        isConnectedToDrone = YES;
+    
         [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
         
         
     }else{
         DVLog(@"Agumon : not here");
-        isConnectedToDrone = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"droneDisconnected" object:self];
     }
 }
@@ -260,13 +257,17 @@
 
 
 -(void) revealControllerPanGestureWillSwipeLeft:(SWRevealViewController*) revealController{
-    MapView* map = (MapView*)[[Menu instance] getMap];
+//    MapView* map = (MapView*)[[Menu instance] getMap];
 //    [map enableMapViewScroll];
 }
 
+#pragma mark - battery delegate
 - (void)battery:(DJIBattery *)battery didUpdateState:(DJIBatteryState *)batteryState{
-    [[[Menu instance] getTopMenu] setStatusLabelText:@"Connected"];
-    [[[Menu instance] getTopMenu] updateBatteryLabelWithBatteryState:batteryState];
+    
+    if (_isReceivingFlightControllerStatus) {
+        [[[Menu instance] getTopMenu] updateBatteryLabelWithBatteryState:batteryState];
+    }
+    
 }
 
 #pragma mark - RC delegate methods
@@ -400,6 +401,17 @@
         }
     }
 }
+
+
+/*
+ 
+ instructions : au démarrage endroit dégagé
+ 
+ expliquer p-> manual f -> automatique
+ verification swith flight mode
+ 
+ record after succesful takeoff
+ */
 
 
 

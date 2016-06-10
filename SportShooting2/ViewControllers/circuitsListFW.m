@@ -6,8 +6,12 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
+#define DV_FLOATING_WINDOW_ENABLE 1
+
 #import "circuitsListFW.h"
 #import "DVFLoatingWindow.h"
+
+
 
 @implementation circuitsListFW
 
@@ -31,6 +35,11 @@
 
 -(void) initWithDefaultsProperties{
     
+    CGRect screenFrame = [[UIScreen mainScreen]bounds];
+    
+    self.frame = CGRectMake(self.superview.center.x, self.superview.center.y,screenFrame.size.width/3, 0.5*screenFrame.size.height);
+    NSLog(@"%@,%@", NSStringFromCGRect(self.frame),NSStringFromCGRect(_titleLabel.frame));
+
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.alpha = 0.7;
@@ -39,6 +48,34 @@
                                         initWithTarget:self action:@selector(topBorderPanGesture:)];
     [_titleLabel addGestureRecognizer:topPanGR];
     
+    
+    
+    [_closeBut addTarget:self action:@selector(onCloseButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [_closeBut animateToClose];
+    
+    
+    [_addBut addTarget:self action:@selector(onAddButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [_addBut addTarget:self action:@selector(onAddButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    
+}
+
+-(void) layoutSubviews{
+    [super layoutSubviews];
+
+    [_closeBut setup];
+    [_addBut setup];
+  
+}
+
+-(void) onCloseButtonClicked:(id) sender{
+    [self hideCircuitList:YES];
+    
+}
+
+-(void) onAddButtonClicked:(id) sender{
+    DVLog(@"add but ");
 }
 
 
@@ -196,9 +233,6 @@
     }
 }
 
-- (IBAction)onAddButtonClicked:(id)sender {
-    [self hideCircuitList:YES];
-}
 
 - (void)topBorderPanGesture:(UIPanGestureRecognizer *)recognizer
 {
@@ -235,7 +269,7 @@
 }
 
 -(void) showCircuitList:(BOOL)animated{
-//    MKMapView* mapView = [[Menu instance] getMap];
+
     MapView* mapView = (MapView*)[[Menu instance] getMap];
     [mapView setMapViewMaskImage:NO];
     
@@ -243,18 +277,18 @@
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionY];
 
-//    positionAnimation.toValue = @(self.center.y*1.2/3 + frameSize.height/2);
     positionAnimation.toValue = @(0.5*self.superview.center.y + self.superview.frame.size.height/10);
     positionAnimation.springBounciness = 25;
     [positionAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
         
     }];
     POPSpringAnimation *positionAnimationX = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
-//    positionAnimationX.toValue = @(frameSize.width*1.2/2);
+
     positionAnimationX.toValue = @(self.superview.center.x*0.4);
     positionAnimationX.springBounciness = 20;
     [positionAnimationX setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
-        
+        [_closeBut animateToClose];
+        [_addBut animateToAdd];
     }];
 
     

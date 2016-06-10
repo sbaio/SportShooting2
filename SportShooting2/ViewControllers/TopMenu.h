@@ -23,6 +23,7 @@
     __weak DJIFlightControllerCurrentState* FCcurrentState;
     
     CGRect takeOffButtonFrame;
+    CGRect landButtonFrame;
 }
 
 -(void) showOn:(UIView*) superview;
@@ -37,6 +38,9 @@
 // other buttons management
 -(void)showTakeOffButton;
 -(void) hideTakeOffButton;
+
+-(void)showLandButton;
+-(void) hideLandButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *menuButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
