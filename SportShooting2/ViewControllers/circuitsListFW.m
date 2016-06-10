@@ -270,6 +270,7 @@
 
 -(void) showCircuitList:(BOOL)animated{
 
+    NSLog(@"herer");
     MapView* mapView = (MapView*)[[Menu instance] getMap];
     [mapView setMapViewMaskImage:NO];
     

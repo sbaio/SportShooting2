@@ -552,140 +552,158 @@
                         <viewControllerLayoutGuide type="top" id="yxi-0r-0XC"/>
                         <viewControllerLayoutGuide type="bottom" id="66l-44-8QA"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="GEG-2L-0Qo">
+                    <view key="view" contentMode="scaleToFill" restorationIdentifier="MapVCView" id="GEG-2L-0Qo">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UYW-Hy-ilc">
-                                <rect key="frame" x="-234" y="0.0" width="1068" height="600"/>
-                                <color key="backgroundColor" white="0.8619874738413712" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="UYW-Hy-ilc" secondAttribute="height" multiplier="1/0.562219" id="t2a-3y-mJg"/>
-                                </constraints>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8LS-Of-6mA" userLabel="Alertsview" customClass="alertsView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" red="0.72753396509850421" green="0.77129008507853403" blue="0.6931266711555466" alpha="0.5" colorSpace="calibratedRGB"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YTl-Wz-E78">
-                                <rect key="frame" x="535" y="511" width="30" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="30" id="3Zo-5F-8pK"/>
-                                    <constraint firstAttribute="height" constant="30" id="GSN-dK-MdZ"/>
-                                </constraints>
-                                <state key="normal" image="pan_50.png"/>
-                                <connections>
-                                    <action selector="onScrollButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="TtA-UK-C0Y"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pOP-eU-x5U">
-                                <rect key="frame" x="486" y="246" width="108" height="108"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="pOP-eU-x5U" secondAttribute="height" id="c3p-mr-bFn"/>
-                                </constraints>
-                                <state key="normal" title="Button" image="recButton_off.png"/>
-                                <connections>
-                                    <action selector="didClickOnRecButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="YeJ-wU-eVy"/>
-                                </connections>
-                            </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wbE-7L-qJF" userLabel="TakeOff button">
-                                <rect key="frame" x="20" y="99" width="42" height="42"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="wbE-7L-qJF" secondAttribute="height" id="1HO-bf-hnW"/>
-                                </constraints>
-                                <state key="normal" image="takeOffButton.png"/>
-                                <connections>
-                                    <action selector="onTakeOffButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="GwU-6A-wBw"/>
-                                </connections>
-                            </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YX9-DI-MBI" userLabel="land button">
-                                <rect key="frame" x="20" y="318" width="42" height="42"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="YX9-DI-MBI" secondAttribute="height" id="OrI-z2-ACC"/>
-                                </constraints>
-                                <state key="normal" image="landButton.png"/>
-                                <connections>
-                                    <action selector="onLandButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="81l-sb-yxs"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rec" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XkK-et-AV6">
-                                <rect key="frame" x="526" y="288" width="29" height="24"/>
-                                <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="17"/>
-                                <color key="textColor" red="0.97460300820000001" green="0.70306689249999998" blue="0.22189830050000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="satellite" pitchEnabled="NO" showsUserLocation="YES" showsBuildings="NO" showsPointsOfInterest="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EKw-wZ-Mbl" customClass="MapView">
-                                <rect key="frame" x="-56" y="381" width="352" height="198"/>
-                                <color key="tintColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="EKw-wZ-Mbl" secondAttribute="height" multiplier="1/0.562219" id="0Il-OZ-8Wm"/>
-                                </constraints>
-                            </mapView>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SqK-I4-71t">
-                                <rect key="frame" x="180" y="236" width="240" height="128"/>
+                            <view contentMode="scaleToFill" restorationIdentifier="ContentView" translatesAutoresizingMaskIntoConstraints="NO" id="a9h-25-Hyk" userLabel="ContentView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bJm-SV-V7B" userLabel="VideoPreviewerView">
+                                        <rect key="frame" x="-234" y="0.0" width="1068" height="600"/>
+                                        <color key="backgroundColor" white="0.86198747379999996" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="bJm-SV-V7B" secondAttribute="height" multiplier="1/0.562219" id="3k2-74-L4L"/>
+                                        </constraints>
+                                    </view>
+                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="satellite" pitchEnabled="NO" showsUserLocation="YES" showsBuildings="NO" showsPointsOfInterest="NO" translatesAutoresizingMaskIntoConstraints="NO" id="usf-MQ-ySQ" customClass="MapView">
+                                        <rect key="frame" x="-56" y="381" width="352" height="198"/>
+                                        <color key="tintColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="usf-MQ-ySQ" secondAttribute="height" multiplier="1/0.562219" id="ltJ-j7-4Zs"/>
+                                        </constraints>
+                                    </mapView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e8C-H9-eDY" userLabel="RecButton">
+                                        <rect key="frame" x="486" y="246" width="108" height="108"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="e8C-H9-eDY" secondAttribute="height" id="yFd-JN-iZm"/>
+                                        </constraints>
+                                        <state key="normal" title="Button" image="recButton_off.png"/>
+                                        <connections>
+                                            <action selector="didClickOnRecButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="DX3-vC-ldB"/>
+                                        </connections>
+                                    </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oSQ-Oa-i31" userLabel="TakeOff button">
+                                        <rect key="frame" x="20" y="99" width="42" height="42"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="oSQ-Oa-i31" secondAttribute="height" id="BC3-3r-sC8"/>
+                                        </constraints>
+                                        <state key="normal" image="takeOffButton.png"/>
+                                        <connections>
+                                            <action selector="onTakeOffButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="Ohg-Sj-uIi"/>
+                                        </connections>
+                                    </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ORS-EC-wpQ" userLabel="land button">
+                                        <rect key="frame" x="20" y="318" width="42" height="42"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="ORS-EC-wpQ" secondAttribute="height" id="qAv-s5-IoG"/>
+                                        </constraints>
+                                        <state key="normal" image="landButton.png"/>
+                                        <connections>
+                                            <action selector="onLandButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="XbN-du-EMA"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rec" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5D2-VJ-R2r" userLabel="RecTimeLabel">
+                                        <rect key="frame" x="526" y="288" width="29" height="24"/>
+                                        <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="17"/>
+                                        <color key="textColor" red="0.97460300820000001" green="0.70306689249999998" blue="0.22189830050000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="987-yS-3Vw" userLabel="MapScrollButton">
+                                        <rect key="frame" x="555" y="555" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="EKd-8C-DBG"/>
+                                            <constraint firstAttribute="width" constant="30" id="Zwn-50-elf"/>
+                                        </constraints>
+                                        <state key="normal" image="pan_50.png"/>
+                                        <connections>
+                                            <action selector="onScrollButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="ZYg-6u-df7"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" id="1P0-TZ-SaX" userLabel="VideoLargeH"/>
+                                    <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerX" secondItem="e8C-H9-eDY" secondAttribute="centerX" id="2AG-N9-vJK"/>
+                                    <constraint firstAttribute="bottom" secondItem="987-yS-3Vw" secondAttribute="bottom" constant="15" id="5h7-jL-2Yb"/>
+                                    <constraint firstItem="oSQ-Oa-i31" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="0.4" id="A4l-Yb-voZ"/>
+                                    <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.13" id="FCk-fG-jf1"/>
+                                    <constraint firstItem="e8C-H9-eDY" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.8" id="JVC-Iv-3Dt"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="M7N-A2-jtw" userLabel="MapSmallY"/>
+                                    <constraint firstItem="ORS-EC-wpQ" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="PTE-DV-Vbo"/>
+                                    <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.135" id="ShP-vN-9Jf"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="UGm-Jm-mdr" userLabel="MapLargeY"/>
+                                    <constraint firstItem="oSQ-Oa-i31" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="UrO-nl-PPq"/>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="Zfd-LJ-AaF" userLabel="VideoSmallY"/>
+                                    <constraint firstItem="e8C-H9-eDY" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.18" id="cqI-Qf-PLD"/>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" id="eiG-gg-aYu" userLabel="VideoLargeX"/>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="fZP-dH-p7x" userLabel="VideoLargeY"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" id="fwl-ZK-OHk" userLabel="MapLargeX"/>
+                                    <constraint firstItem="e8C-H9-eDY" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="ifV-ru-ixB"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" id="mZ5-kd-nZn" userLabel="MapLargeH"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.4" id="nFa-Rg-pwn" userLabel="MapSmallX"/>
+                                    <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="0.33" id="rhw-9Z-rkp" userLabel="MapSmallH"/>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="0.33" id="vJW-Iv-bOb" userLabel="VideoSmallH"/>
+                                    <constraint firstItem="bJm-SV-V7B" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.4" id="vPS-TU-FMD" userLabel="VideoSmallX"/>
+                                    <constraint firstItem="oSQ-Oa-i31" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.135" id="vVu-Xa-mRb"/>
+                                    <constraint firstAttribute="trailing" secondItem="987-yS-3Vw" secondAttribute="trailing" constant="15" id="x5M-aA-8qe"/>
+                                    <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerY" secondItem="e8C-H9-eDY" secondAttribute="centerY" id="yhc-V9-amS"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="Zfd-LJ-AaF"/>
+                                        <exclude reference="vJW-Iv-bOb"/>
+                                        <exclude reference="vPS-TU-FMD"/>
+                                        <exclude reference="UGm-Jm-mdr"/>
+                                        <exclude reference="fwl-ZK-OHk"/>
+                                        <exclude reference="mZ5-kd-nZn"/>
+                                    </mask>
+                                </variation>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="66l-44-8QA" firstAttribute="top" secondItem="YTl-Wz-E78" secondAttribute="bottom" constant="15" id="3j4-un-asU"/>
-                            <constraint firstItem="wbE-7L-qJF" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.135" id="5av-dH-jfB"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="1.6" id="6Ca-3n-Gm0"/>
-                            <constraint firstItem="XkK-et-AV6" firstAttribute="centerY" secondItem="pOP-eU-x5U" secondAttribute="centerY" id="6qv-s0-Dkq"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="956-zp-XNb"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" multiplier="0.33" id="9qn-Ke-ngy"/>
-                            <constraint firstItem="YX9-DI-MBI" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="1.13" id="DYT-lg-ygj"/>
-                            <constraint firstItem="pOP-eU-x5U" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.18" id="Dqr-xZ-v91"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.4" id="J6F-Ug-X8u"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" multiplier="0.33" id="Kzg-Gx-e5F"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" id="PNj-V4-MxR"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" id="QoI-Tf-q1d"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="YL1-0g-iRo"/>
-                            <constraint firstItem="pOP-eU-x5U" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="Zk7-Ar-p5A"/>
-                            <constraint firstItem="wbE-7L-qJF" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="0.4" id="cx3-mu-6Je"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" id="eyX-du-XVz"/>
-                            <constraint firstItem="pOP-eU-x5U" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="1.8" id="gah-JZ-RBy"/>
-                            <constraint firstItem="YX9-DI-MBI" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.135" id="kAn-2W-nO2"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" multiplier="1.6" id="mIu-JW-Rh9"/>
-                            <constraint firstItem="wbE-7L-qJF" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.07" id="neQ-vB-wWT"/>
-                            <constraint firstItem="XkK-et-AV6" firstAttribute="centerX" secondItem="pOP-eU-x5U" secondAttribute="centerX" id="ooE-pN-UVr"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="YTl-Wz-E78" secondAttribute="trailing" constant="15" id="pKZ-w5-2X4"/>
-                            <constraint firstItem="YX9-DI-MBI" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" multiplier="0.07" id="toy-o5-HLs"/>
-                            <constraint firstItem="UYW-Hy-ilc" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" multiplier="0.4" id="ucM-PS-Ckj"/>
-                            <constraint firstItem="EKw-wZ-Mbl" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" id="wrx-t2-asi"/>
+                            <constraint firstItem="a9h-25-Hyk" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="AwI-CJ-4uO"/>
+                            <constraint firstItem="a9h-25-Hyk" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" id="ME2-3p-HJH"/>
+                            <constraint firstItem="8LS-Of-6mA" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" id="NM5-Ns-YBk"/>
+                            <constraint firstItem="a9h-25-Hyk" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" id="Wi2-he-zUz"/>
+                            <constraint firstItem="8LS-Of-6mA" firstAttribute="centerY" secondItem="GEG-2L-0Qo" secondAttribute="centerY" id="ecR-My-dow"/>
+                            <constraint firstItem="8LS-Of-6mA" firstAttribute="width" secondItem="GEG-2L-0Qo" secondAttribute="width" id="hVd-YP-WUf"/>
+                            <constraint firstItem="a9h-25-Hyk" firstAttribute="height" secondItem="GEG-2L-0Qo" secondAttribute="height" id="qMI-J8-Lff"/>
+                            <constraint firstItem="8LS-Of-6mA" firstAttribute="centerX" secondItem="GEG-2L-0Qo" secondAttribute="centerX" id="ult-1W-w5i"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="9qn-Ke-ngy"/>
-                                <exclude reference="mIu-JW-Rh9"/>
-                                <exclude reference="ucM-PS-Ckj"/>
-                                <exclude reference="PNj-V4-MxR"/>
-                                <exclude reference="YL1-0g-iRo"/>
-                                <exclude reference="wrx-t2-asi"/>
-                            </mask>
-                        </variation>
                     </view>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="3Ks-Zb-zo7"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="landButton" destination="YX9-DI-MBI" id="OMS-38-ztJ"/>
-                        <outlet property="mapLargeHeight" destination="PNj-V4-MxR" id="aMJ-Aj-gC6"/>
-                        <outlet property="mapLargeX" destination="wrx-t2-asi" id="PYS-sq-YQq"/>
-                        <outlet property="mapLargeY" destination="YL1-0g-iRo" id="Ob7-tW-gSA"/>
-                        <outlet property="mapSmallHeight" destination="Kzg-Gx-e5F" id="oV6-k2-ogS"/>
-                        <outlet property="mapSmallX" destination="J6F-Ug-X8u" id="V0L-1Y-yhr"/>
-                        <outlet property="mapSmallY" destination="6Ca-3n-Gm0" id="PG6-ck-MtJ"/>
-                        <outlet property="mapView" destination="EKw-wZ-Mbl" id="aVA-YE-Y23"/>
-                        <outlet property="mapViewAspectRatio" destination="0Il-OZ-8Wm" id="qWA-EW-QJS"/>
-                        <outlet property="recButton" destination="pOP-eU-x5U" id="7cN-dJ-xvz"/>
-                        <outlet property="recordingTimeLabel" destination="XkK-et-AV6" id="FJV-Ha-hyL"/>
-                        <outlet property="scrollButton" destination="YTl-Wz-E78" id="Yda-y4-vAc"/>
-                        <outlet property="takeOffButton" destination="wbE-7L-qJF" id="CTo-sG-YCD"/>
-                        <outlet property="videoLargeHeight" destination="eyX-du-XVz" id="mkU-0d-ngc"/>
-                        <outlet property="videoLargeX" destination="QoI-Tf-q1d" id="oLN-EW-wlh"/>
-                        <outlet property="videoLargeY" destination="956-zp-XNb" id="ZCL-gv-rVd"/>
-                        <outlet property="videoPreviewerView" destination="UYW-Hy-ilc" id="qEk-jE-iTl"/>
-                        <outlet property="videoSmallHeight" destination="9qn-Ke-ngy" id="411-Xr-j8H"/>
-                        <outlet property="videoSmallX" destination="ucM-PS-Ckj" id="0yh-PE-uMC"/>
-                        <outlet property="videoSmallY" destination="mIu-JW-Rh9" id="2VV-EW-qSv"/>
-                        <outlet property="videoViewAspectRatio" destination="t2a-3y-mJg" id="OTm-qi-J9p"/>
+                        <outlet property="alertsView" destination="8LS-Of-6mA" id="wgI-oG-GBZ"/>
+                        <outlet property="contentView" destination="a9h-25-Hyk" id="rCj-1M-zLg"/>
+                        <outlet property="landButton" destination="ORS-EC-wpQ" id="h4c-wu-1dP"/>
+                        <outlet property="mapLargeHeight" destination="mZ5-kd-nZn" id="UAv-aO-mGa"/>
+                        <outlet property="mapLargeX" destination="fwl-ZK-OHk" id="HLn-vH-JBI"/>
+                        <outlet property="mapLargeY" destination="UGm-Jm-mdr" id="IQH-Ed-Zx3"/>
+                        <outlet property="mapSmallHeight" destination="rhw-9Z-rkp" id="f2P-Po-PsF"/>
+                        <outlet property="mapSmallX" destination="nFa-Rg-pwn" id="Nkk-eU-VB3"/>
+                        <outlet property="mapSmallY" destination="M7N-A2-jtw" id="88U-rB-jdQ"/>
+                        <outlet property="mapView" destination="usf-MQ-ySQ" id="8DP-BD-23D"/>
+                        <outlet property="mapViewAspectRatio" destination="ltJ-j7-4Zs" id="WID-n2-QiN"/>
+                        <outlet property="recButton" destination="e8C-H9-eDY" id="Lb2-65-fxi"/>
+                        <outlet property="recordingTimeLabel" destination="5D2-VJ-R2r" id="EHf-QG-qrQ"/>
+                        <outlet property="scrollButton" destination="987-yS-3Vw" id="jzq-v5-QOG"/>
+                        <outlet property="takeOffButton" destination="oSQ-Oa-i31" id="hek-aW-lBm"/>
+                        <outlet property="videoLargeHeight" destination="1P0-TZ-SaX" id="ilT-t4-eMg"/>
+                        <outlet property="videoLargeX" destination="eiG-gg-aYu" id="27h-oX-Bl9"/>
+                        <outlet property="videoLargeY" destination="fZP-dH-p7x" id="FHA-EC-2Xz"/>
+                        <outlet property="videoPreviewerView" destination="bJm-SV-V7B" id="Png-UQ-cc0"/>
+                        <outlet property="videoSmallHeight" destination="vJW-Iv-bOb" id="1N8-6n-1RB"/>
+                        <outlet property="videoSmallX" destination="vPS-TU-FMD" id="TUa-l8-MDb"/>
+                        <outlet property="videoSmallY" destination="Zfd-LJ-AaF" id="0pm-qd-e0s"/>
+                        <outlet property="videoViewAspectRatio" destination="3k2-74-L4L" id="qNx-OV-6Bg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hMn-mQ-HtW" userLabel="First Responder" sceneMemberID="firstResponder"/>

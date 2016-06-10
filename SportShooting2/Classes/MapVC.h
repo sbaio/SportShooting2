@@ -30,6 +30,7 @@
 #import "circuitsListFW.h"
 #import "TopMenu.h"
 #import "BottomStatusBar.h"
+#import "alertsView.h"
 
 #import "POP.h"
 
@@ -38,6 +39,7 @@
 @class circuitsListFW;
 @class TopMenu;
 @class BottomStatusBar;
+@class alertsView;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -91,6 +93,9 @@
     NSDate* lastFCUpdateDate;
     int freqCutterCameraFeed;
 }
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet alertsView *alertsView;
+
 @property (weak, nonatomic) IBOutlet MapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *scrollButton;
 @property (strong,nonatomic) Circuit* circuit;
@@ -98,11 +103,11 @@
 @property(nonatomic, strong) CLLocationManager* locationManager;
 @property (weak, nonatomic) IBOutlet UIButton *recButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordingTimeLabel;
-@property (weak, nonatomic) IBOutlet circuitsListFW *circuitsList;
+@property (strong, nonatomic) IBOutlet circuitsListFW *circuitsList;
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
-@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
+//@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
 
 @property (weak, nonatomic) IBOutlet UIButton *takeOffButton;
 @property (weak, nonatomic) IBOutlet UIButton *landButton;

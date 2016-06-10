@@ -38,6 +38,7 @@
 		D6218CDF1D0A0C4300DF1E55 /* closeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CDE1D0A0C4300DF1E55 /* closeButton.m */; };
 		D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */; };
 		D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */; };
+		D6218CEE1D0A52EB00DF1E55 /* alertsView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CED1D0A52EB00DF1E55 /* alertsView.m */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -213,6 +214,8 @@
 		D6218CE71D0A395400DF1E55 /* takeOffAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = takeOffAlertView.h; sourceTree = "<group>"; };
 		D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = takeOffAlertView.m; sourceTree = "<group>"; };
 		D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = takeOffAlertView.xib; sourceTree = "<group>"; };
+		D6218CEC1D0A52EB00DF1E55 /* alertsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alertsView.h; sourceTree = "<group>"; };
+		D6218CED1D0A52EB00DF1E55 /* alertsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = alertsView.m; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -557,6 +560,8 @@
 		D6218CE51D0A395400DF1E55 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CEC1D0A52EB00DF1E55 /* alertsView.h */,
+				D6218CED1D0A52EB00DF1E55 /* alertsView.m */,
 				D6218CE61D0A395400DF1E55 /* takeOffAlertView */,
 			);
 			path = views;
@@ -1372,6 +1377,7 @@
 				D632D51F1D03F71900B12946 /* VideoFrameExtractor.m in Sources */,
 				D632D4F91D03F6A200B12946 /* POPLayerExtras.mm in Sources */,
 				D69902381D04052C0038D05B /* AircraftMenuTVC.m in Sources */,
+				D6218CEE1D0A52EB00DF1E55 /* alertsView.m in Sources */,
 				D632D4111D03F5CB00B12946 /* main.m in Sources */,
 				D632D4F51D03F6A200B12946 /* POPCGUtils.mm in Sources */,
 				D632D4FA1D03F6A200B12946 /* POPMath.mm in Sources */,

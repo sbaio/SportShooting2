@@ -3,18 +3,91 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MapVC">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="alertsView">
             <connections>
-                <outlet property="takeOffAlertView" destination="iN0-l3-epB" id="eVp-Qi-lX2"/>
+                <outlet property="takeOffAlertView" destination="iN0-l3-epB" id="hN5-yO-5lb"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" red="1" green="0.46171342268508431" blue="0.66895345645602711" alpha="1" colorSpace="calibratedRGB"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="B5l-La-1tb">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Yl-T4-Ce7">
+                            <rect key="frame" x="0.0" y="0.0" width="600" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aIX-FZ-sIc">
+                            <rect key="frame" x="0.0" y="30" width="600" height="120"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Qb-Aa-31Y">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="120"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="takeOffButton.png" translatesAutoresizingMaskIntoConstraints="NO" id="BkF-Hd-lZm">
+                                    <rect key="frame" x="240" y="0.0" width="120" height="120"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" secondItem="BkF-Hd-lZm" secondAttribute="height" id="aAe-fd-D2C"/>
+                                    </constraints>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rTu-w3-sPc">
+                                    <rect key="frame" x="360" y="0.0" width="240" height="120"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Ensure that conditions are safe for takeoff. Aircraft will go to an altitude of 1.2m and hover in place." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-lF-kfN">
+                            <rect key="frame" x="0.0" y="150" width="600" height="420"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                        </textView>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NuP-MT-kUg">
+                            <rect key="frame" x="0.0" y="570" width="600" height="30"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpf-Wi-AqO">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="30"/>
+                                    <state key="normal" title="Button"/>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nXM-a5-gCg">
+                                    <rect key="frame" x="300" y="0.0" width="300" height="30"/>
+                                    <state key="normal" title="Button"/>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="nXM-a5-gCg" firstAttribute="width" secondItem="tpf-Wi-AqO" secondAttribute="width" id="yvp-XY-I1j"/>
+                            </constraints>
+                        </stackView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="BkF-Hd-lZm" firstAttribute="height" secondItem="B5l-La-1tb" secondAttribute="height" multiplier="0.2" id="2II-LH-IpL"/>
+                        <constraint firstItem="BkF-Hd-lZm" firstAttribute="centerX" secondItem="B5l-La-1tb" secondAttribute="centerX" id="d77-TN-tFv"/>
+                        <constraint firstItem="aIX-FZ-sIc" firstAttribute="centerY" secondItem="B5l-La-1tb" secondAttribute="centerY" multiplier="0.3" id="urw-3U-GxC"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="0.46083086907881898" green="0.46550850070426386" blue="1" alpha="0.73332225177304966" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="B5l-La-1tb" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Scm-ja-Ph1"/>
+                <constraint firstItem="B5l-La-1tb" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="W7u-jo-Euv"/>
+                <constraint firstItem="B5l-La-1tb" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="aZo-RI-U3I"/>
+                <constraint firstItem="B5l-La-1tb" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="dux-iH-RbO"/>
+            </constraints>
         </view>
     </objects>
+    <resources>
+        <image name="takeOffButton.png" width="200" height="200"/>
+    </resources>
 </document>

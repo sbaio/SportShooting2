@@ -44,7 +44,6 @@
 
     if (self) {
         [self setup];
-        NSLog(@"button setup");
     }
     return self;
 }
@@ -186,7 +185,6 @@
 - (void)setup
 {
     CGFloat height = 2.f;
-    NSLog(@"self bounds , %@",NSStringFromCGRect(self.bounds));
     
     CGFloat width = CGRectGetWidth(self.bounds);
     CGFloat cornerRadius =  1.f;

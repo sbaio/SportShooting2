@@ -42,23 +42,20 @@
     
     [self showTopMenu]; // and bottom
     
-    
-    
-    
-    
-    
 }
 
 -(void) loadNibs{
-    [[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil];
-    [[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil];
-    [[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil];
+    [[[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil] firstObject];
+    
+    [[[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil] firstObject];
+
+//    [[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil];
     [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
+    
 }
 
 -(void) showTopMenu{
     
-
     [_topMenu showOn:self.view];
     
     
@@ -66,6 +63,7 @@
 
     
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -81,6 +79,7 @@
     self.locationManager.delegate = self;
     [self.locationManager startUpdatingLocation];
 }
+
 -(void) initMapView{
     
     mapView.mapVC = self;
@@ -98,7 +97,6 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     phoneLocation = _locationManager.location;
     
-
     if(phoneLocation.coordinate.longitude && phoneLocation.coordinate.latitude){
         if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:phoneLocation.coordinate] > 10000) {
             [mapView setRegion:MKCoordinateRegionMake(phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
@@ -124,29 +122,27 @@
     [VideoPreviewer instance].tapGRSwitching = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(switchMapAndVideoViews:)];
 
     [[VideoPreviewer instance] start];
-
-    [self.view sendSubviewToBack:videoPreviewerView];
     
     freqCutterCameraFeed = 0;
 }
 
 -(void) enlargeVideo_MakeMapSmall_updateConstraints{
     // remove video constraints from superview constraints .. this will keep video aspect
-    [self.view removeConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY,mapLargeHeight,mapLargeX,mapLargeY, nil]];
-    [self.view removeConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY,videoSmallHeight,videoSmallX,videoSmallY, nil]];
+    [_contentView removeConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY,mapLargeHeight,mapLargeX,mapLargeY, nil]];
+    [_contentView removeConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY,videoSmallHeight,videoSmallX,videoSmallY, nil]];
     
-    [self.view addConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY, nil]];
-    [self.view addConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY, nil]];
+    [_contentView addConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY, nil]];
+    [_contentView addConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY, nil]];
     
 }
 
 -(void) enlargeMap_MakeVideoSmall_updateConstraints{
     
-    [self.view removeConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY,mapLargeHeight,mapLargeX,mapLargeY, nil]];
-    [self.view removeConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY,videoSmallHeight,videoSmallX,videoSmallY, nil]];
+    [_contentView removeConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY,mapLargeHeight,mapLargeX,mapLargeY, nil]];
+    [_contentView removeConstraints:[NSArray arrayWithObjects:videoLargeHeight,videoLargeX,videoLargeY,videoSmallHeight,videoSmallX,videoSmallY, nil]];
     
-    [self.view addConstraints:[NSArray arrayWithObjects:mapLargeHeight,mapLargeX,mapLargeY, nil]];
-    [self.view addConstraints:[NSArray arrayWithObjects:videoSmallHeight,videoSmallX,videoSmallY, nil]];
+    [_contentView addConstraints:[NSArray arrayWithObjects:mapLargeHeight,mapLargeX,mapLargeY, nil]];
+    [_contentView addConstraints:[NSArray arrayWithObjects:videoSmallHeight,videoSmallX,videoSmallY, nil]];
 }
 
 
@@ -156,8 +152,7 @@
     
     void (^completionWhenFinishedShowingMap)(BOOL) = ^(BOOL finished)
     {
-        NSLog(@"finished showing map");
-        [self.view sendSubviewToBack:mapView];
+        [_contentView sendSubviewToBack:mapView];
         [mapView updateMaskImageAndButton];
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             videoPreviewerView.alpha = 1.0;
@@ -166,8 +161,6 @@
     };
     void (^completionWhenFinishedShowingVideo)(BOOL) = ^(BOOL finished)
     {
-        NSLog(@"finished showing video");
-        
         [mapView updateMaskImageAndButton];
         [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             
@@ -202,9 +195,9 @@
         
         // circuit selection part
         if (!self.circuit) {
-            
-                [self showCircuitListView];
+            [self showCircuitListView];
         }
+        
         
         
     }
@@ -221,7 +214,7 @@
             
         } completion:completionWhenFinishedShowingVideo];
         [self enlargeVideo_MakeMapSmall_updateConstraints];
-        [self.view sendSubviewToBack:videoPreviewerView];
+        [_contentView sendSubviewToBack:videoPreviewerView];
         [mapView enableMapViewScroll];
         
         [videoPreviewerView setFrame:[[UIScreen mainScreen] bounds]];
@@ -411,10 +404,8 @@
 //        [self stopRecord];
 //    }
 
-    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
-    [_takeOffAlertView setFrame:CGRectMake(<#CGFloat x#>, <#CGFloat y#>, screenSize.width/2, screenSize.height*0.75)];
-    [self.view addSubview:_takeOffAlertView];
     
+    [_alertsView showTakeOffAlert];
     
 }
 
@@ -423,8 +414,6 @@
 -(void) showCircuitListView{
     
     [_circuitsList initWithDefaultsProperties];
-
-    
     
     mapVCTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnMapVC:)];
     
