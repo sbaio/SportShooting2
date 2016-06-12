@@ -19,6 +19,10 @@
 #import "PresentingAnimationController.h"
 #import "DismissingAnimationController.h"
 
+#import "UIImage+animatedGIF.h"
+#import "UIColor+CustomColors.h"
+
+@import Photos;
 
 @interface MapVC ()
 
@@ -302,6 +306,7 @@
             
             // mapview to remove pins
             [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
+            [[Calc Instance] map:mapView removePolylineNamed:@"poly"];
         }
         else if(pan.state == UIGestureRecognizerStateChanged){
             // get the coordinate
@@ -318,17 +323,22 @@
             circuitManager* cm = [circuitManager Instance];
             
             swipedCircuit = [cm removeSameLocsFromCircuit:swipedCircuit];
+            NSLog(@"repair");
             swipedCircuit = [cm repairCircuit:swipedCircuit];
+            NSLog(@"finished repair");
             
             [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
             
-            [[Calc Instance] map:mapView addLocations:swipedCircuit withName:@"panLoc" andColor:@"RGB 212 175 55"];
+//            [[Calc Instance] map:mapView addLocations:swipedCircuit withName:@"panLoc" andColor:@"RGB 212 175 55"];
+            
+            [[Calc Instance] map:mapView drawCircuitPolyline:swipedCircuit withTitle:@"poly" andColor:@"RGB 212 175 55"];
             
             UINavigationController* navC = (UINavigationController*)menuRevealVC.frontViewController;
             NSArray* arrayOfControllers = navC.viewControllers;
-            NSLog(@"vcs , %@",navC.viewControllers);
+            
             circuitDefinitionTVC* tvc = (circuitDefinitionTVC*)arrayOfControllers[1];
             tvc.loadedCircuit.locations = swipedCircuit;
+            
             
             if (tvc.loadedCircuit.circuitName) {
                 [cm saveCircuit:tvc.loadedCircuit];
@@ -441,6 +451,7 @@
 }
 - (IBAction)onLandButtonClicked:(id)sender {
 }
+
 
 
 

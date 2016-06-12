@@ -64,8 +64,12 @@
     switch (indexPath.row) {
         case 0:
         {// select circuti .. open
-            CircuitsTVC* circListTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"TrackListVC"];
-            [self.navigationController pushViewController:circListTVC animated:YES];
+            [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
+            
+            [[[Menu instance] getMapVC] showCircuitListView];
+            // OLD--> open in navC
+//            CircuitsTVC* circListTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"TrackListVC"];
+//            [self.navigationController pushViewController:circListTVC animated:YES];
             break;
         }
         case 1:

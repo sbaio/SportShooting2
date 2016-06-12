@@ -17,6 +17,7 @@
 #import "AppDelegate.h"
 #import "VideoPreviewer.h"
 #import "TopMenu.h"
+#import "MapView.h"
 
 @class MapVC;
 @class GeneralMenuVC;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D612D1A61D0CC51200CC6D14 /* cells.xib in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A51D0CC51200CC6D14 /* cells.xib */; };
 		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
 		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
 		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
@@ -39,6 +40,9 @@
 		D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */; };
 		D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */; };
 		D6218CEE1D0A52EB00DF1E55 /* alertsView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CED1D0A52EB00DF1E55 /* alertsView.m */; };
+		D6218CF11D0B328D00DF1E55 /* UIImage+animatedGIF.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CF01D0B328D00DF1E55 /* UIImage+animatedGIF.m */; };
+		D6218CF31D0B33E200DF1E55 /* takeOffButton.gif in Resources */ = {isa = PBXBuildFile; fileRef = D6218CF21D0B33E200DF1E55 /* takeOffButton.gif */; };
+		D6218CF51D0B85EF00DF1E55 /* SwitchRC.gif in Resources */ = {isa = PBXBuildFile; fileRef = D6218CF41D0B85EF00DF1E55 /* SwitchRC.gif */; };
 		D632D4111D03F5CB00B12946 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4101D03F5CB00B12946 /* main.m */; };
 		D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D632D4131D03F5CB00B12946 /* AppDelegate.m */; };
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
@@ -177,6 +181,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D612D1A51D0CC51200CC6D14 /* cells.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = cells.xib; sourceTree = "<group>"; };
 		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
 		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
 		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
@@ -216,6 +221,10 @@
 		D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = takeOffAlertView.xib; sourceTree = "<group>"; };
 		D6218CEC1D0A52EB00DF1E55 /* alertsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alertsView.h; sourceTree = "<group>"; };
 		D6218CED1D0A52EB00DF1E55 /* alertsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = alertsView.m; sourceTree = "<group>"; };
+		D6218CEF1D0B328D00DF1E55 /* UIImage+animatedGIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+animatedGIF.h"; sourceTree = "<group>"; };
+		D6218CF01D0B328D00DF1E55 /* UIImage+animatedGIF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+animatedGIF.m"; sourceTree = "<group>"; };
+		D6218CF21D0B33E200DF1E55 /* takeOffButton.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = takeOffButton.gif; sourceTree = "<group>"; };
+		D6218CF41D0B85EF00DF1E55 /* SwitchRC.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SwitchRC.gif; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D632D4101D03F5CB00B12946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D632D4121D03F5CB00B12946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -563,6 +572,7 @@
 				D6218CEC1D0A52EB00DF1E55 /* alertsView.h */,
 				D6218CED1D0A52EB00DF1E55 /* alertsView.m */,
 				D6218CE61D0A395400DF1E55 /* takeOffAlertView */,
+				D612D1A51D0CC51200CC6D14 /* cells.xib */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1026,6 +1036,8 @@
 				D632D53B1D04033300B12946 /* KalmanFilter1D.m */,
 				D632D53C1D04033300B12946 /* Vec.h */,
 				D632D53D1D04033300B12946 /* Vec.m */,
+				D6218CEF1D0B328D00DF1E55 /* UIImage+animatedGIF.h */,
+				D6218CF01D0B328D00DF1E55 /* UIImage+animatedGIF.m */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1140,6 +1152,8 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D6218CF41D0B85EF00DF1E55 /* SwitchRC.gif */,
+				D6218CF21D0B33E200DF1E55 /* takeOffButton.gif */,
 				D6218CD81D09527E00DF1E55 /* landButton.png */,
 				D6218CD61D09459100DF1E55 /* antenna.png */,
 				D6218CD41D08C7D000DF1E55 /* takeOffButton.png */,
@@ -1270,6 +1284,7 @@
 				D69902771D0408110038D05B /* menuIcon.png in Resources */,
 				D6218CA91D04D4CC00DF1E55 /* RC_green.png in Resources */,
 				D69902811D0408110038D05B /* video.png in Resources */,
+				D612D1A61D0CC51200CC6D14 /* cells.xib in Resources */,
 				D6218CC71D07425F00DF1E55 /* GeneralMenuLogo.png in Resources */,
 				D632D56D1D04042200B12946 /* targetDronePosition.png in Resources */,
 				D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */,
@@ -1280,10 +1295,12 @@
 				D6218CD91D09527E00DF1E55 /* landButton.png in Resources */,
 				D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */,
 				D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */,
+				D6218CF51D0B85EF00DF1E55 /* SwitchRC.gif in Resources */,
 				D69902551D0407850038D05B /* LUT_YG.png in Resources */,
 				D699027D1D0408110038D05B /* recButton_on.png in Resources */,
 				D69902781D0408110038D05B /* pan.png in Resources */,
 				D69902741D0408110038D05B /* inspireCamera.png in Resources */,
+				D6218CF31D0B33E200DF1E55 /* takeOffButton.gif in Resources */,
 				D6218CB61D05400E00DF1E55 /* mapViewLayer.psd in Resources */,
 				D699026E1D0408110038D05B /* carSpeed.png in Resources */,
 				D632D4EC1D03F6A200B12946 /* pop-Info.plist in Resources */,
@@ -1354,6 +1371,7 @@
 				D69902321D04050A0038D05B /* circuitDefinitionTVC.m in Sources */,
 				D69902351D04050A0038D05B /* GeneralMenuVC.m in Sources */,
 				D6218CDC1D0A0A2E00DF1E55 /* UIColor+CustomColors.m in Sources */,
+				D6218CF11D0B328D00DF1E55 /* UIImage+animatedGIF.m in Sources */,
 				D632D4F01D03F6A200B12946 /* POPAnimationExtras.mm in Sources */,
 				D632D4EF1D03F6A200B12946 /* POPAnimationEvent.mm in Sources */,
 				D69902491D0406330038D05B /* PresentingAnimationController.m in Sources */,

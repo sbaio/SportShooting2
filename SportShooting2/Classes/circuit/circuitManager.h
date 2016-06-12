@@ -13,7 +13,7 @@
 
 @interface circuitManager : NSObject
 {
-    
+    dispatch_queue_t savingQueue;
 }
 
 +(id) Instance;

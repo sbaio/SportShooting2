@@ -18,7 +18,6 @@
 
 #import "VideoPreviewer/VideoPreviewer.h"
 #import "MapVC.h"
-#import "circuitsListFW.h"
 #import "MapView.h"
 
 @class MapVC;

@@ -36,12 +36,10 @@
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XlK-CR-hre">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
-                                    <color key="backgroundColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
                                     <state key="normal" image="batteryicon.png"/>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8EG-xY-n8J" userLabel="BatteryLabel">
                                     <rect key="frame" x="23" y="0.0" width="31" height="600"/>
-                                    <color key="backgroundColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
@@ -74,11 +72,9 @@
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nfc-jg-NUo">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
-                                    <color key="backgroundColor" red="1.6996170869999999e-07" green="0.54942137000000002" blue="0.70689094070000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7eA-re-Zxi" userLabel="GPSLabel">
                                     <rect key="frame" x="23" y="0.0" width="31" height="600"/>
-                                    <color key="backgroundColor" red="1.6996170869999999e-07" green="0.54942137000000002" blue="0.70689094070000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
@@ -93,11 +89,9 @@
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CNk-E4-b8K">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
-                                    <color key="backgroundColor" red="0.69365592277486909" green="0.62981000414317978" blue="0.099737877295309821" alpha="1" colorSpace="calibratedRGB"/>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aS0-bL-g7y" userLabel="GPSLabel">
                                     <rect key="frame" x="23" y="0.0" width="31" height="600"/>
-                                    <color key="backgroundColor" red="0.69365592277486909" green="0.62981000414317978" blue="0.099737877295309821" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>

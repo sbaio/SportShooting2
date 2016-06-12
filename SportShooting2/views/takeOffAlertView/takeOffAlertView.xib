@@ -9,6 +9,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="alertsView">
             <connections>
+                <outlet property="switchGIF" destination="qls-uX-4d4" id="anp-lE-GNx"/>
                 <outlet property="takeOffAlertView" destination="iN0-l3-epB" id="hN5-yO-5lb"/>
             </connections>
         </placeholder>
@@ -29,41 +30,117 @@
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aIX-FZ-sIc">
                             <rect key="frame" x="0.0" y="30" width="600" height="120"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Qb-Aa-31Y">
-                                    <rect key="frame" x="0.0" y="0.0" width="240" height="120"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u2p-mD-h5n">
+                                    <rect key="frame" x="0.0" y="0.0" width="30" height="120"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="takeOffButton.png" translatesAutoresizingMaskIntoConstraints="NO" id="BkF-Hd-lZm">
-                                    <rect key="frame" x="240" y="0.0" width="120" height="120"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BkF-Hd-lZm">
+                                    <rect key="frame" x="30" y="0.0" width="120" height="120"/>
                                     <constraints>
                                         <constraint firstAttribute="width" secondItem="BkF-Hd-lZm" secondAttribute="height" id="aAe-fd-D2C"/>
                                     </constraints>
                                 </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Takeoff" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Qb-Aa-31Y">
+                                    <rect key="frame" x="150" y="0.0" width="300" height="120"/>
+                                    <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="45"/>
+                                    <color key="textColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rTu-w3-sPc">
-                                    <rect key="frame" x="360" y="0.0" width="240" height="120"/>
+                                    <rect key="frame" x="450" y="0.0" width="150" height="120"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
+                            <constraints>
+                                <constraint firstItem="BkF-Hd-lZm" firstAttribute="centerX" secondItem="aIX-FZ-sIc" secondAttribute="centerX" multiplier="0.3" id="TDn-0G-wbM"/>
+                                <constraint firstItem="2Qb-Aa-31Y" firstAttribute="centerX" secondItem="aIX-FZ-sIc" secondAttribute="centerX" id="vx2-uu-FIV"/>
+                            </constraints>
                         </stackView>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Ensure that conditions are safe for takeoff. Aircraft will go to an altitude of 1.2m and hover in place." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-lF-kfN">
-                            <rect key="frame" x="0.0" y="150" width="600" height="420"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                        </textView>
-                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NuP-MT-kUg">
-                            <rect key="frame" x="0.0" y="570" width="600" height="30"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BOr-X2-4N7">
+                            <rect key="frame" x="0.0" y="150" width="600" height="174"/>
                             <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpf-Wi-AqO">
-                                    <rect key="frame" x="0.0" y="0.0" width="300" height="30"/>
-                                    <state key="normal" title="Button"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fjo-eM-neg">
+                                    <rect key="frame" x="0.0" y="0.0" width="60" height="174"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Please turn switch on RC to F to enable automatic flight, switch back to P or A to stop it in emergency" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TDW-PV-Ma7">
+                                    <rect key="frame" x="60" y="0.0" width="246" height="174"/>
+                                    <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="15"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YRk-c3-T3m">
+                                    <rect key="frame" x="306" y="0.0" width="60" height="174"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qls-uX-4d4">
+                                    <rect key="frame" x="366" y="0.0" width="174" height="174"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" secondItem="qls-uX-4d4" secondAttribute="height" id="PMm-Ot-dZb"/>
+                                    </constraints>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zTD-Pa-iWN">
+                                    <rect key="frame" x="540" y="0.0" width="60" height="174"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="qls-uX-4d4" firstAttribute="width" secondItem="qls-uX-4d4" secondAttribute="height" id="Diy-8I-kIA"/>
+                                <constraint firstItem="zTD-Pa-iWN" firstAttribute="width" secondItem="BOr-X2-4N7" secondAttribute="width" multiplier="0.1" id="LbT-3J-FGL"/>
+                                <constraint firstItem="qls-uX-4d4" firstAttribute="height" secondItem="BOr-X2-4N7" secondAttribute="height" id="NU9-6e-8MT"/>
+                                <constraint firstItem="fjo-eM-neg" firstAttribute="width" secondItem="BOr-X2-4N7" secondAttribute="width" multiplier="0.1" id="cZC-IR-KRv"/>
+                                <constraint firstItem="YRk-c3-T3m" firstAttribute="width" secondItem="fjo-eM-neg" secondAttribute="width" id="qZW-bE-gKo"/>
+                            </constraints>
+                        </stackView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZIU-hD-EEo">
+                            <rect key="frame" x="0.0" y="324" width="600" height="174"/>
+                            <subviews>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Ensure that conditions are safe for takeoff. Aircraft will go to an altitude of 1.2m and hover in place." selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-lF-kfN">
+                                    <rect key="frame" x="60" y="9" width="480" height="156"/>
+                                    <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="15"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="pI4-lF-kfN" firstAttribute="centerX" secondItem="ZIU-hD-EEo" secondAttribute="centerX" id="9RM-TU-Hjd"/>
+                                <constraint firstItem="pI4-lF-kfN" firstAttribute="height" secondItem="ZIU-hD-EEo" secondAttribute="height" multiplier="0.9" id="V43-jh-bGV"/>
+                                <constraint firstItem="pI4-lF-kfN" firstAttribute="centerY" secondItem="ZIU-hD-EEo" secondAttribute="centerY" id="Xf0-Ms-X8G"/>
+                                <constraint firstItem="pI4-lF-kfN" firstAttribute="width" secondItem="ZIU-hD-EEo" secondAttribute="width" multiplier="0.8" id="jxo-cU-lkg"/>
+                            </constraints>
+                        </view>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NuP-MT-kUg" userLabel="Button Stack View">
+                            <rect key="frame" x="0.0" y="498" width="600" height="102"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpf-Wi-AqO">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="102"/>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                    <state key="normal" title="Cancel">
+                                        <color key="titleColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="didClickOnCancelButton:" destination="-1" eventType="touchUpInside" id="E21-6e-pB8"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nXM-a5-gCg">
-                                    <rect key="frame" x="300" y="0.0" width="300" height="30"/>
-                                    <state key="normal" title="Button"/>
+                                    <rect key="frame" x="300" y="0.0" width="300" height="102"/>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                    <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="19"/>
+                                    <state key="normal" title="Ok! Takeoff">
+                                        <color key="titleColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="didClickOnTakeOffButton:" destination="-1" eventType="touchUpInside" id="1MY-Gf-Ose"/>
+                                    </connections>
                                 </button>
                             </subviews>
                             <constraints>
@@ -73,12 +150,13 @@
                     </subviews>
                     <constraints>
                         <constraint firstItem="BkF-Hd-lZm" firstAttribute="height" secondItem="B5l-La-1tb" secondAttribute="height" multiplier="0.2" id="2II-LH-IpL"/>
-                        <constraint firstItem="BkF-Hd-lZm" firstAttribute="centerX" secondItem="B5l-La-1tb" secondAttribute="centerX" id="d77-TN-tFv"/>
+                        <constraint firstItem="NuP-MT-kUg" firstAttribute="height" secondItem="B5l-La-1tb" secondAttribute="height" multiplier="0.17" id="9NF-jW-olv"/>
+                        <constraint firstItem="TDW-PV-Ma7" firstAttribute="height" secondItem="ZIU-hD-EEo" secondAttribute="height" id="XcS-cR-7po"/>
                         <constraint firstItem="aIX-FZ-sIc" firstAttribute="centerY" secondItem="B5l-La-1tb" secondAttribute="centerY" multiplier="0.3" id="urw-3U-GxC"/>
                     </constraints>
                 </stackView>
             </subviews>
-            <color key="backgroundColor" red="0.46083086907881898" green="0.46550850070426386" blue="1" alpha="0.73332225177304966" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="0.69040471315383911" green="0.92653781175613403" blue="0.64869457483291626" alpha="0.80000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="B5l-La-1tb" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Scm-ja-Ph1"/>
                 <constraint firstItem="B5l-La-1tb" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="W7u-jo-Euv"/>
@@ -86,8 +164,10 @@
                 <constraint firstItem="B5l-La-1tb" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="dux-iH-RbO"/>
             </constraints>
         </view>
+        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="EPa-9F-eZn">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <point key="canvasLocation" x="549" y="415"/>
+        </imageView>
     </objects>
-    <resources>
-        <image name="takeOffButton.png" width="200" height="200"/>
-    </resources>
 </document>

@@ -829,14 +829,14 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
     [self refreshContentView];
 }
 
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
-{
-    [super setHighlighted:highlighted animated:YES];
-    
-    if (highlighted) {
-        self.backgroundColor = [UIColor colorWithHue:0.125 saturation:0.93 brightness:0.95 alpha:1.0];
-    } 
-}
+//- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+//{
+//    [super setHighlighted:highlighted animated:YES];
+//    
+//    if (highlighted) {
+//        self.backgroundColor = [UIColor colorWithHue:0.125 saturation:0.93 brightness:0.95 alpha:1.0];
+//    } 
+//}
 
 #pragma mark Handle Table Events
 

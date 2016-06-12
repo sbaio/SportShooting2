@@ -9,6 +9,7 @@
 #import "circuitManager.h"
 #import <CoreLocation/CLLocation.h>
 
+
 @implementation circuitManager
 
 
@@ -24,6 +25,7 @@
 }
 -(id) init{
     self = [super init];
+    savingQueue = dispatch_queue_create("saving_Queue", DISPATCH_QUEUE_SERIAL);
     return self;
 }
 
@@ -445,8 +447,11 @@
     if (!circuit.circuitName) {
         NSLog(@"empty name");
     }
-    [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"%@_c",circuit.circuitName]];
-    NSLog(@"save circuit %@, %d",circuit.circuitName,(int)circuit.locations.count);
+    dispatch_async(savingQueue, ^{
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"%@_c",circuit.circuitName]];
+        NSLog(@"save circuit %@, %d",circuit.circuitName,(int)circuit.locations.count);
+    });
+    
 }
 -(Circuit*) loadCircuitNamed_coder:(NSString*) circuitName{
     

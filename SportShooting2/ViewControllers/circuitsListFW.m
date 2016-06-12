@@ -29,6 +29,8 @@
     self.alpha = 0;
     allCircuits = [self loadExistingCircuitsNames_coder];
     
+    selectedRow = -1;
+    selectRow = -1;
     return self;
 }
 
@@ -38,7 +40,6 @@
     CGRect screenFrame = [[UIScreen mainScreen]bounds];
     
     self.frame = CGRectMake(self.superview.center.x, self.superview.center.y,screenFrame.size.width/3, 0.5*screenFrame.size.height);
-    NSLog(@"%@,%@", NSStringFromCGRect(self.frame),NSStringFromCGRect(_titleLabel.frame));
 
     _tableView.dataSource = self;
     _tableView.delegate = self;
@@ -51,12 +52,10 @@
     
     
     [_closeBut addTarget:self action:@selector(onCloseButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [_closeBut animateToClose];
-    
+    _closeBut.isAdd = NO;
     
     [_addBut addTarget:self action:@selector(onAddButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [_addBut addTarget:self action:@selector(onAddButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
+    _addBut.isAdd = YES;
     
     
 }
@@ -64,8 +63,12 @@
 -(void) layoutSubviews{
     [super layoutSubviews];
 
-    [_closeBut setup];
-    [_addBut setup];
+    if (!_closeBut.resized) {
+        [_closeBut resize];
+    }
+    if (!_addBut.resized) {
+        [_addBut resize];
+    }
   
 }
 
@@ -75,36 +78,126 @@
 }
 
 -(void) onAddButtonClicked:(id) sender{
-    DVLog(@"add but ");
+
+    if (!defineTableView) {
+        defineTableView = [[UITableView alloc] initWithFrame:_tableView.frame];
+        defineTableView.dataSource = self;
+    }
+    [defineTableView reloadData];
+    
+    POPBasicAnimation* entranceAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+                                            
+    if (_addBut.status ==  2) {
+
+        entranceAnimation.fromValue = @(_tableView.center.x+_tableView.frame.size.width);
+        entranceAnimation.toValue = @(_tableView.center.x);
+        entranceAnimation.duration = 1;
+        
+        [self addSubview:defineTableView];
+        [defineTableView.layer pop_addAnimation:entranceAnimation forKey:@"entranceAlpha"];
+        [_addBut animateToMinusWithCompletion:^(BOOL finished) {
+            
+        }];
+    }
+    else if (_addBut.status == 3){
+        entranceAnimation.toValue = @(_tableView.center.x + _tableView.frame.size.width);
+        entranceAnimation.duration = 0.5;
+        [entranceAnimation setCompletionBlock:^(POPAnimation * anim, BOOL finished) {
+            [defineTableView removeFromSuperview];
+        }];
+        [defineTableView.layer pop_addAnimation:entranceAnimation forKey:@"entranceAlpha"];
+        
+        
+        [_addBut animateToAddWithCompletion:^(BOOL finished) {
+            
+        }];
+    }
+
+    
 }
 
 
-#pragma mark -  UITableView dataSource
+#pragma mark -  UITableView  dataSource
+
+// CIRCUIT LIST
 
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section{
-    return allCircuits.count;;
+    if (tableView == _tableView) {
+        return allCircuits.count;
+    }
+    else if(tableView == defineTableView){
+        return 3;
+    }
+    else{
+        return 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSArray *parts = [[NSBundle mainBundle] loadNibNamed:@"cells" owner:nil options:nil];
     
-    NSString *CellIdentifier = @"swipeableCellTrackSelection";
-
-    CircuitsTVC* tvc = [[Menu instance] getCircuitsMenu];
+    if (tableView == _tableView) {
+        
+        MGSwipeTableCell *cell = [parts objectAtIndex:0];
+        
+        NSLog(@"cell for row ------>  %d <-------",(int)indexPath.row);
+        cell.delegate = self;
+        UILabel* textLabel = [self labelOfCell:cell];
+        [textLabel setText:[allCircuits objectAtIndex:indexPath.row]];
+        
+        [self setButtonForCell:cell AtIndexPath:indexPath];
+        
+        return cell;
+    }
+    else if (tableView == defineTableView){
+        NSLog(@"cell for row ------>define  %d <-------",(int)indexPath.row);
+        int row = (int)indexPath.row;
+        
+        UITableViewCell* cell = [parts objectAtIndex:(row+1)];
+        
+        switch (row) {
+            case 0:
+            {
+                txtFieldCircuitName = [self textFieldOfCell:cell];
+                txtFieldCircuitName.delegate = self;
+                if (loadedCircuit.circuitName) {
+                    [txtFieldCircuitName setText:loadedCircuit.circuitName];
+                }
+            }
+                break;
+            case 1:
+            {
+                txtFieldCircuitLength = [self textFieldOfCell:cell];
+                txtFieldCircuitLength.delegate = self;
+                
+                if (loadedCircuit.locations) {
+                    [txtFieldCircuitLength setText:[NSString stringWithFormat:@"%0.1fm",[loadedCircuit length]]];
+                }
+            }
+                break;
+            case 2:
+            {
+                txtFieldRTH_Alt = [self textFieldOfCell:cell];
+                txtFieldRTH_Alt.delegate = self;
+                if (loadedCircuit.RTH_altitude) {
+                    [txtFieldRTH_Alt setText:[NSString stringWithFormat:@"%0.1fm",loadedCircuit.RTH_altitude]];
+                }
+            }
+                break;
+                
+            default:
+                break;
+        }
+        
+        return cell;
+    }
+    else{
+        return [[UITableViewCell alloc] init];
+    }
     
-    MGSwipeTableCell *cell = [tvc.tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    
-    [tableView setBackgroundColor:cell.contentView.backgroundColor];
-    
-    cell.delegate = self;
-    UILabel* textLabel = [[cell.contentView subviews] objectAtIndex:0];
-    
-    [textLabel setText:[allCircuits objectAtIndex:indexPath.row]];
-    
-    return cell;
 }
 
 -(BOOL) swipeTableCell:(MGSwipeTableCell*) cell canSwipe:(MGSwipeDirection) direction fromPoint:(CGPoint) point{
@@ -151,38 +244,115 @@
     return result;
 }
 
+// DEFINE TABLE VIEW
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    if (textField == txtFieldCircuitLength) {
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textFieldloc{
+    [textFieldloc resignFirstResponder];
+    
+    NSString* string = textFieldloc.text;
+    
+    if (textFieldloc == txtFieldRTH_Alt){
+        if (!loadedCircuit) {
+            loadedCircuit = [[Circuit alloc]init];
+        }
+        loadedCircuit.RTH_altitude = [string floatValue];
+        
+        [txtFieldRTH_Alt setText:[NSString stringWithFormat:@"%0.1fm",loadedCircuit.RTH_altitude]];
+        
+        if(loadedCircuit.circuitName){
+            [[circuitManager Instance] saveCircuit:loadedCircuit];
+        }
+        else{
+            [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES];
+            });
+        }
+    }
+    
+    else if (textFieldloc == txtFieldCircuitName){
+        loadedCircuit.circuitName = string;
+        
+        if (!loadedCircuit.locations) {
+            // launch pan circuit to get _loadedCircuit.locations
+            [self startPan];
+        }
+        else{
+            [[circuitManager Instance] saveCircuit:loadedCircuit];
+
+            [_tableView reloadData];
+            
+            
+        }
+    }
+    
+    return NO;
+}
 
 #pragma mark - delegate methods
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    // load concerned circuit and show it
-    MGSwipeTableCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    NSString* circuitName = [self txtOfCell:cell];
-    
-    MapVC* mapVC = [[Menu instance] getMapVC];
-    MKMapView* mapView = [[Menu instance] getMap];
-    
-    circuitManager* cm = [circuitManager Instance];
-    
-    if (!mapVC.circuit || !mapVC.circuit.circuitName || ![mapVC.circuit.circuitName isEqualToString:circuitName]) {
-        loadedCircuit = [cm loadCircuitNamed_coder:circuitName];
+    if (tableView == _tableView) {
+        // load concerned circuit and show it
+        MGSwipeTableCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        
+        NSString* circuitName = [self txtOfCell:cell];
+        
+        MapVC* mapVC = [[Menu instance] getMapVC];
+        MKMapView* mapView = [[Menu instance] getMap];
+        
+        circuitManager* cm = [circuitManager Instance];
+        
+        if (!mapVC.circuit || !mapVC.circuit.circuitName || ![mapVC.circuit.circuitName isEqualToString:circuitName]) {
+            loadedCircuit = [cm loadCircuitNamed_coder:circuitName];
+        }
+        
+        if (!loadedCircuit || !loadedCircuit.locations || !loadedCircuit.locations.count) {
+            NSLog(@"empty circuit loaded");
+            return;
+        }
+        
+        [[Calc Instance] map:mapView showCircuit:loadedCircuit];
+        
+        
+        selectRow = (int)indexPath.row;
+        [self setButtonForCell:[tableView cellForRowAtIndexPath:indexPath] AtIndexPath:indexPath];
+    }
+    else if (tableView == defineTableView){
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
-    if (!loadedCircuit || !loadedCircuit.locations || !loadedCircuit.locations.count) {
-        NSLog(@"empty circuit loaded");
-        return;
-    }
-    
-    [[Calc Instance] map:mapView showCircuit:loadedCircuit];
-
-    
-    [self hideOrshowButtonAtIndexPath:indexPath hide:NO];
     
 }
 -(void) tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self hideOrshowButtonAtIndexPath:indexPath hide:YES];
+    selectRow = -1;
+    [self setButtonForCell:[tableView cellForRowAtIndexPath:indexPath] AtIndexPath:indexPath];
+}
+
+-(void) setButtonForCell:(MGSwipeTableCell*) cell AtIndexPath:(NSIndexPath*) indexPath {
+    
+    UIButton* selectButton = [self buttonOfCell:cell];
+    [selectButton addTarget:self action:@selector(didSelectCircuitAtSelectedRow:) forControlEvents:UIControlEventTouchUpInside];
+    int row = (int)indexPath.row;
+    NSLog(@"setButton for cell , %d ,select , %d , selected , %d",row,selectRow,selectedRow);
+    if (row == selectedRow) {
+        [selectButton setTitle:@"selected" forState:UIControlStateNormal];
+        [selectButton setHidden:NO];
+    }
+    else if (row == selectRow){
+        [selectButton setTitle:@"select" forState:UIControlStateNormal];
+        [selectButton setHidden:NO];
+    }
+    else{
+        [selectButton setHidden:YES];
+    }
 }
 
 -(void) hideOrshowButtonAtIndexPath:(NSIndexPath*) indexPath hide:(BOOL) hide{
@@ -195,7 +365,7 @@
         alph = 0;
         
     }
-    UIButton* selectButton = cell.contentView.subviews[1];
+    UIButton* selectButton = [self buttonOfCell:cell];
     if (hide && [selectButton.titleLabel.text isEqualToString:@"selected"]) {
         return;
     }
@@ -211,7 +381,7 @@
 
 
 - (void) didSelectCircuitAtSelectedRow:(id) sender{
-    NSLog(@"selected circuit , %d",(int)[_tableView indexPathForSelectedRow].row);
+    
     MapVC* mapVC = [[Menu instance] getMapVC];
     if (loadedCircuit) {
         mapVC.circuit = loadedCircuit;
@@ -219,18 +389,19 @@
         
         // inform that this circuit "circuitName" is selected
         MGSwipeTableCell* cell = [_tableView cellForRowAtIndexPath:[_tableView indexPathForSelectedRow]];
-        UIButton* button = cell.contentView.subviews[1];
+        UIButton* button = [self buttonOfCell:cell];
         [button setTitle:@"selected" forState:UIControlStateNormal];
         
         for (MGSwipeTableCell* celli in [_tableView visibleCells]) {
             if (celli != cell ) {
-                UIButton* buttoni = celli.contentView.subviews[1];
+                UIButton* buttoni = [self buttonOfCell:celli];
 
                 [buttoni setHidden:YES];
                 [buttoni setTitle:@"select" forState:UIControlStateNormal];
             }
         }
     }
+    selectedRow = (int) [_tableView indexPathForSelectedRow].row;
 }
 
 
@@ -270,7 +441,6 @@
 
 -(void) showCircuitList:(BOOL)animated{
 
-    NSLog(@"herer");
     MapView* mapView = (MapView*)[[Menu instance] getMap];
     [mapView setMapViewMaskImage:NO];
     
@@ -288,8 +458,12 @@
     positionAnimationX.toValue = @(self.superview.center.x*0.4);
     positionAnimationX.springBounciness = 20;
     [positionAnimationX setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
-        [_closeBut animateToClose];
-        [_addBut animateToAdd];
+        [_closeBut animateToCloseWithCompletion:^(BOOL finished) {
+            
+        }];
+        [_addBut animateToAddWithCompletion:^(BOOL finished) {
+
+        }];
     }];
 
     
@@ -305,6 +479,18 @@
 
 
 
+-(void) startPan{
+    [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeftSide animated:YES];
+    MapVC* mapVC = [[Menu instance] getMapVC];
+    
+    [mapVC disableMainMenuPan];
+    [mapVC.mapView disableMapViewScroll];
+    
+    mapVC.isPathDrawingEnabled = YES;
+    
+    DVLog(@"please define circuit through swiping on the screen");
+}
+
 
 
 
@@ -316,20 +502,6 @@
 
 #pragma mark -  Supporting methods
 
-- (void)performBlockOnMainThread:(void (^)())block
-{
-    if (block) {
-        if ([NSThread isMainThread]) {
-            block();
-        }
-        else {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                block();
-            });
-        }
-    }
-}
-
 -(NSMutableArray*) loadExistingCircuitsNames_coder{
     NSMutableArray* arrayOfCircuitsNames = [[NSMutableArray alloc] init];
     
@@ -340,8 +512,6 @@
             NSArray* arrayFromCircuitPath = [key componentsSeparatedByString:@"_"];
             NSString* circuitN = arrayFromCircuitPath[0];
             [arrayOfCircuitsNames addObject:circuitN];
-            NSLog(@"%@",circuitN);
-            
         }
         
     }
@@ -349,12 +519,19 @@
 }
 
 -(NSString*) txtOfCell:(MGSwipeTableCell*) cell{
-    if (cell.contentView.subviews.count) {
-        UILabel* label = cell.contentView.subviews[0]; // the label containing the text
-        return label.text;
-    }
-    return nil;
+    return [self labelOfCell:cell].text;
 }
+
+-(UILabel*) labelOfCell:(MGSwipeTableCell*)cell{
+    return cell.contentView.subviews[1];
+}
+-(UIButton*) buttonOfCell:(MGSwipeTableCell*)cell{
+    return [cell.contentView.subviews objectAtIndex:0];
+}
+-(UITextField*) textFieldOfCell:(UITableViewCell*)cell{
+    return [cell.contentView.subviews objectAtIndex:1];
+}
+
 -(void) removeCircuitAtIndexPath:(NSIndexPath*) indexPath{
     
     NSInteger index = indexPath.row;

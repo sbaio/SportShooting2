@@ -66,16 +66,13 @@
     return mapVC;
 }
 
-
+-(MapView*) getMapView{
+    
+    return [self getMapVC].mapView;
+}
 
 -(MKMapView*) getMap{
-    MKMapView* map = nil;
-    for (UIView* subview in [self getMainRevealVC].frontViewController.view.subviews) {
-        if ([subview isKindOfClass:[MKMapView class]]) {
-            map = (MKMapView*)subview;
-        }
-    }
-    return map;
+    return [self getMapView];
 }
 
 

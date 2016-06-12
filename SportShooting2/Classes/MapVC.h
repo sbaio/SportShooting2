@@ -125,4 +125,5 @@
 
 -(void) startUpdatingLoc;
 -(void) showCircuitListView;
+
 @end

@@ -47,8 +47,6 @@
             NSArray* arrayFromCircuitPath = [key componentsSeparatedByString:@"_"];
             NSString* circuitN = arrayFromCircuitPath[0];
             [arrayOfCircuitsNames addObject:circuitN];
-            NSLog(@"%@",circuitN);
-            
         }
         
     }

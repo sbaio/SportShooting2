@@ -48,24 +48,6 @@
 
 }
 
-//
-//-(void) setTextFiledForRTH_Alt{
-//    txtFieldRTH_Alt=[[UITextField alloc]initWithFrame:CGRectMake(120, 2, 90, 40)];
-//    
-//    txtFieldRTH_Alt.autoresizingMask=UIViewAutoresizingFlexibleHeight;
-//    txtFieldRTH_Alt.autoresizesSubviews=YES;
-//    [txtFieldRTH_Alt setBorderStyle:UITextBorderStyleNone];
-//    
-//    txtFieldRTH_Alt.backgroundColor = self.tableView.backgroundColor;
-//    txtFieldRTH_Alt.textColor = [UIColor colorWithHue:0.125 saturation:0.93 brightness:0.95 alpha:1.0];
-//    txtFieldRTH_Alt.tintColor = [UIColor whiteColor];
-//    txtFieldRTH_Alt.clearButtonMode = UITextFieldViewModeWhileEditing;
-//    txtFieldRTH_Alt.textAlignment = NSTextAlignmentRight;
-//    
-//    txtFieldRTH_Alt.delegate = self;
-//}
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -128,18 +110,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    if ( indexPath.row == 4){
-        if (_loadedCircuit.locations) {
-            
-            NSLog(@"%@,%0.3f,%d",_loadedCircuit.circuitName,[_loadedCircuit length],(int)_loadedCircuit.locations.count);
-        }
-        else{
-            NSLog(@"empty locs");
-        }
-    }
+
     
     
     

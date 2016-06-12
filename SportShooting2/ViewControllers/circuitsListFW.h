@@ -19,11 +19,18 @@
 #import "closeButton.h"
 
 
-@interface circuitsListFW : UIView <UITableViewDataSource, UITableViewDelegate,MGSwipeTableCellDelegate>
+@interface circuitsListFW : UIView <UITableViewDataSource, UITableViewDelegate,MGSwipeTableCellDelegate,UITextFieldDelegate>
 {
     NSMutableArray* allCircuits;
     Circuit* loadedCircuit;
+    int selectedRow;
+    int selectRow;
     
+    UITableView* defineTableView;
+    
+    UITextField* txtFieldCircuitName;
+    UITextField *txtFieldRTH_Alt;
+    UITextField *txtFieldCircuitLength;
 }
 -(void) showCircuitList:(BOOL)animated;
 

@@ -458,9 +458,17 @@
 }
 
 -(void) map:(MKMapView*) mapView drawCircuitPins:(NSMutableArray *) circuitCoords withColor:(NSString*) colorString{
+
+    NSMutableArray* arrayOfAnno = [[NSMutableArray alloc] init];
     for (CLLocation* loci in circuitCoords) {
-        [self map:mapView addPin:loci andTitle:@"circuitDrawing" andColor:colorString];
+        MKPointAnnotation * annotation = [[MKPointAnnotation alloc] init];
+        annotation.title = @"circuitDrawing";
+        annotation.subtitle = colorString;
+        annotation.coordinate = loci.coordinate;
+        [arrayOfAnno addObject:annotation];
     }
+    
+    [mapView addAnnotations:arrayOfAnno];
 }
 
 -(void) map:(MKMapView*) mapView addPin:(CLLocation*) location andTitle:(NSString*) title andColor:(NSString*) colorString{
@@ -584,12 +592,11 @@
 }
 
 -(void) map:(MKMapView*) mapView addLocations:(NSMutableArray*) locations withName:(NSString*) pinName andColor:(NSString*) colorName{
-    for (CLLocation* loc in locations) {
-        [self map:mapView addPin:loc andTitle:pinName andColor:colorName];
-    }
+    [self map:mapView drawCircuitPins:locations withColor:@"RGB 212 175 55"];
 }
 
 -(void) map:(MKMapView*)mapView showCircuit:(Circuit*) circuit{
+
     [mapView setRegion:[circuit region]];
     [[Calc Instance] map:mapView removePolylineNamed:@"circuitPolyline"];
     [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];

@@ -257,8 +257,6 @@
 
 
 -(void) revealControllerPanGestureWillSwipeLeft:(SWRevealViewController*) revealController{
-//    MapView* map = (MapView*)[[Menu instance] getMap];
-//    [map enableMapViewScroll];
 }
 
 #pragma mark - battery delegate

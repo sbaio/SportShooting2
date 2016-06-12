@@ -20,6 +20,8 @@
 }
 
 @property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
+@property (weak, nonatomic) IBOutlet UIImageView *switchGIF;
+
 
 -(void) showTakeOffAlert;
 

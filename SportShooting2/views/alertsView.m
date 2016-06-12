@@ -9,30 +9,53 @@
 #import "alertsView.h"
 #import "POP.h"
 
+#import "UIImage+animatedGIF.h"
+
 @implementation alertsView
 
 -(void) showTakeOffAlert{
+    [_takeOffAlertView.layer pop_removeAllAnimations];
     
     if (!_takeOffAlertView) {
         _takeOffAlertView = [[[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil] firstObject];
+        
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"SwitchRC" withExtension:@"gif"];
+        UIImage* mygif = [UIImage animatedImageWithAnimatedGIFURL:url];
+        
+        [_switchGIF setImage:mygif];
+        _switchGIF.layer.cornerRadius = 8;
+        
+        _takeOffAlertView.clipsToBounds = YES;
     }
     
     [self setFrame:self.superview.bounds];
     [mapVC.view addSubview:self];
     
     CGPoint center = self.center;
-    CGSize size = CGSizeMake(self.frame.size.width*0.4, self.frame.size.height*0.7);
+    CGSize size = CGSizeMake(self.frame.size.width*0.6, self.frame.size.height*0.7);
     
     [_takeOffAlertView setFrame:CGRectMake(center.x-size.width/2, center.y - size.height/2 , size.width, size.height)];
     
     [self.superview bringSubviewToFront:self];
     
-    [self addSubview:_takeOffAlertView];
+    if (![self.subviews containsObject:_takeOffAlertView]) {
+        [self addSubview:_takeOffAlertView];
+    }
+    
+    self.userInteractionEnabled = YES;
+    self.alpha = 1.0;
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     positionAnimation.velocity = @2000;
     positionAnimation.springBounciness = 20;
     [positionAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        
+    }];
+    
+    POPSpringAnimation *positionAnimationY = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionY];
+    positionAnimationY.toValue = @(center.y);
+    positionAnimationY.springBounciness = 20;
+    [positionAnimationY setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
         
     }];
     
@@ -43,23 +66,59 @@
     
     [_takeOffAlertView.layer pop_addAnimation:cornerAnimation forKey:@"cornerAnimation"];
     [_takeOffAlertView.layer pop_addAnimation:positionAnimation forKey:@"positionAnimation"];
+    [_takeOffAlertView.layer pop_addAnimation:positionAnimationY forKey:@"positionAnimationY"];
     
-}
-
--(void) hideAlertView{
-    [self.superview sendSubviewToBack:self];
 }
 
 -(void) didTapOnAlertView:(UITapGestureRecognizer*) sender{
     CGPoint tapPoint = [sender locationInView:sender.view];
     CGRect currentAlertRect = _takeOffAlertView.frame;
     if (!CGRectContainsPoint(currentAlertRect, tapPoint)) {
-//        NSLog(@"dismiss");
-        [self.superview sendSubviewToBack:self];
+
+        [self hideAlertView];
     }
     else{
-        NSLog(@"not dismiss");
+        
     }
+}
+
+- (IBAction)didClickOnTakeOffButton:(id)sender {
+    self.userInteractionEnabled = NO;
+    
+    NSLog(@"takeOff with completion");
+    
+    POPBasicAnimation* dismissY =[POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionY];
+    dismissY.toValue = @(-0);
+    dismissY.duration = 1.0;
+    
+    [_takeOffAlertView.layer pop_addAnimation:dismissY forKey:@"dismissFly"];
+    
+    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimSelf.toValue = @(0);
+    opacityAnimSelf.duration = 0.5;
+    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
+        NSLog(@"finished");
+        [self.superview sendSubviewToBack:self];
+    }];
+    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
+}
+
+- (IBAction)didClickOnCancelButton:(id)sender {
+    [self hideAlertView];
+    
+}
+
+-(void) hideAlertView{
+    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimSelf.toValue = @(0);
+    opacityAnimSelf.duration = 0.5;
+    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
+        NSLog(@"finished");
+        [self.superview sendSubviewToBack:self];
+    }];
+    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
 }
 
 
