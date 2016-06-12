@@ -31,6 +31,9 @@
     
     selectedRow = -1;
     selectRow = -1;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(panCircuitEnded:) name:@"panCircuitEnded" object:nil];
+    
+    showSwipeAnimation = YES;
     return self;
 }
 
@@ -100,6 +103,7 @@
         }];
     }
     else if (_addBut.status == 3){
+        isDefiningNewCircuit = NO;
         entranceAnimation.toValue = @(_tableView.center.x + _tableView.frame.size.width);
         entranceAnimation.duration = 0.5;
         [entranceAnimation setCompletionBlock:^(POPAnimation * anim, BOOL finished) {
@@ -111,6 +115,8 @@
         [_addBut animateToAddWithCompletion:^(BOOL finished) {
             
         }];
+        allCircuits = [self loadExistingCircuitsNames_coder];
+        [_tableView reloadData];
     }
 
     
@@ -277,16 +283,18 @@
     }
     
     else if (textFieldloc == txtFieldCircuitName){
+        if (!loadedCircuit) {
+            loadedCircuit = [[Circuit alloc]init];
+        }
         loadedCircuit.circuitName = string;
         
         if (!loadedCircuit.locations) {
-            // launch pan circuit to get _loadedCircuit.locations
+            // launch pan circuit to get
+            isDefiningNewCircuit = YES;
             [self startPan];
         }
         else{
             [[circuitManager Instance] saveCircuit:loadedCircuit];
-
-            [_tableView reloadData];
             
             
         }
@@ -461,9 +469,37 @@
         [_closeBut animateToCloseWithCompletion:^(BOOL finished) {
             
         }];
-        [_addBut animateToAddWithCompletion:^(BOOL finished) {
+        
+        if ([self.subviews containsObject:defineTableView]) {
+            [_addBut animateToMinusWithCompletion:^(BOOL finished) {
+                
+            }];
+        }
+        else{
+            [_addBut animateToAddWithCompletion:^(BOOL finished) {
+                
+            }];
+        }
+        
+        if (showSwipeAnimation) {
+            MGSwipeTableCell* firstCell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            
+            showSwipeAnimation = NO;
 
-        }];
+            
+            
+            [firstCell showSwipe:MGSwipeDirectionLeftToRight animated:YES completion:^(BOOL finished) {
+                
+            }];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [firstCell hideSwipeAnimated:YES completion:^(BOOL finished) {
+                    NSLog(@"finished");
+                }];
+            });
+            
+        }
+        
     }];
 
     
@@ -492,7 +528,19 @@
 }
 
 
-
+-(void) panCircuitEnded:(NSNotification*) notification{
+    NSDictionary* dict = notification.userInfo;
+    NSMutableArray* locations = [dict objectForKey:@"locations"];
+    
+    if (isDefiningNewCircuit) {
+        loadedCircuit.locations = locations;
+        [[circuitManager Instance] saveCircuit:loadedCircuit];
+        [defineTableView reloadData];
+    }
+    
+    
+    
+}
 
 
 

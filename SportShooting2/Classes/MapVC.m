@@ -323,15 +323,21 @@
             circuitManager* cm = [circuitManager Instance];
             
             swipedCircuit = [cm removeSameLocsFromCircuit:swipedCircuit];
-            NSLog(@"repair");
+            
             swipedCircuit = [cm repairCircuit:swipedCircuit];
-            NSLog(@"finished repair");
+            
             
             [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
             
-//            [[Calc Instance] map:mapView addLocations:swipedCircuit withName:@"panLoc" andColor:@"RGB 212 175 55"];
-            
+
             [[Calc Instance] map:mapView drawCircuitPolyline:swipedCircuit withTitle:@"poly" andColor:@"RGB 212 175 55"];
+            
+            isPathDrawingEnabled = NO;
+            [self enableMainMenuPan];
+            
+            NSDictionary *aDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:swipedCircuit,@"locations", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"panCircuitEnded" object:nil userInfo:aDictionary];
+            return;
             
             UINavigationController* navC = (UINavigationController*)menuRevealVC.frontViewController;
             NSArray* arrayOfControllers = navC.viewControllers;
@@ -351,8 +357,7 @@
             
             [tvc.tableView reloadData];
             
-            isPathDrawingEnabled = NO;
-            [self enableMainMenuPan];
+            
         }
     }
 }
@@ -418,7 +423,6 @@
     [_alertsView showTakeOffAlert];
     
 }
-
 
 
 -(void) showCircuitListView{

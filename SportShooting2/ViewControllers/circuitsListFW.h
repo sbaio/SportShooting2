@@ -23,6 +23,7 @@
 {
     NSMutableArray* allCircuits;
     Circuit* loadedCircuit;
+    Circuit* newCircuit;
     int selectedRow;
     int selectRow;
     
@@ -31,6 +32,10 @@
     UITextField* txtFieldCircuitName;
     UITextField *txtFieldRTH_Alt;
     UITextField *txtFieldCircuitLength;
+    
+    BOOL isDefiningNewCircuit;
+    
+    BOOL showSwipeAnimation;
 }
 -(void) showCircuitList:(BOOL)animated;
 
