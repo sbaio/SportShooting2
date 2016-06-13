@@ -26,7 +26,7 @@
     [self.window setRootViewController:mainRevealController];
     
     mapVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
-    
+    [mapVC.mapView enableMapViewScroll];
     menuRevealController = (SWRevealViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"mainBackVC"];
     [mainRevealController setFrontVC:mapVC rearVC:menuRevealController];
     

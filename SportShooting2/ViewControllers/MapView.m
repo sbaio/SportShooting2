@@ -6,8 +6,12 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
+#define RADIAN(x) ((x)*M_PI/180.0)
+
 #import "MapView.h"
 #import "UIColor+CustomColors.h"
+
+
 
 @interface MapView (){
 
@@ -225,5 +229,43 @@
 -(void) enableMapViewScroll{
     [self setScrollEnabled:YES];
     [_mapVC.scrollButton setImage:[UIImage imageNamed:@"pan_yellow.png"] forState:UIControlStateNormal];
+}
+
+
+
+#pragma mark - annotations
+
+-(void) updateCarLocation:(CLLocation*) carLoc{
+    if (!carAnnotation) {
+        carAnnotation = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:carLoc.coordinate andType:1];
+        [self addAnnotation:carAnnotation];
+    }
+    else{
+        
+        [carAnnotation setCoordinate:carLoc.coordinate];
+        float carHeading = (carLoc.course < 180) ? carLoc.course : carLoc.course-360;
+        [carAnnotation updateHeading:RADIAN(carHeading)];
+    }
+}
+
+-(void) updateDroneAnnotation:(Drone*) drone{
+    if (!droneAnno) {
+        droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:0];
+        
+        [self addAnnotation:droneAnno];
+    }
+    else{
+        [droneAnno setCoordinate:drone.droneLoc.coordinate];
+    }
+         [droneAnno.annotationView updateHeading:RADIAN(drone.droneYaw)];
+    
+    if (!droneSpeed_vecAnno) {
+        droneSpeed_vecAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:9];
+        [self addAnnotation:droneSpeed_vecAnno];
+    }
+    else{
+        [droneSpeed_vecAnno setCoordinate:drone.droneLoc.coordinate];
+        [droneSpeed_vecAnno.annotationView updateHeading:RADIAN(drone.droneLoc.course) andScale:drone.droneLoc.speed/17];
+    }
 }
 @end

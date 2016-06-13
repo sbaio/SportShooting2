@@ -25,7 +25,6 @@
 }
 -(id) init{
     self = [super init];
-    savingQueue = dispatch_queue_create("saving_Queue", DISPATCH_QUEUE_SERIAL);
     return self;
 }
 
@@ -447,10 +446,9 @@
     if (!circuit.circuitName) {
         NSLog(@"empty name");
     }
-    dispatch_async(savingQueue, ^{
-        [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"%@_c",circuit.circuitName]];
-        NSLog(@"save circuit %@, %d",circuit.circuitName,(int)circuit.locations.count);
-    });
+
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"%@_c",circuit.circuitName]];
+    NSLog(@"save circuit %@, %d",circuit.circuitName,(int)circuit.locations.count);
     
 }
 -(Circuit*) loadCircuitNamed_coder:(NSString*) circuitName{
@@ -467,5 +465,102 @@
     
     [userDefaults removeObjectForKey:[NSString stringWithFormat:@"%@_c",circuitName]];
 }
+
+
+
+
+#pragma mark - car simulation 
+
+-(void) simulateCarOnCircuit:(Circuit*) circuit{
+    if ([carSimulationTimer isValid]) {
+        [carSimulationTimer invalidate];
+    }
+    
+    carPrevIndex = 0; // for simulation purpose ...
+    carIndexOnSimpleCircuit = 0;
+    carSimulatedLocation = circuit.locations[carIndexOnSimpleCircuit%circuit.locations.count];
+    
+    simulationCircuit = circuit;
+    
+    cumulatedDist = 0;
+    
+    carSimulationTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(moveCarOnCircuit:) userInfo:nil repeats:YES];
+}
+
+-(void) moveCarOnCircuit:(NSTimer*)timer{
+    if ([[Menu instance]getMapVC].isRealCar) {
+        return;
+    }
+    // input slider ...
+    carSpeed = 30;//[virtualCarSpeedSlider value];
+    
+    CLLocation* prevLocation = carSimulatedLocation;
+    
+    carSimulatedLocation = [self moveSimulatedCarFrom:carSimulatedLocation byDistance:carSpeed*0.1 onCircuit:simulationCircuit];
+    
+    
+    // ------------> filter heading
+//        float course_heading = [[Calc Instance] headingTo:carSimulatedLocation.coordinate fromPosition:prevLocation.coordinate];
+    NSMutableArray* angleArray = simulationCircuit.interAngle;
+    float course_heading = [angleArray[carPrevIndex] floatValue];
+   
+    
+    carSimulatedLocation = [[CLLocation alloc]initWithCoordinate:carSimulatedLocation.coordinate altitude:0 horizontalAccuracy:1 verticalAccuracy:1 course:course_heading speed:carSpeed timestamp:[[NSDate alloc] init]];
+    if (![[Menu instance]getMapVC].isRealCar) {
+        [[[Menu instance]getMapVC] carAtLocation:carSimulatedLocation];
+    }
+    
+}
+
+-(CLLocation*) moveSimulatedCarFrom:(CLLocation*) carLoc byDistance:(float) distance onCircuit:(Circuit*) circuit{
+    
+    CLLocation* nextLoc  = [[CLLocation alloc] init];
+    
+    // prevCarIndex here stored
+    CLLocation* locip1 = circuit.locations[(carPrevIndex+1)%circuit.locations.count];
+    
+    
+    float distToLocip1 = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:locip1.coordinate];
+    
+    
+    if (distToLocip1 > distance) {
+        
+        float heading = [[Calc Instance] headingTo:locip1.coordinate fromPosition:carLoc.coordinate];
+        
+        nextLoc = [[Calc Instance] locationFrom:carLoc atDistance:distance atBearing:heading];
+        
+        // going to next index prevCarIndex +1
+    }
+    else{
+        float distanceToDo = distance;
+        
+        for (int i = 0; i< 2*circuit.locations.count; i++) {
+            CLLocation* locip1 = circuit.locations[(carPrevIndex+i+1)%circuit.locations.count];
+            CLLocation* locip2 = circuit.locations[(carPrevIndex+i+2)%circuit.locations.count];
+            
+            float dist_ip1_ip2 = [circuit.interDistance[(carPrevIndex+i+1)%circuit.locations.count] floatValue];
+            
+            if (distanceToDo > dist_ip1_ip2) {
+                
+                distanceToDo -= dist_ip1_ip2;
+                continue;
+            }
+            else{
+                float course = [[Calc Instance] headingTo:locip2.coordinate fromPosition:locip1.coordinate];
+                
+                
+                nextLoc = [[Calc Instance] locationFrom:locip1 atDistance:distanceToDo atBearing:course];
+                // going between index prevCarIndex+1 and prevCarIndex+2
+                
+                carPrevIndex = (int)(carPrevIndex+i+1)%circuit.locations.count;
+                
+                break;
+            }
+        }
+        
+    }
+    return nextLoc;
+}
+
 
 @end

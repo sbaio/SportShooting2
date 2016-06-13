@@ -37,8 +37,7 @@
 		D6218CD91D09527E00DF1E55 /* landButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CD81D09527E00DF1E55 /* landButton.png */; };
 		D6218CDC1D0A0A2E00DF1E55 /* UIColor+CustomColors.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CDB1D0A0A2E00DF1E55 /* UIColor+CustomColors.m */; };
 		D6218CDF1D0A0C4300DF1E55 /* closeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CDE1D0A0C4300DF1E55 /* closeButton.m */; };
-		D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */; };
-		D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */; };
+		D6218CEB1D0A395400DF1E55 /* AlertViews.xib in Resources */ = {isa = PBXBuildFile; fileRef = D6218CE91D0A395400DF1E55 /* AlertViews.xib */; };
 		D6218CEE1D0A52EB00DF1E55 /* alertsView.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CED1D0A52EB00DF1E55 /* alertsView.m */; };
 		D6218CF11D0B328D00DF1E55 /* UIImage+animatedGIF.m in Sources */ = {isa = PBXBuildFile; fileRef = D6218CF01D0B328D00DF1E55 /* UIImage+animatedGIF.m */; };
 		D6218CF31D0B33E200DF1E55 /* takeOffButton.gif in Resources */ = {isa = PBXBuildFile; fileRef = D6218CF21D0B33E200DF1E55 /* takeOffButton.gif */; };
@@ -216,9 +215,7 @@
 		D6218CDB1D0A0A2E00DF1E55 /* UIColor+CustomColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+CustomColors.m"; sourceTree = "<group>"; };
 		D6218CDD1D0A0C4300DF1E55 /* closeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = closeButton.h; sourceTree = "<group>"; };
 		D6218CDE1D0A0C4300DF1E55 /* closeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = closeButton.m; sourceTree = "<group>"; };
-		D6218CE71D0A395400DF1E55 /* takeOffAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = takeOffAlertView.h; sourceTree = "<group>"; };
-		D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = takeOffAlertView.m; sourceTree = "<group>"; };
-		D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = takeOffAlertView.xib; sourceTree = "<group>"; };
+		D6218CE91D0A395400DF1E55 /* AlertViews.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AlertViews.xib; path = takeOffAlertView/AlertViews.xib; sourceTree = "<group>"; };
 		D6218CEC1D0A52EB00DF1E55 /* alertsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alertsView.h; sourceTree = "<group>"; };
 		D6218CED1D0A52EB00DF1E55 /* alertsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = alertsView.m; sourceTree = "<group>"; };
 		D6218CEF1D0B328D00DF1E55 /* UIImage+animatedGIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+animatedGIF.h"; sourceTree = "<group>"; };
@@ -571,20 +568,10 @@
 			children = (
 				D6218CEC1D0A52EB00DF1E55 /* alertsView.h */,
 				D6218CED1D0A52EB00DF1E55 /* alertsView.m */,
-				D6218CE61D0A395400DF1E55 /* takeOffAlertView */,
+				D6218CE91D0A395400DF1E55 /* AlertViews.xib */,
 				D612D1A51D0CC51200CC6D14 /* cells.xib */,
 			);
 			path = views;
-			sourceTree = "<group>";
-		};
-		D6218CE61D0A395400DF1E55 /* takeOffAlertView */ = {
-			isa = PBXGroup;
-			children = (
-				D6218CE71D0A395400DF1E55 /* takeOffAlertView.h */,
-				D6218CE81D0A395400DF1E55 /* takeOffAlertView.m */,
-				D6218CE91D0A395400DF1E55 /* takeOffAlertView.xib */,
-			);
-			path = takeOffAlertView;
 			sourceTree = "<group>";
 		};
 		D632D4031D03F5CB00B12946 = {
@@ -1293,7 +1280,7 @@
 				D632D55F1D04042200B12946 /* aircraft.png in Resources */,
 				D6218CAA1D04D4CC00DF1E55 /* GPS_green.png in Resources */,
 				D6218CD91D09527E00DF1E55 /* landButton.png in Resources */,
-				D6218CEB1D0A395400DF1E55 /* takeOffAlertView.xib in Resources */,
+				D6218CEB1D0A395400DF1E55 /* AlertViews.xib in Resources */,
 				D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */,
 				D6218CF51D0B85EF00DF1E55 /* SwitchRC.gif in Resources */,
 				D69902551D0407850038D05B /* LUT_YG.png in Resources */,
@@ -1357,7 +1344,6 @@
 				D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */,
 				D632D52A1D03FD2900B12946 /* SWRevealViewController.m in Sources */,
 				D632D5351D04030700B12946 /* Autopilot.m in Sources */,
-				D6218CEA1D0A395400DF1E55 /* takeOffAlertView.m in Sources */,
 				D632D4F81D03F6A200B12946 /* POPGeometry.mm in Sources */,
 				D632D4FE1D03F6A200B12946 /* TransformationMatrix.cpp in Sources */,
 				D632D5401D04033300B12946 /* Vec.m in Sources */,

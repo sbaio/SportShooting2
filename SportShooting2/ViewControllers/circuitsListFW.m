@@ -403,7 +403,11 @@
     
     MapVC* mapVC = [[Menu instance] getMapVC];
     if (loadedCircuit) {
+        
+        [loadedCircuit update];
+        
         mapVC.circuit = loadedCircuit;
+        
         NSLog(@"setting mapVC circuit: \"%@\"",loadedCircuit.circuitName);
         
         // inform that this circuit "circuitName" is selected
@@ -450,7 +454,6 @@
          [self removeFromSuperview];
         MapView* map = (MapView*)[[Menu instance] getMap];
         [map updateMaskImageAndButton];
-       
     }];
     
     [self.layer pop_addAnimation:offscreenAnimation forKey:@"offscreenAnimation"];

@@ -74,7 +74,35 @@
     return [self initWithLocations:circuit andName:circuitName];
 }
 
-
+-(void) update{
+    if (!self.circuitName) {
+        NSLog(@"empty name");
+        return;
+    }
+    if (!self.locations) {
+        NSLog(@"empty locs");
+        return;
+    }
+    if (self.RTH_altitude < 5) {
+        NSLog(@"RTH altitude insufficient");
+    }
+    if (!self.interDistance) {
+        self.interDistance = [self calculateInterDistancesOfCircuit:self.locations];
+    }
+    self.circuitLength = [self length];
+    if (!self.interAngle) {
+        self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
+    }
+    
+    if (!self.interIndexesDistance) {
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            self.interIndexesDistance = [self calculateInterIndexesDistances2];
+            NSLog(@"finished");
+        });
+        
+    }
+}
 
 // save circuit
 
@@ -278,6 +306,50 @@
         }
         [returnArray addObject:startIndexArray];
         
+    }
+    return  returnArray;
+}
+
+-(NSMutableArray*) calculateInterIndexesDistances2{
+    
+    NSMutableArray* returnArray = [[NSMutableArray alloc] init];
+    // initialisation
+    for (int i = 0; i <self.locations.count; i++) {
+        NSMutableArray* startIndexArray = [[NSMutableArray alloc] init];
+        for (int j=0; j<self.locations.count; j++) {
+            [startIndexArray addObject:[NSNumber numberWithFloat:0]];
+        }
+        [returnArray addObject:startIndexArray];
+    }
+    
+    for (int i = 0 ; i<self.locations.count; i++) {
+        
+        for (int j = 0; j<self.locations.count; j++) {
+            // here we calculate from j to j+i
+            float value_j_jpi = 0;
+            if (i == 0) {
+                value_j_jpi = 0;
+            }
+            else if (i == 1) {
+                value_j_jpi = [self.interDistance[j] floatValue];
+            }
+            else{
+                int k = (j+1)%self.locations.count;
+                int l = (j+i)%self.locations.count;
+                NSMutableArray* start_j = [returnArray objectAtIndex:j];
+                float j_k = [[start_j objectAtIndex:k] floatValue];
+                NSMutableArray* start_k = [returnArray objectAtIndex:k];
+                float k_jpi = [[start_k objectAtIndex:l] floatValue];
+                
+                value_j_jpi = j_k + k_jpi;
+                
+                if (value_j_jpi > self.circuitLength/2) {
+                    value_j_jpi -= self.circuitLength;
+                }
+            }
+            NSMutableArray* startIndex_j = [returnArray objectAtIndex:j];
+            [startIndex_j replaceObjectAtIndex:(j+i)%self.locations.count withObject:[NSNumber numberWithFloat:value_j_jpi]];
+        }
     }
     return  returnArray;
 }

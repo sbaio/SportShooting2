@@ -30,13 +30,13 @@
     NSMutableArray* arrayOfDroneYawSp;
 }
 
-@property (weak, nonatomic) MKMapView* mapView;
+//@property (weak, nonatomic) MKMapView* mapView;
 @property CLLocation* droneLoc; // GPS pos , alt, velocity .. when realDrone updated in callback at init
 @property int droneIndexOnCircuit;
 @property float droneDistToItsIndex;
 @property float droneYaw;
 @property float droneYawSpeed;
-//@property  droneAnnotation
+
 @property CLLocation* targetLocation;
 
 @property Aircraft_Camera_Car_Annotation* droneSpeedVec_Anno;
@@ -58,5 +58,6 @@
 
 -(void) updateDroneStateWithFlightControllerState:(DJIFlightControllerCurrentState*) state;
 
+-(Drone*) newDroneStateFrom:(Drone*) currentDroneState withTargetSpeed:(float) targSp andTargetAngle:(float) targHeading andTargAltitude:(float) targAlt during:(float) dt;
 
 @end

@@ -10,17 +10,24 @@
 #import "DVFloatingWindow.h"
 #import "Circuit.h"
 #import "Calc.h"
+#import "Menu.h"
 
 @interface circuitManager : NSObject
 {
-    dispatch_queue_t savingQueue;
+    Circuit* simulationCircuit;
+    NSTimer * carSimulationTimer;
+    int carPrevIndex;
+    CLLocation* carSimulatedLocation;
+    float cumulatedDist;
+    
+    int carIndexOnSimpleCircuit;
+    float carSpeed; // calculated with avgDist / timerInterval
 }
 
 +(id) Instance;
 
 -(NSMutableArray*) loadCircuitNamed:(NSString*)circuitName;
 
-//-(Circuit*) loadCircuit:(NSString*) circuitName;
 
 -(Circuit*) loadCircuit:(NSString*) circuitName;
 -(Circuit*) circuitWithLocations:(NSMutableArray*) locations andName:(NSString*) circuitName;
@@ -42,5 +49,8 @@
 -(void) saveCircuit:(Circuit*) circuit;
 -(Circuit*) loadCircuitNamed_coder:(NSString*) circuitName;
 -(void) removeCircuitNamed:(NSString*) circuitName;
+
+// CAR SIMULATION
+-(void) simulateCarOnCircuit:(Circuit*) circuit;
 
 @end

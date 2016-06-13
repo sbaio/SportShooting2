@@ -41,6 +41,7 @@
 @class BottomStatusBar;
 @class alertsView;
 @class AppDelegate;
+@class CircuitsTVC;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -91,6 +92,15 @@
     __weak IBOutlet NSLayoutConstraint *videoLargeY;
     
     
+    // mission
+    CLLocation* droneSimulatedLoc;
+    NSTimer* pathPlanningTimer;
+    NSDate* startMissionDate;
+    int countFollow;
+    NSDate* refDate;
+    
+    BOOL commandByTargetLocation;
+    //
     
     NSDate* lastFCUpdateDate;
     int freqCutterCameraFeed;
@@ -101,7 +111,7 @@
 @property (weak, nonatomic) IBOutlet MapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *scrollButton;
 @property (strong,nonatomic) Circuit* circuit;
-//@property (strong,nonatomic)  /// reference circuit
+
 @property(nonatomic, strong) CLLocationManager* locationManager;
 @property (weak, nonatomic) IBOutlet UIButton *recButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordingTimeLabel;
@@ -109,19 +119,22 @@
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
-@property(strong,nonatomic) CLLocation * phoneLocation;;
+@property(strong,nonatomic) CLLocation * phoneLocation;
+@property(strong,nonatomic) CLLocation * carLocation; // maybe simulated
 //@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
 
 @property (weak, nonatomic) IBOutlet UIButton *takeOffButton;
 @property (weak, nonatomic) IBOutlet UIButton *landButton;
-
+@property (weak, nonatomic) IBOutlet UIButton *GoButton;
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic,strong) Autopilot* autopilot;
 @property(nonatomic,strong) DJICamera* camera;
 
 @property BOOL isPathDrawingEnabled;
-
+@property BOOL isRealCar;
+@property BOOL isRealDrone;
+@property Drone* simulatedDrone;
 
 -(void) enableMainMenuPan;
 -(void) disableMainMenuPan;
@@ -129,4 +142,10 @@
 -(void) startUpdatingLoc;
 -(void) showCircuitListView;
 
+-(void) switchToVideo;
+-(void) switchToMap;
+
+-(BOOL) isShowingCircuitList;
+
+-(void) carAtLocation:(CLLocation*) location;
 @end

@@ -35,7 +35,7 @@
     [super viewDidLoad];
     
     [self loadNibs];
-    
+    [self initUI];
     
     
     mainRevealVC = [[Menu instance] getMainRevealVC];
@@ -47,6 +47,8 @@
     [self showTopMenu]; // and bottom
     appD = [[Menu instance] getAppDelegate];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
+    
 }
 
 -(void) loadNibs{
@@ -54,9 +56,13 @@
     
     [[[NSBundle mainBundle] loadNibNamed:@"BottomStatusBar" owner:self options:nil] firstObject];
 
-//    [[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil];
     [[NSBundle mainBundle] loadNibNamed:@"circuitsListFW" owner:self options:nil];
     
+   
+}
+-(void) initUI{
+    [_GoButton.layer setCornerRadius:8];
+    [_GoButton setHidden:YES];
 }
 
 -(void) showTopMenu{
@@ -150,20 +156,11 @@
     [_contentView addConstraints:[NSArray arrayWithObjects:videoSmallHeight,videoSmallX,videoSmallY, nil]];
 }
 
-
--(void)switchMapAndVideoViews:(UITapGestureRecognizer*) tap{
-    
+-(void) switchToVideo{
     BOOL isVideoMain = (videoPreviewerView.frame.size.width == [[UIScreen mainScreen]bounds].size.width);
-    
-    void (^completionWhenFinishedShowingMap)(BOOL) = ^(BOOL finished)
-    {
-        [_contentView sendSubviewToBack:mapView];
-        [mapView updateMaskImageAndButton];
-        [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            videoPreviewerView.alpha = 1.0;
-            mapView.alpha = 1.0;
-        } completion:nil];
-    };
+    if (isVideoMain) {
+        return;
+    }
     void (^completionWhenFinishedShowingVideo)(BOOL) = ^(BOOL finished)
     {
         [mapView updateMaskImageAndButton];
@@ -173,61 +170,81 @@
         } completion:nil];
         
     };
+    if (CGRectIsEmpty(smallSize)) {
+        smallSize = videoPreviewerView.frame;
+    }
+    
+    [mapView setMapViewMaskImage:NO];
+    
+    [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        mapView.alpha = 0.5;//1
+        [mapView setFrame:smallSize];
+        
+    } completion:completionWhenFinishedShowingVideo];
+    [self enlargeVideo_MakeMapSmall_updateConstraints];
+    [_contentView sendSubviewToBack:videoPreviewerView];
+    [mapView enableMapViewScroll];
+    
+    [videoPreviewerView setFrame:[[UIScreen mainScreen] bounds]];
+    [[VideoPreviewer instance].glView adjustSize];
+    
+    [mapView addGestureRecognizer:mapView.tapGRMapVideoSwitching];
+    [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
+    [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
+}
+-(void) switchToMap{
+    BOOL isMapMain = (mapView.frame.size.width == [[UIScreen mainScreen]bounds].size.width);
+    if (isMapMain) {
+        return;
+    }
+    void (^completionWhenFinishedShowingMap)(BOOL) = ^(BOOL finished)
+    {
+        [_contentView sendSubviewToBack:mapView];
+        [mapView updateMaskImageAndButton];
+        [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            videoPreviewerView.alpha = 1.0;
+            mapView.alpha = 1.0;
+        } completion:nil];
+    };
+    // enlarge map
+    if (CGRectIsEmpty(smallSize)) {
+        smallSize = mapView.frame;
+    }
+    [mapView setMapViewMaskImage:NO];
+    
+    [UIView animateWithDuration:0.9 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        videoPreviewerView.alpha = 0.8;
+        
+        mapView.alpha = 0.8;//1
+        [mapView setFrame:[[UIScreen mainScreen] bounds]];
+        
+    } completion:completionWhenFinishedShowingMap];
+    
+    [self enlargeMap_MakeVideoSmall_updateConstraints];
+    [videoPreviewerView setFrame:smallSize];
+    [[VideoPreviewer instance].glView adjustSize];
+    [mapView enableMapViewScroll];
+    
+    [mapView removeGestureRecognizer:mapView.tapGRMapVideoSwitching];
+    [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
+    [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
+    
+    // circuit selection part
+    if (!self.circuit) {
+        [self showCircuitListView];
+    }
+}
+-(void)switchMapAndVideoViews:(UITapGestureRecognizer*) tap{
+    
+    BOOL isVideoMain = (videoPreviewerView.frame.size.width == [[UIScreen mainScreen]bounds].size.width);
     
     if (isVideoMain) {
-        // enlarge map
-        if (CGRectIsEmpty(smallSize)) {
-            smallSize = mapView.frame;
-        }
-        [mapView setMapViewMaskImage:NO];
-        
-        [UIView animateWithDuration:0.9 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            videoPreviewerView.alpha = 0.8;
-            
-            mapView.alpha = 0.8;//1
-            [mapView setFrame:[[UIScreen mainScreen] bounds]];
-      
-        } completion:completionWhenFinishedShowingMap];
-        
-        [self enlargeMap_MakeVideoSmall_updateConstraints];
-        [videoPreviewerView setFrame:smallSize];
-        [[VideoPreviewer instance].glView adjustSize];
-        [mapView disableMapViewScroll];
-        
-        [mapView removeGestureRecognizer:mapView.tapGRMapVideoSwitching];
-        [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
-        [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
-        
-        // circuit selection part
-        if (!self.circuit) {
-            [self showCircuitListView];
-        }
-        
-        
+        [self switchToMap];
+    
         
     }
     else{
-        if (CGRectIsEmpty(smallSize)) {
-            smallSize = videoPreviewerView.frame;
-        }
-        
-        [mapView setMapViewMaskImage:NO];
-        
-        [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            mapView.alpha = 0.5;//1
-            [mapView setFrame:smallSize];
-            
-        } completion:completionWhenFinishedShowingVideo];
-        [self enlargeVideo_MakeMapSmall_updateConstraints];
-        [_contentView sendSubviewToBack:videoPreviewerView];
-        [mapView enableMapViewScroll];
-        
-        [videoPreviewerView setFrame:[[UIScreen mainScreen] bounds]];
-        [[VideoPreviewer instance].glView adjustSize];
-        
-        [mapView addGestureRecognizer:mapView.tapGRMapVideoSwitching];
-        [[VideoPreviewer instance].glView addGestureRecognizer:[VideoPreviewer instance].tapGROnLargeView];
-        [[VideoPreviewer instance].glView removeGestureRecognizer:[VideoPreviewer instance].tapGRSwitching];
+        [self switchToVideo];
     }
 }
 #pragma mark - drone state callback
@@ -419,9 +436,8 @@
 //        [self stopRecord];
 //    }
 
-    
-    
-    
+//    [_alertsView showTakeOffAlert];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
 }
 
 
@@ -454,9 +470,142 @@
     [_alertsView showTakeOffAlert];
 }
 - (IBAction)onLandButtonClicked:(id)sender {
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    // set landing icon to gif
+    if (fc) {
+        DVLog(@"landing");
+        [fc autoLandingWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                DVLog(@"landing error : %@",error.localizedDescription);
+                // set landing icon to fix image
+            }
+            else{
+                DVLog(@"landing succeded");
+            }
+        }];
+        return;
+    }
+    else{
+        DVLog(@"Flight controller not found");
+        return;
+    }
+}
+
+-(BOOL) isShowingCircuitList{
+
+    if ([[[UIApplication sharedApplication]keyWindow].subviews containsObject:_circuitsList]) {
+        return YES;
+    }
+    else{
+        return NO;
+    }
+    
+}
+
+-(void) handleGoButton:(NSNotification*) notif{
+    if ([_GoButton isHidden]) {
+        [_GoButton setHidden:NO];
+    }
+    else{
+        [_GoButton setHidden:YES];
+        
+    }
+}
+- (IBAction)didClickOnGoButton:(id)sender {
+    // when detected driving .. popup to ask if drone should start following/ moving
+    [self startMission];
 }
 
 
+-(void) startMission{
+    _isRealDrone = NO;
+    _isRealCar = NO;
+    
+    if (!_circuit) {
+        NSLog(@"no circuit");
+        return;
+    }
+    
+    // ***********  CAR ***********
+    if (!_isRealCar) {
+        // start simulation --> callback --> carLocation contains current car location
+        [[circuitManager Instance]simulateCarOnCircuit:_circuit];
+    }
+    // ***********  Drone ***********
+    if (!_isRealDrone) {
+        
+        CLLocation* simulatedDroneStartLocation = _circuit.locations[0];
+        droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:simulatedDroneStartLocation.coordinate altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
+        
+        _simulatedDrone = [[Drone alloc] initWithLocation:droneSimulatedLoc];
+    }
+    
+    // ********** PATH PLANNING TIMER *********
+    if(pathPlanningTimer){
+        [pathPlanningTimer invalidate];
+        pathPlanningTimer = nil;
+    }
+    
+    pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    
+    pathPlanningTimer.tolerance = 0.01;
+    
+    startMissionDate = [[NSDate alloc] init]; // initialisation de la date reference de start mission
+    countFollow = 0;
+    refDate = [[NSDate alloc] init];
+}
+
+
+-(void) carAtLocation:(CLLocation*) location{
+    
+    if (_isRealCar) {
+        if (location.speed < 0) {
+            NSLog(@"location with negative speed");
+            _carLocation = nil;
+            return;
+        }
+        else{
+            _carLocation = location;
+            // display the speed !!!
+        }
+    }
+    else{
+        _carLocation = location;
+    }
+    [mapView updateCarLocation:_carLocation];
+    
+}
+
+-(void) onPathPlanningTimerTicked{
+    _isRealDrone = NO;
+    _isRealCar = NO;
+    
+    if (!_isRealDrone) {// SIMULATED DRONE
+        if (_circuit.locations.count) {
+            
+            _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:10 andTargetAngle:0 andTargAltitude:10 during:0.1];
+            [mapView updateDroneAnnotation:_simulatedDrone];
+            
+            if (commandByTargetLocation) {
+                // MOVE SIMULATED DRONE WITH TARGET LOCATION
+                
+            }
+            else{
+                
+            }
+        }
+        else{
+            NSLog(@"simple circuit not loaded yet");
+            return;
+        }
+    }
+    else{ // REAL DRONE
+         // ********* GIMBAL COMMAND **********
+        
+        
+        // ********* PATH PLANNING ************
+    }
+}
 
 
 @end

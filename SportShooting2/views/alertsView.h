@@ -16,7 +16,6 @@
     __weak MapVC* mapVC;
     UITapGestureRecognizer* dismissTapGRAlertView;
     
-//    UIView* takeOffAlertView;
 }
 
 @property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
@@ -25,4 +24,6 @@
 
 -(void) showTakeOffAlert;
 
+
+-(BOOL) isShowingAnAlert;
 @end

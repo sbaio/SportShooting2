@@ -38,5 +38,7 @@
 -(float) length;
 -(MKCoordinateRegion) region;
 
+-(void) update;
+
 
 @end

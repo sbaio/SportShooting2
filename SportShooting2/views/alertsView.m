@@ -13,11 +13,25 @@
 
 @implementation alertsView
 
+
+-(void) didTapOnAlertView:(UITapGestureRecognizer*) sender{
+
+    CGPoint tapPoint = [sender locationInView:sender.view];
+    CGRect currentAlertRect = _takeOffAlertView.frame;
+    if (!CGRectContainsPoint(currentAlertRect, tapPoint)) {
+
+        [self dismissTakeoffAlertFade];
+    }
+    else{
+        
+    }
+}
+
+// takeoff
 -(void) showTakeOffAlert{
-    [_takeOffAlertView.layer pop_removeAllAnimations];
     
     if (!_takeOffAlertView) {
-        _takeOffAlertView = [[[NSBundle mainBundle] loadNibNamed:@"takeOffAlertView" owner:self options:nil] firstObject];
+        _takeOffAlertView = [[[NSBundle mainBundle] loadNibNamed:@"AlertViews" owner:self options:nil] firstObject];
         
         NSURL *url = [[NSBundle mainBundle] URLForResource:@"SwitchRC" withExtension:@"gif"];
         UIImage* mygif = [UIImage animatedImageWithAnimatedGIFURL:url];
@@ -27,6 +41,7 @@
         
         _takeOffAlertView.clipsToBounds = YES;
     }
+    [_takeOffAlertView.layer pop_removeAllAnimations];
     
     [self setFrame:self.superview.bounds];
     [mapVC.view addSubview:self];
@@ -68,22 +83,52 @@
     [_takeOffAlertView.layer pop_addAnimation:positionAnimation forKey:@"positionAnimation"];
     [_takeOffAlertView.layer pop_addAnimation:positionAnimationY forKey:@"positionAnimationY"];
     
+    if ([[[Menu instance] getMapVC] isShowingCircuitList]) {
+        [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
+    }
+    
 }
 
--(void) didTapOnAlertView:(UITapGestureRecognizer*) sender{
-    CGPoint tapPoint = [sender locationInView:sender.view];
-    CGRect currentAlertRect = _takeOffAlertView.frame;
-    if (!CGRectContainsPoint(currentAlertRect, tapPoint)) {
-
-        [self hideAlertView];
-    }
-    else{
+-(void) dismissTakeOffAlertY{
+    POPBasicAnimation* dismissY =[POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionY];
+    dismissY.toValue = @(-0);
+    dismissY.duration = 1.0;
+    
+    [_takeOffAlertView.layer pop_addAnimation:dismissY forKey:@"dismissFly"];
+    
+    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimSelf.toValue = @(0);
+    opacityAnimSelf.duration = 0.5;
+    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
+        [self.superview sendSubviewToBack:self];
+    }];
+    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
+}
+-(void) dismissTakeoffAlertFade{
+    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimSelf.toValue = @(0);
+    opacityAnimSelf.duration = 0.5;
+    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
         
-    }
+        [self.superview sendSubviewToBack:self];
+    }];
+    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
+}
+
+-(void) shakeTakeoffAlertViewWithComp:(void (^)(BOOL finished))callback{
+    
+    POPSpringAnimation *shakeAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    shakeAnimation.velocity = @2000;
+    shakeAnimation.springBounciness = 20;
+    [shakeAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        callback(finished);
+    }];
+    [_takeOffAlertView pop_addAnimation:shakeAnimation forKey:@"shakeAnimation"];
 }
 
 - (IBAction)didClickOnTakeOffButton:(id)sender {
-    self.userInteractionEnabled = NO;
     
     DJIFlightController* fc = [ComponentHelper fetchFlightController];
     if (fc && [[Menu instance] getAppDelegate].isReceivingFlightControllerStatus) {
@@ -97,43 +142,19 @@
     }
     else{
         DVLog(@"Flight controller not found");
+        [self shakeTakeoffAlertViewWithComp:^(BOOL finished) {
+            [self dismissTakeoffAlertFade];
+            [mapVC switchToVideo];
+        }];
     }
-    
-    NSLog(@"takeOff with completion");
-    
-    POPBasicAnimation* dismissY =[POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionY];
-    dismissY.toValue = @(-0);
-    dismissY.duration = 1.0;
-    
-    [_takeOffAlertView.layer pop_addAnimation:dismissY forKey:@"dismissFly"];
-    
-    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
-    
-    opacityAnimSelf.toValue = @(0);
-    opacityAnimSelf.duration = 0.5;
-    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
-        NSLog(@"finished");
-        [self.superview sendSubviewToBack:self];
-    }];
-    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
 }
-
 - (IBAction)didClickOnCancelButton:(id)sender {
-    [self hideAlertView];
-    
+    [self dismissTakeoffAlertFade];
 }
 
--(void) hideAlertView{
-    POPBasicAnimation* opacityAnimSelf = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
-    
-    opacityAnimSelf.toValue = @(0);
-    opacityAnimSelf.duration = 0.5;
-    [opacityAnimSelf setCompletionBlock:^(POPAnimation * animation, BOOL finished) {
-        NSLog(@"finished");
-        [self.superview sendSubviewToBack:self];
-    }];
-    [self.layer pop_addAnimation:opacityAnimSelf forKey:@"opacity"];
-}
+
+// land
+
 
 
 -(id) initWithCoder:(NSCoder *)aDecoder{
@@ -146,6 +167,19 @@
     return self;
 }
 
+-(BOOL) isShowingAnAlert{
+    NSArray* arrayOfSiblings = self.superview.subviews;
+    int alertIndex = (int)[arrayOfSiblings indexOfObject:self];
+    int mainContentViewIndex = (int)[arrayOfSiblings indexOfObject:[[Menu instance] getMapVC].contentView];
+    
+    
+    if (alertIndex < mainContentViewIndex) {
+        return NO;
+    }
+    else{
+        return YES;
+    }
+}
 
 
 @end

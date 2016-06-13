@@ -16,11 +16,12 @@
 
 
 @implementation Drone
-@synthesize mapView;
+
 -(void) initWithDrone:(DJIAircraft*) realDrone{
     DVLog(@"setting real drone as drone");
     
 }
+
 -(id) initWithLocation:(CLLocation*) loc{
     
     self = [super init];
@@ -31,12 +32,7 @@
     self.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:loc.coordinate andType:0];
     self.droneSpeedVec_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:loc.coordinate andType:9];
     
-    MapVC* mapVC = [[Menu instance] getMapVC];
-    
-    mapView = mapVC.mapView;
-    
-    [mapView addAnnotation:self.droneAnno];
-    [mapView addAnnotation:self.droneSpeedVec_Anno];
+    [self.droneSpeedVec_Anno updateHeading:self.droneLoc.course andScale:self.droneLoc.speed];
     
     return self;
 }
@@ -287,12 +283,12 @@
     if (!self.droneAnno) {
         self.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:state.aircraftLocation andType:0];
         [self.droneAnno.annotationView updateHeading:heading];
-        [mapView addAnnotation:self.droneAnno];
+//        [mapView addAnnotation:self.droneAnno];
     }
     else{
-        if (![mapView.annotations containsObject:self.droneAnno]) {
-            [mapView addAnnotation:self.droneAnno];
-        }
+//        if (![mapView.annotations containsObject:self.droneAnno]) {
+////            [mapView addAnnotation:self.droneAnno];
+//        }
         [self.droneAnno setCoordinate:state.aircraftLocation];
         [self.droneAnno.annotationView updateHeading:heading];
     }
@@ -302,16 +298,72 @@
     if (!self.droneSpeedVec_Anno) {
         self.droneSpeedVec_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:state.aircraftLocation andType:9];
         [self.droneSpeedVec_Anno updateHeading:RADIAN(angle) andScale:scale];
-        [mapView addAnnotation: self.droneSpeedVec_Anno];
+//        [mapView addAnnotation: self.droneSpeedVec_Anno];
     }
     else{
-        if (![mapView.annotations containsObject:self.droneSpeedVec_Anno]) {
-            [mapView addAnnotation:self.droneSpeedVec_Anno];
-        }
+//        if (![mapView.annotations containsObject:self.droneSpeedVec_Anno]) {
+////            [mapView addAnnotation:self.droneSpeedVec_Anno];
+//        }
         [self.droneSpeedVec_Anno setCoordinate:state.aircraftLocation];
         [self.droneSpeedVec_Anno updateHeading:RADIAN(angle) andScale:scale];
     }
     
+}
+
+-(Drone*) newDroneStateFrom:(Drone*) currentDroneState withTargetSpeed:(float) targSp andTargetAngle:(float) targHeading andTargAltitude:(float) targAlt during:(float) dt{
+    
+    Drone* newState = [[Drone alloc] init];
+    
+    CLLocation* newLoc = [self newDroneStateFromState:currentDroneState.droneLoc targetSpeed:targSp targetAngle:targHeading targetAltitude:targAlt];
+    
+    newState.droneLoc = newLoc;
+    
+    return newState;
+}
+
+-(Vec*) newDroneSpeedFromSpeed:(CLLocation*) droneLoc targetSpeed:(float) targSp targetAngle:(float) targAngle{
+    
+    Vec* initialSpeed_vec = [[Vec alloc] initWithNorm:droneLoc.speed andAngle:droneLoc.course];
+    Vec* targetSpeed_vec = [[Vec alloc] initWithNorm:targSp andAngle:targAngle];
+    
+    Vec* deltaSp_vec = [targetSpeed_vec substractVector:initialSpeed_vec];
+    
+    float scalar = [deltaSp_vec dotProduct:initialSpeed_vec];
+    
+    if (scalar > 0) {
+        [deltaSp_vec updateWithNorm:MIN(3, deltaSp_vec.norm)*0.1 andAngle:deltaSp_vec.angle];
+    }else{
+        [deltaSp_vec updateWithNorm:MIN(6, deltaSp_vec.norm)*0.1 andAngle:deltaSp_vec.angle];
+    }
+    
+    Vec* newSpeed_vec =[deltaSp_vec addVector:initialSpeed_vec];
+    
+    return  newSpeed_vec;
+}
+
+-(CLLocation*) newDroneStateFromState:(CLLocation*) droneLoc targetSpeed:(float) targSp targetAngle:(float) targAngle targetAltitude:(float) targAlt{
+    // state should be first initialized to : initial position , sp = 0, targang = 0
+    
+    Vec* newSpeed_Vec = [self newDroneSpeedFromSpeed:droneLoc targetSpeed:targSp targetAngle:targAngle];
+    float sp = bindBetween(newSpeed_Vec.norm, 0, 17);
+    
+    [newSpeed_Vec updateWithNorm:sp andAngle:newSpeed_Vec.angle];
+    
+    
+    
+    // ALTITUDE
+    float currentAltitude = droneLoc.altitude;
+    float diffAlt = targAlt - currentAltitude;
+    diffAlt = bindBetween(diffAlt, -0.5,0.5);
+    float nextAltitudeForSimulatedDrone = currentAltitude + diffAlt;
+    
+    
+    NSDate* date = [[NSDate alloc]init];
+    CLLocationCoordinate2D newCoord = [[Calc Instance] predictedGPSPositionFromCurrentPosition:droneLoc.coordinate andCourse:droneLoc.course andSpeed:droneLoc.speed during:0.1];
+    CLLocation* newLoc = [[CLLocation alloc] initWithCoordinate:newCoord altitude:nextAltitudeForSimulatedDrone horizontalAccuracy:0 verticalAccuracy:0 course:newSpeed_Vec.angle speed:newSpeed_Vec.norm timestamp:date];
+    
+    
+    return newLoc;
 }
 
 @end

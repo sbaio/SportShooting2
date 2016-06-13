@@ -624,6 +624,17 @@
                                             <action selector="onScrollButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="ZYg-6u-df7"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enq-Sg-45p">
+                                        <rect key="frame" x="240" y="428" width="300" height="75"/>
+                                        <color key="backgroundColor" red="0.6957245990348967" green="0.80475227516884762" blue="0.88465700041570672" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                        <state key="normal" title="GO !">
+                                            <color key="titleColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="didClickOnGoButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="J7k-Fs-yya"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -631,11 +642,15 @@
                                     <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerX" secondItem="e8C-H9-eDY" secondAttribute="centerX" id="2AG-N9-vJK"/>
                                     <constraint firstAttribute="bottom" secondItem="987-yS-3Vw" secondAttribute="bottom" constant="15" id="5h7-jL-2Yb"/>
                                     <constraint firstItem="oSQ-Oa-i31" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="0.4" id="A4l-Yb-voZ"/>
+                                    <constraint firstItem="Enq-Sg-45p" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.55" id="DyB-48-4rp"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.13" id="FCk-fG-jf1"/>
                                     <constraint firstItem="e8C-H9-eDY" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.8" id="JVC-Iv-3Dt"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="M7N-A2-jtw" userLabel="MapSmallY"/>
+                                    <constraint firstItem="Enq-Sg-45p" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.3" id="N76-Uh-HSF"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="PTE-DV-Vbo"/>
+                                    <constraint firstItem="Enq-Sg-45p" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="1/8" id="Rlx-Iu-Dfh"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.135" id="ShP-vN-9Jf"/>
+                                    <constraint firstItem="Enq-Sg-45p" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="1/2" id="TEf-f4-m20"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="UGm-Jm-mdr" userLabel="MapLargeY"/>
                                     <constraint firstItem="oSQ-Oa-i31" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="UrO-nl-PPq"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="Zfd-LJ-AaF" userLabel="VideoSmallY"/>
@@ -681,6 +696,7 @@
                     <navigationItem key="navigationItem" id="3Ks-Zb-zo7"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="GoButton" destination="Enq-Sg-45p" id="f4i-1v-8Gz"/>
                         <outlet property="alertsView" destination="8LS-Of-6mA" id="wgI-oG-GBZ"/>
                         <outlet property="contentView" destination="a9h-25-Hyk" id="rCj-1M-zLg"/>
                         <outlet property="landButton" destination="ORS-EC-wpQ" id="h4c-wu-1dP"/>
