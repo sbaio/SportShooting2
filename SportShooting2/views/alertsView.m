@@ -32,7 +32,7 @@
     [mapVC.view addSubview:self];
     
     CGPoint center = self.center;
-    CGSize size = CGSizeMake(self.frame.size.width*0.6, self.frame.size.height*0.7);
+    CGSize size = CGSizeMake(self.frame.size.width*0.6, self.frame.size.height*0.75);
     
     [_takeOffAlertView setFrame:CGRectMake(center.x-size.width/2, center.y - size.height/2 , size.width, size.height)];
     
@@ -84,6 +84,20 @@
 
 - (IBAction)didClickOnTakeOffButton:(id)sender {
     self.userInteractionEnabled = NO;
+    
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc && [[Menu instance] getAppDelegate].isReceivingFlightControllerStatus) {
+        DVLog(@"taking off");
+        [fc takeoffWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                DVLog(@"takeOff error : %@",error.localizedDescription);
+                
+            }
+        }];
+    }
+    else{
+        DVLog(@"Flight controller not found");
+    }
     
     NSLog(@"takeOff with completion");
     

@@ -40,6 +40,7 @@
 @class TopMenu;
 @class BottomStatusBar;
 @class alertsView;
+@class AppDelegate;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
 {
@@ -56,7 +57,8 @@
     CGRect smallSize;
     
     
-    CLLocation * phoneLocation;
+    __weak AppDelegate* appD;
+    
     CircuitsTVC* circuitListTVC;
     
     UITapGestureRecognizer* mapVCTapGR;
@@ -107,6 +109,7 @@
 @property (strong, nonatomic) IBOutlet TopMenu *topMenu;
 
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
+@property(strong,nonatomic) CLLocation * phoneLocation;;
 //@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
 
 @property (weak, nonatomic) IBOutlet UIButton *takeOffButton;

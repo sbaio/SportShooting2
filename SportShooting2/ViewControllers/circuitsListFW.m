@@ -328,7 +328,18 @@
         }
         
         [[Calc Instance] map:mapView showCircuit:loadedCircuit];
-        
+        if (mapVC.phoneLocation) {
+            float dist = 1000000;
+            int i = 0;
+            for (CLLocation* loci in loadedCircuit.locations) {
+                float disti = [[Calc Instance] distanceFromCoords2D:loci.coordinate toCoords2D:mapVC.phoneLocation.coordinate];
+                if (dist > disti) {
+                    dist = disti;
+                    i = (int)[loadedCircuit.locations indexOfObject:loci];
+                }
+            }
+            NSLog(@"closest distance circuit to user , %0.3f",dist);
+        }
         
         selectRow = (int)indexPath.row;
         [self setButtonForCell:[tableView cellForRowAtIndexPath:indexPath] AtIndexPath:indexPath];
@@ -349,7 +360,7 @@
     UIButton* selectButton = [self buttonOfCell:cell];
     [selectButton addTarget:self action:@selector(didSelectCircuitAtSelectedRow:) forControlEvents:UIControlEventTouchUpInside];
     int row = (int)indexPath.row;
-    NSLog(@"setButton for cell , %d ,select , %d , selected , %d",row,selectRow,selectedRow);
+    
     if (row == selectedRow) {
         [selectButton setTitle:@"selected" forState:UIControlStateNormal];
         [selectButton setHidden:NO];
@@ -494,7 +505,7 @@
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [firstCell hideSwipeAnimated:YES completion:^(BOOL finished) {
-                    NSLog(@"finished");
+                    
                 }];
             });
             
@@ -595,4 +606,6 @@
 
 // add observer when menu opened .. mainReveal frontPosition != left
 //--> dismiss this view
+
+// rename circuit ...:/
 @end

@@ -171,7 +171,7 @@
     [transformTopAnimation setCompletionBlock:^(POPAnimation* anim, BOOL finished){
         _status = 2;
         callback(finished);
-        NSLog(@"finished add");
+        
     }];
     [self.topLayer pop_addAnimation:transformTopAnimation forKey:@"rotateTopAnimation"];
     
@@ -221,7 +221,7 @@
     transformTopAnimation.springSpeed = 20;
     transformTopAnimation.dynamicsTension = 1000;
     [transformTopAnimation setCompletionBlock:^(POPAnimation * anim, BOOL fin) {
-        NSLog(@"finished close part");
+        
         callback(fin);
     }];
     

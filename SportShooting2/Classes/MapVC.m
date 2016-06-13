@@ -45,6 +45,7 @@
     [self initVideoPreviewerView];
     
     [self showTopMenu]; // and bottom
+    appD = [[Menu instance] getAppDelegate];
     
 }
 
@@ -99,19 +100,19 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
-    phoneLocation = _locationManager.location;
+    _phoneLocation = _locationManager.location;
     
-    if(phoneLocation.coordinate.longitude && phoneLocation.coordinate.latitude){
-        if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:phoneLocation.coordinate] > 10000) {
-            [mapView setRegion:MKCoordinateRegionMake(phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
+    if(_phoneLocation.coordinate.longitude && _phoneLocation.coordinate.latitude){
+        if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:_phoneLocation.coordinate] > 10000) {
+            [mapView setRegion:MKCoordinateRegionMake(_phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
         }
         
     }
     else{
-        phoneLocation = nil;
+        _phoneLocation = nil;
     }
     
-    _autopilot.userLocation = phoneLocation;
+    _autopilot.userLocation = _phoneLocation;
     
 }
 
@@ -245,7 +246,6 @@
         [realDrone updateDroneStateWithFlightControllerState:state];
     }
     
-    AppDelegate* appD = [[Menu instance] getAppDelegate];
     lastFCUpdateDate = [[NSDate alloc] init];
     if (!appD.isReceivingFlightControllerStatus) {
         [appD setIsReceivingFlightControllerStatus:YES];
@@ -272,7 +272,7 @@
 //        [_bottomStatusBar updateAltitudeLabelWithAltitude:state.ultrasonicHeight];
 //    }
 //    else{
-        [_bottomStatusBar updateWith:state andPhoneLocation:phoneLocation];
+        [_bottomStatusBar updateWith:state andPhoneLocation:_phoneLocation];
 //        [_bottomStatusBar updateDistanceToRCLabelWithDistance:-1];
 //    }
     
@@ -420,7 +420,7 @@
 //    }
 
     
-    [_alertsView showTakeOffAlert];
+    
     
 }
 
@@ -451,7 +451,7 @@
 }
 
 - (IBAction)onTakeOffButtonClicked:(id)sender {
-    
+    [_alertsView showTakeOffAlert];
 }
 - (IBAction)onLandButtonClicked:(id)sender {
 }

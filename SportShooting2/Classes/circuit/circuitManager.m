@@ -458,7 +458,7 @@
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_c",circuitName]];
     Circuit* circuit = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
-    NSLog(@"load circuit %@ , %d",circuitName,(int)circuit.locations.count);
+//    NSLog(@"load circuit %@ , %d",circuitName,(int)circuit.locations.count);
     
     return circuit;
 }
