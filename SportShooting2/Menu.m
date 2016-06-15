@@ -44,11 +44,7 @@
     return (GeneralMenuVC*)menuReveal.rearViewController;
 }
 
--(CircuitsTVC*) getCircuitsMenu{
-    CircuitsTVC* circuitsTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"TrackListVC"];
-    
-    return circuitsTVC;
-}
+
 
 -(UINavigationController*) getNavC{
     SWRevealViewController* menuReveal = [self getMenuRevealVC];

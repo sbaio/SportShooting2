@@ -43,7 +43,6 @@
 -(SWRevealViewController*) getMenuRevealVC;
 
 -(GeneralMenuVC*) getGeneralMenu;
--(CircuitsTVC*) getCircuitsMenu;
 
 -(MapVC*) getMapVC;
 -(AppDelegate*) getAppDelegate;

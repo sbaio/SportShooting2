@@ -761,6 +761,7 @@ const int FrontViewPositionNone = 0xff;
 //    _contentView.backgroundColor = [UIColor yellowColor];
     
     UIImageView* backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BackGroundImage_contentView_MenuReveal.png"]];
+    
     [_contentView addSubview:backgroundImage];
     [_contentView sendSubviewToBack:backgroundImage];
     

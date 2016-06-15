@@ -10,7 +10,7 @@
 #import "CircuitsTVC.h"
 #import "circuitDefinitionTVC.h"
 #import "SWRevealViewController.h"
-
+#import "UIColor+CustomColors.h"
 #import "Menu.h"
 
 
@@ -52,6 +52,11 @@
     NSString *CellIdentifier = [items objectAtIndex:indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
+    UIView *bgColorView = [[UIView alloc] initWithFrame:cell.bounds];
+    bgColorView.backgroundColor = [UIColor customGrayForCellSelection];
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    [cell setSelectedBackgroundView:bgColorView];
+    
     return cell;
 }
 
@@ -65,11 +70,7 @@
         case 0:
         {// select circuti .. open
             [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
-            
             [[[Menu instance] getMapVC] showCircuitListView];
-            // OLD--> open in navC
-//            CircuitsTVC* circListTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"TrackListVC"];
-//            [self.navigationController pushViewController:circListTVC animated:YES];
             break;
         }
         case 1:
