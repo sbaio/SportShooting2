@@ -25,6 +25,7 @@
 }
 -(id) init{
     self = [super init];
+    _simulatedCarSpeed = 0;
     return self;
 }
 
@@ -456,8 +457,6 @@
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_c",circuitName]];
     Circuit* circuit = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
-//    NSLog(@"load circuit %@ , %d",circuitName,(int)circuit.locations.count);
-    
     return circuit;
 }
 -(void) removeCircuitNamed:(NSString*) circuitName{
@@ -470,6 +469,7 @@
 
 
 #pragma mark - car simulation 
+
 
 -(void) simulateCarOnCircuit:(Circuit*) circuit{
     if ([carSimulationTimer isValid]) {
@@ -492,15 +492,10 @@
         return;
     }
     // input slider ...
-    carSpeed = 30;//[virtualCarSpeedSlider value];
-    
-    CLLocation* prevLocation = carSimulatedLocation;
+    carSpeed = _simulatedCarSpeed;//[virtualCarSpeedSlider value];
     
     carSimulatedLocation = [self moveSimulatedCarFrom:carSimulatedLocation byDistance:carSpeed*0.1 onCircuit:simulationCircuit];
     
-    
-    // ------------> filter heading
-//        float course_heading = [[Calc Instance] headingTo:carSimulatedLocation.coordinate fromPosition:prevLocation.coordinate];
     NSMutableArray* angleArray = simulationCircuit.interAngle;
     float course_heading = [angleArray[carPrevIndex] floatValue];
    

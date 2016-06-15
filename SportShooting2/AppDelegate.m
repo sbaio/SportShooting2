@@ -31,10 +31,15 @@
     [mainRevealController setFrontVC:mapVC rearVC:menuRevealController];
     
     UINavigationController* navC = [[UINavigationController alloc] init];
+    [navC setNavigationBarHidden:YES];
+
     
     UITableViewController* GeneralMenu = [mainStoryboard instantiateViewControllerWithIdentifier:@"generalMenuVC"];
     
     [menuRevealController setFrontVC:navC rearVC:GeneralMenu];
+    
+    
+
     
     [self setMainAndMenuRevealProperties];
     

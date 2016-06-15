@@ -7,6 +7,7 @@
 //
 
 #define RADIAN(x) ((x)*M_PI/180.0)
+#define bindBetween(a,b,c) ((a > c) ? c: ((a<b)? b:a))
 
 #import "MapView.h"
 #import "UIColor+CustomColors.h"
@@ -249,23 +250,151 @@
 }
 
 -(void) updateDroneAnnotation:(Drone*) drone{
-    if (!droneAnno) {
-        droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:0];
+    if (!drone.droneAnno) {
+        drone.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:0];
         
-        [self addAnnotation:droneAnno];
+        [self addAnnotation:drone.droneAnno];
     }
     else{
-        [droneAnno setCoordinate:drone.droneLoc.coordinate];
+        [drone.droneAnno setCoordinate:drone.droneLoc.coordinate];
     }
-         [droneAnno.annotationView updateHeading:RADIAN(drone.droneYaw)];
+         [drone.droneAnno.annotationView updateHeading:RADIAN(drone.droneYaw)];
     
-    if (!droneSpeed_vecAnno) {
-        droneSpeed_vecAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:9];
-        [self addAnnotation:droneSpeed_vecAnno];
+    if (!drone.droneSpeed_vecAnno) {
+        drone.droneSpeed_vecAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:9];
+        [self addAnnotation:drone.droneSpeed_vecAnno];
     }
     else{
-        [droneSpeed_vecAnno setCoordinate:drone.droneLoc.coordinate];
-        [droneSpeed_vecAnno.annotationView updateHeading:RADIAN(drone.droneLoc.course) andScale:drone.droneLoc.speed/17];
+        [drone.droneSpeed_vecAnno setCoordinate:drone.droneLoc.coordinate];
+        [drone.droneSpeed_vecAnno.annotationView updateHeading:RADIAN(drone.droneLoc.course) andScale:drone.droneLoc.speed/17];
     }
+}
+
+-(void) updateDroneSensCircuit_PerpAnnotations:(Drone*) drone{
+    if (!drone.sensCircuit_Anno) {
+        drone.sensCircuit_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneIndexLocation.coordinate andType:9];
+        [self addAnnotation:drone.sensCircuit_Anno];
+    }
+    else{
+        [drone.sensCircuit_Anno setCoordinate:drone.droneIndexLocation.coordinate];
+        [drone.sensCircuit_Anno updateHeading:RADIAN(drone.sensCircuit.angle) andScale:0.5];
+    }
+    if (!drone.versCircuit_Anno) {
+        drone.versCircuit_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneIndexLocation.coordinate andType:8];
+        [self addAnnotation:drone.versCircuit_Anno];
+    }
+    else{
+        [drone.versCircuit_Anno setCoordinate:drone.droneIndexLocation.coordinate];
+        [drone.versCircuit_Anno updateHeading:RADIAN(drone.versCircuit.angle) andScale:0.5];
+    }
+}
+
+
+#pragma mark - methods
+
+-(void) removePinsNamed:(NSString*) pinName{
+//    NSMutableArray *allAnnotations = [[NSMutableArray alloc] initWithArray:];
+    
+    for( id <MKAnnotation> annotation in [self annotations])
+    {
+        
+        if ([annotation isKindOfClass:[MKPointAnnotation class]]) {
+            MKPointAnnotation* pin = (MKPointAnnotation*) annotation;
+            if ([pin.title isEqualToString:pinName]) {
+                [self removeAnnotation:annotation];
+            }
+        }
+    }
+}
+
+-(void) addPin:(CLLocation*) location andTitle:(NSString*) title andColor:(NSString*) colorString{
+    MKPointAnnotation * annotation = [[MKPointAnnotation alloc] init];
+    annotation.title = title;
+    annotation.subtitle = colorString;
+    annotation.coordinate = location.coordinate;
+    
+    [self addAnnotation:annotation];
+}
+
+-(void) movePinNamed:(NSString*) name toCoord:(CLLocation*) newLoc andColor:(NSString*) colorString{
+    int count = 0;
+    for( id <MKAnnotation> annotation in [self annotations])
+    {
+        if ([annotation isKindOfClass:[MKPointAnnotation class]]) {
+            MKPointAnnotation* pin = (MKPointAnnotation*) annotation;
+            if ([pin.title isEqualToString:name]) {
+                if (count) {
+                    [self removeAnnotation:annotation];
+                }
+                else{
+                    [pin setCoordinate:newLoc.coordinate];
+                    count = 1;
+                }
+                
+            }
+        }
+    }
+    if (!count) {
+        [self addPin:newLoc andTitle:name andColor:colorString];
+    }
+}
+
+-(void) showCircuit:(Circuit*) circuit{
+    [self setRegion:[circuit region]];
+//    [self removePolylineNamed:@"circuitPolyline"];
+    [self removePinsNamed:@"panLoc"];
+//    [self drawCircuitPolyline:circuit.locations withTitle:@"circuitPolyline" andColor:@"RGB 212 175 55"];
+}
+
+-(void) CenterViewOn:(CLLocationCoordinate2D) locationCoord{
+    if(CLLocationCoordinate2DIsValid(locationCoord))
+    {
+        if (!locationCoord.longitude && !locationCoord.latitude) {
+            DVLog(@"Center view: wrong coord, should try when got really valid ones");
+            return;
+        }
+        MKCoordinateRegion region= MKCoordinateRegionMake(locationCoord, MKCoordinateSpanMake(0.003,0.003));
+        [self setRegion:region animated:YES];
+    }
+    
+}
+
+-(void) CenterViewOnCar:(CLLocation*) carLoc andDrone:(CLLocation*) droneLoc{
+    
+    if (!carLoc && !droneLoc) {
+        return;
+    }
+    else if (droneLoc && !carLoc){
+        [self CenterViewOn:droneLoc.coordinate];
+    }
+    else if(carLoc && !droneLoc){
+        [self CenterViewOn:carLoc.coordinate];
+    }
+    else{
+        float dist_Drone_Car = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:droneLoc.coordinate];
+        float angle = [[Calc Instance] headingTo:carLoc.coordinate fromPosition:droneLoc.coordinate];
+        
+        CLLocationCoordinate2D middlePoint = [[Calc Instance] predictedGPSPositionFromCurrentPosition:droneLoc.coordinate andCourse:angle andSpeed:dist_Drone_Car during:0.5];
+        
+        if(CLLocationCoordinate2DIsValid(middlePoint))
+        {
+            if (!middlePoint.longitude && !middlePoint.latitude) {
+                DVLog(@"Center view: wrong coord, should try when got really valid ones");
+                return;
+            }
+            
+            float northDist = fabs(dist_Drone_Car*cos(RADIAN(angle)))*7/3;
+            float eastDist = fabs(dist_Drone_Car*sin(RADIAN(angle)))*7/3;
+            
+            northDist = bindBetween(northDist, 100, 10000);
+            eastDist = bindBetween(eastDist, 100, 10000);
+            
+            MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(middlePoint, northDist, eastDist);
+            
+            
+            [self setRegion:region animated:YES];
+        }
+    }
+    
 }
 @end

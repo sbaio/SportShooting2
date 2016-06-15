@@ -73,7 +73,6 @@
 
 -(void) map:(MKMapView*) mapView drawCircuitPins:(NSMutableArray *) circuitCoords withColor:(NSString*) colorString;
 
--(void) map:(MKMapView*) mapView CenterViewOnCar:(CLLocation*) carLoc andDrone:(CLLocation*) droneLoc;
 
 -(void) map:(MKMapView*) mapView addRegion:(CLCircularRegion*) region andTitle:(NSString*) regionName andColor:(NSString*) colorString;
 

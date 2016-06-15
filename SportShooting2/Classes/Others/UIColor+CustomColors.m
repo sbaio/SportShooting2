@@ -10,10 +10,20 @@
 
 @implementation UIColor (CustomColors)
 
++(UIColor*) customGrayForCellSelection
+{
+    return [UIColor colorWithWhite:0.7 alpha:0.3];
+}
+
+
+
+
+
 + (UIColor *)customGrayColor
 {
     return [self colorWithRed:84 green:84 blue:84];
 }
+
 
 + (UIColor *)customRedColor
 {

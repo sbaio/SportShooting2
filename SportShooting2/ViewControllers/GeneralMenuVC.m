@@ -11,7 +11,7 @@
 
 #import "MapVC.h"
 #import "Menu.h"
-
+#import "UIColor+CustomColors.h"
 
 @interface GeneralMenuVC ()
 
@@ -53,6 +53,11 @@
     NSString *CellIdentifier = [rowsArray objectAtIndex:indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 
+    
+    UIView *bgColorView = [[UIView alloc] initWithFrame:cell.bounds];
+    bgColorView.backgroundColor = [UIColor customGrayForCellSelection];
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    [cell setSelectedBackgroundView:bgColorView];
     return cell;
 }
 

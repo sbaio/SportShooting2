@@ -50,7 +50,8 @@
     
     
     Drone* realDrone;
-    
+    NSString* yellowColorString;
+    NSString* redColorString;
     UIPanGestureRecognizer * swipeGR;
     NSMutableArray* swipedCircuit;
     
@@ -93,11 +94,15 @@
     
     
     // mission
-    CLLocation* droneSimulatedLoc;
+//    CLLocation* droneSimulatedLoc;
     NSTimer* pathPlanningTimer;
     NSDate* startMissionDate;
     int countFollow;
     NSDate* refDate;
+    
+//    float distDroneCar;
+    int carIndexOnCircuit;
+
     
     BOOL commandByTargetLocation;
     //
@@ -127,6 +132,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *landButton;
 @property (weak, nonatomic) IBOutlet UIButton *GoButton;
 
+@property (weak, nonatomic) IBOutlet UISlider *simulatedCarSpeedSlider;
+
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic,strong) Autopilot* autopilot;
 @property(nonatomic,strong) DJICamera* camera;
@@ -134,7 +141,10 @@
 @property BOOL isPathDrawingEnabled;
 @property BOOL isRealCar;
 @property BOOL isRealDrone;
+
+@property Drone* drone;
 @property Drone* simulatedDrone;
+@property Drone* predictedDrone;
 
 -(void) enableMainMenuPan;
 -(void) disableMainMenuPan;

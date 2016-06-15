@@ -19,8 +19,6 @@
 
 - (void)touchUpInsideHandler:(closeButton *)sender;
 - (void)animateToMenu;
-- (void)animateToClose;
--(void) animateToAdd;
 - (void)removeAllAnimations;
 @end
 

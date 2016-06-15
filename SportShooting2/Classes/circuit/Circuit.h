@@ -20,7 +20,7 @@
 @property NSMutableArray* interIndexesDistance;
 @property NSMutableArray* interAngle;
 @property NSMutableArray* diffAngle;
-@property NSMutableArray* distLociTo_Vec;
+@property NSMutableArray* Loc0_Loci_Vecs;
 @property (nonatomic) MKCoordinateRegion region;
 @property float RTH_altitude; // need to be set
 
@@ -30,7 +30,7 @@
 // interesting locs
 
 //-(Circuit*) initWithLocations:(NSMutableArray*) circLocs;
--(Circuit*) initWithLocations:(NSMutableArray*) circLocs andName:(NSString*) circuitName;
+//-(Circuit*) initWithLocations:(NSMutableArray*) circLocs andName:(NSString*) circuitName;
 -(id) initWithLocations:(NSMutableArray*) circLocs andName:(NSString*) circuitName calc:(BOOL) calc;
 -(Circuit*) initWithCircuitNamed:(NSString*) circuitName;
 

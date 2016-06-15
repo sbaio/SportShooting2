@@ -22,7 +22,7 @@
 #import "UIImage+animatedGIF.h"
 #import "UIColor+CustomColors.h"
 
-@import Photos;
+//@import Photos;
 
 @interface MapVC ()
 
@@ -63,6 +63,11 @@
 -(void) initUI{
     [_GoButton.layer setCornerRadius:8];
     [_GoButton setHidden:YES];
+    
+    [_simulatedCarSpeedSlider setHidden:YES];
+    
+    yellowColorString = @"RGB 212 175 55";
+    redColorString = @"RGB 222 22 22";
 }
 
 -(void) showTopMenu{
@@ -322,7 +327,7 @@
             swipedCircuit = [[NSMutableArray alloc] init];
             
             // mapview to remove pins
-            [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
+            [mapView removePinsNamed:@"panLoc"];
             [[Calc Instance] map:mapView removePolylineNamed:@"poly"];
         }
         else if(pan.state == UIGestureRecognizerStateChanged){
@@ -344,7 +349,7 @@
             swipedCircuit = [cm repairCircuit:swipedCircuit];
             
             
-            [[Calc Instance] map:mapView removePinsNamed:@"panLoc"];
+            [mapView removePinsNamed:@"panLoc"];
             
 
             [[Calc Instance] map:mapView drawCircuitPolyline:swipedCircuit withTitle:@"poly" andColor:@"RGB 212 175 55"];
@@ -505,10 +510,11 @@
 -(void) handleGoButton:(NSNotification*) notif{
     if ([_GoButton isHidden]) {
         [_GoButton setHidden:NO];
+        [_simulatedCarSpeedSlider setHidden:NO];
     }
     else{
         [_GoButton setHidden:YES];
-        
+        [_simulatedCarSpeedSlider setHidden:YES];
     }
 }
 - (IBAction)didClickOnGoButton:(id)sender {
@@ -521,7 +527,7 @@
     _isRealDrone = NO;
     _isRealCar = NO;
     
-    if (!_circuit) {
+    if (!_circuit || !_circuit.locations.count) {
         NSLog(@"no circuit");
         return;
     }
@@ -534,10 +540,15 @@
     // ***********  Drone ***********
     if (!_isRealDrone) {
         
-        CLLocation* simulatedDroneStartLocation = _circuit.locations[0];
-        droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:simulatedDroneStartLocation.coordinate altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
+        CLLocation* droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:[_circuit.locations[0] coordinate] altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
         
         _simulatedDrone = [[Drone alloc] initWithLocation:droneSimulatedLoc];
+    }
+    else{
+        if (!appD.isReceivingFlightControllerStatus) {
+            DVLog(@"No drone connected");
+        }
+        // here we are supposed to have info in _realDrone
     }
     
     // ********** PATH PLANNING TIMER *********
@@ -555,6 +566,11 @@
     refDate = [[NSDate alloc] init];
 }
 
+- (IBAction)simulatedCarSpeedSliderDidChangeValue:(id)sender {
+    if (sender == _simulatedCarSpeedSlider) {
+        [[circuitManager Instance] setSimulatedCarSpeed:[_simulatedCarSpeedSlider value]];
+    }
+}
 
 -(void) carAtLocation:(CLLocation*) location{
     
@@ -579,25 +595,24 @@
 -(void) onPathPlanningTimerTicked{
     _isRealDrone = NO;
     _isRealCar = NO;
-    
+        
     if (!_isRealDrone) {// SIMULATED DRONE
-        if (_circuit.locations.count) {
+        
+        [mapView CenterViewOnCar:_carLocation andDrone:_simulatedDrone.droneLoc];
+        
+        _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:25 andTargetAngle:_simulatedDrone.droneCar_Vec.angle andTargAltitude:10 during:0.1];
+        [mapView updateDroneAnnotation:_simulatedDrone];
+        
+        [self follow:_carLocation onCircuit:_circuit droneLoc:_simulatedDrone];
+        
+        if (commandByTargetLocation) {
+            // MOVE SIMULATED DRONE WITH TARGET LOCATION
             
-            _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:10 andTargetAngle:0 andTargAltitude:10 during:0.1];
-            [mapView updateDroneAnnotation:_simulatedDrone];
-            
-            if (commandByTargetLocation) {
-                // MOVE SIMULATED DRONE WITH TARGET LOCATION
-                
-            }
-            else{
-                
-            }
         }
         else{
-            NSLog(@"simple circuit not loaded yet");
-            return;
+            
         }
+
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********
@@ -607,5 +622,198 @@
     }
 }
 
+-(void) follow:(CLLocation*) carLoc onCircuit:(Circuit*) circuit droneLoc:(Drone*) drone{
+    
+    
+    [self updatePredictedDrone:drone];
+    
+    CLLocation* target = [self calculateNextTargetLocation:carLoc onCircuit:circuit drone:_predictedDrone];
+    
+    
+    // CALCULER LA FREQ D'exec
+    countFollow ++;
+    countFollow = countFollow%10;
+    if (!countFollow) {
+        NSTimeInterval time = -[refDate timeIntervalSinceNow];
+        float freqRuntime = 10/time;
+        NSLog(@"freq , %0.3f",freqRuntime);
+        refDate = [[NSDate alloc] init];
+    }
+}
+
+-(void) updatePredictedDrone:(Drone*) drone{
+    CLLocationCoordinate2D predictCoord = [[Calc Instance] predictedGPSPositionFromCurrentPosition:drone.droneLoc.coordinate andCourse:drone.droneLoc.course andSpeed:drone.droneLoc.speed during:1.5];
+    
+    CLLocation* dronePredictedLocation = [[CLLocation alloc] initWithCoordinate:predictCoord altitude:drone.droneLoc.altitude horizontalAccuracy:0 verticalAccuracy:0 course:drone.droneLoc.course speed:drone.droneLoc.speed timestamp:drone.droneLoc.timestamp];
+    
+    if (!_predictedDrone) {
+        _predictedDrone = [[Drone alloc] initWithLocation:dronePredictedLocation];
+    }
+    else{
+        [_predictedDrone updateDroneStateWithLoc:dronePredictedLocation andYaw:dronePredictedLocation.course];
+    }
+
+    [mapView movePinNamed:@"dronePredictedLoc" toCoord:dronePredictedLocation andColor:@"RGB 129 22 89"];
+}
+
+-(CLLocation*) calculateNextTargetLocation:(CLLocation*) carLoc onCircuit:(Circuit*) circuit drone:(Drone*) predictedDrone{
+    
+    CLLocation* target = nil;
+    _drone = _simulatedDrone;
+    
+    if (_isRealDrone) {
+        _drone = realDrone;
+    }
+    
+    carIndexOnCircuit = [self carIndexOnCircuit:circuit forCarLoc:carLoc];
+    
+    [_drone calculateDroneInfoOnCircuit:circuit forCarLocation:carLoc carIndex:carIndexOnCircuit];
+    
+    [_predictedDrone calculateDroneInfoOnCircuit:circuit forCarLocation:carLoc carIndex:carIndexOnCircuit];
+    
+    CLLocation* loc = [circuit.locations objectAtIndex:_drone.droneIndexOnCircuit];
+    [mapView movePinNamed:@"droneIndex" toCoord:loc andColor:yellowColorString];
+    
+    [mapView updateDroneSensCircuit_PerpAnnotations:_drone];
+    
+    
+    [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circuit];
+    
+    return target;
+}
+
+-(int) carIndexOnCircuit:(Circuit*) circuit forCarLoc:(CLLocation*) carLoc{
+    int carIndex = 0;
+    
+    // sort with distance
+    NSArray* sortedWithDistance = [circuit.locations sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+        CLLocation* loc1 = (CLLocation*)obj1;
+        CLLocation* loc2 = (CLLocation*)obj2;
+        
+        float dist1 = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loc1.coordinate];
+        float dist2 = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loc2.coordinate];
+        
+        if (dist1 < dist2) {
+            return NSOrderedAscending;
+        } else if (dist1 > dist2) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
+    }];
+    
+    float carCourse = carLoc.course;
+    
+    CLLocation* loci = sortedWithDistance[0];
+    int index = (int)[circuit.locations indexOfObject:loci];
+    
+    
+    carIndex = index;
+    
+    // search in the closest locations which one has the same course ...
+    for (int i = 0 ; i < sortedWithDistance.count; i++) {
+        
+        CLLocation* loci = sortedWithDistance[i];
+        int index = (int)[circuit.locations indexOfObject:loci];
+        
+        
+        float dist = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loci.coordinate];
+        
+        if (dist < 50) {
+            
+            Vec* courseVec = [[Vec alloc] initWithNorm:1 andAngle:carCourse];
+            Vec* sensCircuitVec = [[Vec alloc] initWithNorm:1 andAngle:[circuit.interAngle[index] floatValue]];
+            float dot = [sensCircuitVec dotProduct:courseVec];
+            
+            if (dot > 0.9) {
+                
+                carIndex = index;
+                break;
+            }
+            else {
+                continue;
+            }
+        }
+        else{
+            break;
+        }
+    }
+    
+    // DISPLAY
+    CLLocation* loc = circuit.locations[carIndex];
+    [mapView movePinNamed:@"carIndex" toCoord:loc andColor:redColorString];
+    
+    return carIndex;
+}
+
+-(void) setCloseTrackingOrShortcutting:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circuit{
+    
+    
+    float maxDistOnCircuitForCloseTracking = 9*40;
+    float minDistOnCircuitForCloseTracking = -75;
+    float droneSpeedSensCircuit = [drone.droneSpeed_Vec dotProduct:drone.sensCircuit];
+    
+    float diffSp = drone.carSpeed_Vec.norm - droneSpeedSensCircuit;
+    
+    
+    if (drone.isCloseTracking) {
+//        // décider si on arrete le close tracking : voiture est partie/ index loin
+
+        if (drone.distanceOnCircuitToCar > -75 && drone.distanceOnCircuitToCar < 35) {
+            // en fct de la vitesse de la voiture dire si la voiture est partie...
+            
+            if (diffSp > 0.5*drone.distanceOnCircuitToCar +20) {
+                DVLog(@"Shortcutting: la voiture est partie");
+                drone.isCloseTracking = NO;
+            }
+            else {
+                
+            }
+        }
+        
+        if (drone.distanceOnCircuitToCar < minDistOnCircuitForCloseTracking -20) {
+            
+            drone.isCloseTracking = NO;
+        }
+
+    }
+    else{
+        if (drone.carSpeed_Vec.norm < 2 && (drone.droneCar_Vec.norm < 20 || (drone.distanceOnCircuitToCar >- 50 && drone.distanceOnCircuitToCar < 50 && drone.droneDistToItsIndex < 20)) ) {
+            
+            drone.isCloseTracking = YES;
+            
+//            arrayTargetBearingCloseTracking = nil;
+            DVLog(@"voiture proche");
+            return;
+        }
+        // décider si on peut reprendre la voiture
+        if (drone.droneDistToItsIndex < 15) {
+
+            if (drone.distanceOnCircuitToCar > minDistOnCircuitForCloseTracking && drone.distanceOnCircuitToCar < maxDistOnCircuitForCloseTracking) {
+                if (diffSp < 0.5*drone.distanceOnCircuitToCar+10) {
+                    DVLog(@"CloseTracking: peut suivre la voiture");
+                    drone.isCloseTracking = YES;
+//                    arrayTargetBearingCloseTracking = nil;
+                }
+            }
+        }
+        else{
+            // if have the right altitude then go
+            
+            // else just gain altitude
+            
+            
+            // prendre de l'altitude et freiner ...
+            //***********************************
+            // SHORTCUT if have the right altitude
+            //***********************************
+            // else
+            //***********************************
+            //      isShortcutting = NO;
+            //      isCloseTracking = NO;
+        }
+    }
+    
+}
 
 @end

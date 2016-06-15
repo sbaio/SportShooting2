@@ -25,24 +25,29 @@
     self.circuitName = circuitName;
     
     if (calc) {
-        self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
-        [self calculateCourbureCircuit:self.locations];
-        self.interIndexesDistance = [[Calc Instance] loadArrayNamed:[NSString stringWithFormat:@"distances%@",self.circuitName]];
-        if (!self.interIndexesDistance) {
-            self.interIndexesDistance = [self calculateInterIndexesDistances:self.locations];
-            NSString* st = [NSString stringWithFormat:@"distances%@",self.circuitName];
-            [self saveArrayFrom:self.interIndexesDistance toPathName:st];
-        }
-        self.distLociTo_Vec = [[NSMutableArray alloc] init];
-        for (int i = 0; i<circLocs.count; i++) {
-            CLLocation* loci = circLocs[i];
-            CLLocation* droneLoc = circLocs[0];
-            float distLociDrone = [[Calc Instance] distanceFromCoords2D:droneLoc.coordinate toCoords2D:loci.coordinate];
-            float headingDroneToLoci = [[Calc Instance] headingTo:loci.coordinate fromPosition:droneLoc.coordinate];
-            
-            Vec* droneToLoci_Vec = [[Vec alloc] initWithNorm:distLociDrone andAngle:headingDroneToLoci];
-            [self.distLociTo_Vec addObject:droneToLoci_Vec];
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
+            [self calculateCourbureCircuit:self.locations];
+            self.interIndexesDistance = [[Calc Instance] loadArrayNamed:[NSString stringWithFormat:@"distances%@",self.circuitName]];
+            if (!self.interIndexesDistance) {
+                self.interIndexesDistance = [self calculateInterIndexesDistances:self.locations];
+                NSString* st = [NSString stringWithFormat:@"distances%@",self.circuitName];
+                [self saveArrayFrom:self.interIndexesDistance toPathName:st];
+            }
+            self.Loc0_Loci_Vecs = [[NSMutableArray alloc] init];
+            for (int i = 0; i<self.locations.count; i++) {
+                CLLocation* loci = self.locations[i];
+                CLLocation* loc0 = self.locations[0];
+                
+                float distLociToLoc0 = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:loci.coordinate];
+                float headingLoc0ToLoci = [[Calc Instance] headingTo:loci.coordinate fromPosition:loc0.coordinate];
+                
+                NSLog(@"%0.3f  , %0.3f ",distLociToLoc0,headingLoc0ToLoci);
+                Vec* Loc0ToLoci_Vec = [[Vec alloc] initWithNorm:distLociToLoc0 andAngle:headingLoc0ToLoci];
+                [self.Loc0_Loci_Vecs addObject:Loc0ToLoci_Vec];
+            }
+        });
+        
     }
     
     
@@ -71,7 +76,7 @@
     }
     
     
-    return [self initWithLocations:circuit andName:circuitName];
+    return [self initWithLocations:circuit andName:circuitName calc:NO];
 }
 
 -(void) update{
@@ -101,6 +106,20 @@
             NSLog(@"finished");
         });
         
+    }
+    if (!self.Loc0_Loci_Vecs) {
+        self.Loc0_Loci_Vecs = [[NSMutableArray alloc] init];
+        for (int i = 0; i<self.locations.count; i++) {
+            CLLocation* loci = self.locations[i];
+            CLLocation* loc0 = self.locations[0];
+            
+            float distLociToLoc0 = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:loci.coordinate];
+            float headingLoc0ToLoci = [[Calc Instance] headingTo:loci.coordinate fromPosition:loc0.coordinate];
+            
+            NSLog(@"%0.3f  , %0.3f ",distLociToLoc0,headingLoc0ToLoci);
+            Vec* Loc0ToLoci_Vec = [[Vec alloc] initWithNorm:distLociToLoc0 andAngle:headingLoc0ToLoci];
+            [self.Loc0_Loci_Vecs addObject:Loc0ToLoci_Vec];
+        }
     }
 }
 

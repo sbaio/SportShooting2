@@ -22,8 +22,8 @@
     
     
     Aircraft_Camera_Car_Annotation* carAnnotation;
-    Aircraft_Camera_Car_Annotation* droneAnno;
-    Aircraft_Camera_Car_Annotation* droneSpeed_vecAnno;
+//    Aircraft_Camera_Car_Annotation* droneAnno;
+//    Aircraft_Camera_Car_Annotation* droneSpeed_vecAnno;
     
 }
 @property (weak) MapVC* mapVC;
@@ -39,7 +39,20 @@
 //-(void) didEnlargeMapView;
 -(void) updateMaskImageAndButton;
 
+// annotations
 -(void) updateCarLocation:(CLLocation*) carLoc;
 -(void) updateDroneAnnotation:(Drone*) drone;
+-(void) updateDroneSensCircuit_PerpAnnotations:(Drone*) drone;
+
+
+// mapview methods
+-(void) addPin:(CLLocation*) location andTitle:(NSString*) title andColor:(NSString*) colorString;
+-(void) removePinsNamed:(NSString*) pinName;
+-(void) showCircuit:(Circuit*) circuit;
+
+-(void) CenterViewOn:(CLLocationCoordinate2D) locationCoord;
+-(void) CenterViewOnCar:(CLLocation*) carLoc andDrone:(CLLocation*) droneLoc;
+
+-(void) movePinNamed:(NSString*) name toCoord:(CLLocation*) newLoc andColor:(NSString*) colorString;
 
 @end

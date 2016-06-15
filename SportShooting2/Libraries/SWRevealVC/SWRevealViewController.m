@@ -747,6 +747,7 @@ const int FrontViewPositionNone = 0xff;
     // create a custom content view for the controller
     _contentView = [[SWRevealView alloc] initWithFrame:frame controller:self];
     
+    
     // set the content view to resize along with its superview
     [_contentView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
     
@@ -757,7 +758,11 @@ const int FrontViewPositionNone = 0xff;
     self.view = _contentView;
     
     // Apple also tells us to do this:
-    _contentView.backgroundColor = [UIColor blackColor];
+//    _contentView.backgroundColor = [UIColor yellowColor];
+    
+    UIImageView* backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BackGroundImage_contentView_MenuReveal.png"]];
+    [_contentView addSubview:backgroundImage];
+    [_contentView sendSubviewToBack:backgroundImage];
     
     // we set the current frontViewPosition to none before seting the
     // desired initial position, this will force proper controller reload

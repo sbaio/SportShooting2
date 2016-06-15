@@ -24,6 +24,8 @@
     float carSpeed; // calculated with avgDist / timerInterval
 }
 
+@property float simulatedCarSpeed;
+
 +(id) Instance;
 
 -(NSMutableArray*) loadCircuitNamed:(NSString*)circuitName;

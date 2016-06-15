@@ -19,7 +19,7 @@
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Circuits" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nd9-0z-bSR">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="108"/>
-                    <color key="backgroundColor" red="0.97460300820000001" green="0.70306689249999998" blue="0.22189830050000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="0.8642808198928833" green="0.66358554363250732" blue="0.17238028347492218" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="23"/>
                     <color key="textColor" red="0.20967585243904865" green="0.28760729962712617" blue="0.58522555401151832" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>

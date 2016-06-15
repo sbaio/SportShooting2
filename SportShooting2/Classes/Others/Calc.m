@@ -480,33 +480,6 @@
     [mapView addAnnotation:annotation];
 }
 
--(void) map:(MKMapView*) mapView CenterViewOnCar:(CLLocation*) carLoc andDrone:(CLLocation*) droneLoc{
-    
-    float dist_Drone_Car = [self distanceFromCoords2D:carLoc.coordinate toCoords2D:droneLoc.coordinate];
-    float angle = [self headingTo:carLoc.coordinate fromPosition:droneLoc.coordinate];
-    
-    CLLocationCoordinate2D middlePoint = [self predictedGPSPositionFromCurrentPosition:droneLoc.coordinate andCourse:angle andSpeed:dist_Drone_Car during:0.5];
-    
-    if(CLLocationCoordinate2DIsValid(middlePoint))
-    {
-        if (!middlePoint.longitude && !middlePoint.latitude) {
-            DVLog(@"Center view: wrong coord, should try when got really valid ones");
-            return;
-        }
-        
-        float northDist = fabs(dist_Drone_Car*cos(RADIAN(angle)))*7/3;
-        float eastDist = fabs(dist_Drone_Car*sin(RADIAN(angle)))*7/3;
-        
-        northDist = bindBetween(northDist, 100, 10000);
-        eastDist = bindBetween(eastDist, 100, 10000);
-        
-        MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(middlePoint, northDist, eastDist);
-        
-        
-        [mapView setRegion:region animated:YES];
-    }
-    
-}
 
 -(void) map:(MKMapView*) mapView addRegion:(CLCircularRegion*) region andTitle:(NSString*) regionName andColor:(NSString*) colorString{
     MKCircle* circle = [MKCircle circleWithCenterCoordinate:region.center radius:region.radius];

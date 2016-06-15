@@ -29,10 +29,6 @@
     self.droneLoc = loc;
     self.droneYaw = 0;
     
-    self.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:loc.coordinate andType:0];
-    self.droneSpeedVec_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:loc.coordinate andType:9];
-    
-    [self.droneSpeedVec_Anno updateHeading:self.droneLoc.course andScale:self.droneLoc.speed];
     
     return self;
 }
@@ -44,11 +40,15 @@
     [self.droneAnno setCoordinate:droneLoc.coordinate];
     [self.droneAnno.annotationView updateHeading:RADIAN(yaw)];
     // droneSpeedAnno
-    [self.droneSpeedVec_Anno setCoordinate:droneLoc.coordinate];
-    [self.droneSpeedVec_Anno.annotationView updateHeading:RADIAN(droneLoc.course) andScale:droneLoc.speed/17.0];
+    [self.droneSpeed_vecAnno setCoordinate:droneLoc.coordinate];
+    [self.droneSpeed_vecAnno.annotationView updateHeading:RADIAN(droneLoc.course) andScale:droneLoc.speed/17.0];
 }
 
--(void) calculateDroneIndexOnCircuit:(Circuit*) circuit forCarLocation:(CLLocation*) carLoc carIndex:(int) carIndex{
+-(void) calculateDroneInfoOnCircuit:(Circuit*) circuit forCarLocation:(CLLocation*) carLoc carIndex:(int) carIndex{
+    // this method sets self.droneIndexOnCircuit,self.droneDistToItsIndex, self.distanceOnCircuitToCar
+    // and also
+    // self.carSpeed_Vec, self.droneSpeed_Vec, self.droneCar_Vec
+
     
     NSMutableArray* distToDroneArray = [[NSMutableArray alloc]init];
     NSMutableArray* distOnCircToCar = [[NSMutableArray alloc] init];
@@ -227,6 +227,32 @@
         self.droneDistToItsIndex = [distToDroneArray[index] floatValue];
         self.distanceOnCircuitToCar = [[startIndexArray objectAtIndex:index] floatValue];
     }
+    
+    self.distanceToCar = [[Calc Instance] distanceFromCoords2D:self.droneLoc.coordinate toCoords2D:carLoc.coordinate];
+    self.bearingToCar = [[Calc Instance] headingTo:carLoc.coordinate fromPosition:self.droneLoc.coordinate];
+    self.carSpeed_Vec = [[Vec alloc] initWithNorm:carLoc.speed andAngle:carLoc.course];
+    self.droneSpeed_Vec = [[Vec alloc] initWithNorm:self.droneLoc.speed andAngle:self.droneLoc.course];
+    self.droneCar_Vec = [[Vec alloc] initWithNorm:self.distanceToCar andAngle:self.bearingToCar];
+    CLLocation* loc0 = circuit.locations[0];
+    self.drone_Loc0_Vec = [[Vec alloc] initWithNorm:[[Calc Instance] distanceFromCoords2D:self.droneLoc.coordinate toCoords2D:loc0.coordinate] andAngle:[[Calc Instance] headingTo:loc0.coordinate fromPosition:self.droneLoc.coordinate]];
+    
+    float angleSens = [circuit.interAngle[self.droneIndexOnCircuit%circuit.locations.count] floatValue];
+    self.sensCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
+    self.versCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
+    
+    _droneIndexLocation = circuit.locations[self.droneIndexOnCircuit];
+    Vec* versCircuiTest90 = [[Vec alloc] initWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:angleSens+90]];
+    Vec* droneVersCircuit = [[Vec alloc] initWithNorm:self.droneDistToItsIndex andAngle:[[Calc Instance] headingTo:_droneIndexLocation.coordinate fromPosition:self.droneLoc.coordinate]];
+    
+    if ([versCircuiTest90 dotProduct:droneVersCircuit] > 0) {
+        [self.versCircuit updateWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:(angleSens+90)]];
+    }
+    else {
+        [self.versCircuit updateWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:(angleSens-90)]];
+    }
+    
+    
+    
 }
 
 -(void) estimateDroneYawSpeed:(float) currentYaw{
@@ -278,41 +304,15 @@
     self.droneLoc = realDroneLocation;
     self.droneYaw = state.attitude.yaw;
     
-    double heading = RADIAN(state.attitude.yaw);
-    
-    if (!self.droneAnno) {
-        self.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:state.aircraftLocation andType:0];
-        [self.droneAnno.annotationView updateHeading:heading];
-//        [mapView addAnnotation:self.droneAnno];
-    }
-    else{
-//        if (![mapView.annotations containsObject:self.droneAnno]) {
-////            [mapView addAnnotation:self.droneAnno];
-//        }
-        [self.droneAnno setCoordinate:state.aircraftLocation];
-        [self.droneAnno.annotationView updateHeading:heading];
-    }
-    
-    
-    float scale = speed/17.0;
-    if (!self.droneSpeedVec_Anno) {
-        self.droneSpeedVec_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:state.aircraftLocation andType:9];
-        [self.droneSpeedVec_Anno updateHeading:RADIAN(angle) andScale:scale];
-//        [mapView addAnnotation: self.droneSpeedVec_Anno];
-    }
-    else{
-//        if (![mapView.annotations containsObject:self.droneSpeedVec_Anno]) {
-////            [mapView addAnnotation:self.droneSpeedVec_Anno];
-//        }
-        [self.droneSpeedVec_Anno setCoordinate:state.aircraftLocation];
-        [self.droneSpeedVec_Anno updateHeading:RADIAN(angle) andScale:scale];
-    }
-    
 }
 
+
+
+
+#pragma mark - simulation
 -(Drone*) newDroneStateFrom:(Drone*) currentDroneState withTargetSpeed:(float) targSp andTargetAngle:(float) targHeading andTargAltitude:(float) targAlt during:(float) dt{
     
-    Drone* newState = [[Drone alloc] init];
+    Drone* newState = currentDroneState;
     
     CLLocation* newLoc = [self newDroneStateFromState:currentDroneState.droneLoc targetSpeed:targSp targetAngle:targHeading targetAltitude:targAlt];
     

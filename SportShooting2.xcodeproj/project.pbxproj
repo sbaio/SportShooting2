@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D612D1A61D0CC51200CC6D14 /* cells.xib in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A51D0CC51200CC6D14 /* cells.xib */; };
+		D612D1AA1D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */; };
 		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
 		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
 		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
@@ -181,6 +182,7 @@
 
 /* Begin PBXFileReference section */
 		D612D1A51D0CC51200CC6D14 /* cells.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = cells.xib; sourceTree = "<group>"; };
+		D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackGroundImage_contentView_MenuReveal.png; sourceTree = "<group>"; };
 		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
 		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
 		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
@@ -1139,6 +1141,7 @@
 		D69902571D0408110038D05B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */,
 				D6218CF41D0B85EF00DF1E55 /* SwitchRC.gif */,
 				D6218CF21D0B33E200DF1E55 /* takeOffButton.gif */,
 				D6218CD81D09527E00DF1E55 /* landButton.png */,
@@ -1277,6 +1280,7 @@
 				D6218CD11D07EFBC00DF1E55 /* BottomStatusBar.xib in Resources */,
 				D6218CAE1D04D82C00DF1E55 /* Cable_green.png in Resources */,
 				D632D5631D04042200B12946 /* droneTargetLocation.png in Resources */,
+				D612D1AA1D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png in Resources */,
 				D632D55F1D04042200B12946 /* aircraft.png in Resources */,
 				D6218CAA1D04D4CC00DF1E55 /* GPS_green.png in Resources */,
 				D6218CD91D09527E00DF1E55 /* landButton.png in Resources */,

@@ -16,4 +16,6 @@
 + (UIColor *)customGreenColor;
 + (UIColor *)customBlueColor;
 
++(UIColor*) customGrayForCellSelection;
+
 @end
