@@ -10,10 +10,11 @@
 
 #define WeakRef(__obj) __weak typeof(self) __obj = self
 #define WeakReturn(__obj) if(__obj ==nil)return;
+#define sign(a) ( ( (a) < 0 )  ?  -1   : ( (a) > 0 ) )
+#define bindBetween(a,b,c) ((a > c) ? c: ((a<b)? b:a))
 
 #import "MapVC.h"
 #import "GeneralMenuVC.h"
-#import "circuitDefinitionTVC.h"
 
 
 #import "PresentingAnimationController.h"
@@ -22,7 +23,6 @@
 #import "UIImage+animatedGIF.h"
 #import "UIColor+CustomColors.h"
 
-//@import Photos;
 
 @interface MapVC ()
 
@@ -63,6 +63,8 @@
 -(void) initUI{
     [_GoButton.layer setCornerRadius:8];
     [_GoButton setHidden:YES];
+    [_StopButton.layer setCornerRadius:8];
+    [_StopButton setHidden:YES];
     
     [_simulatedCarSpeedSlider setHidden:YES];
     
@@ -113,10 +115,14 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     _phoneLocation = _locationManager.location;
     
-    if(_phoneLocation.coordinate.longitude && _phoneLocation.coordinate.latitude){
+    if(_phoneLocation.speed >= 0){
         if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:_phoneLocation.coordinate] > 10000) {
             [mapView setRegion:MKCoordinateRegionMake(_phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
         }
+        if (_isRealCar) {
+            [self carAtLocation:_phoneLocation];
+        }
+        
         
     }
     else{
@@ -236,7 +242,9 @@
     
     // circuit selection part
     if (!self.circuit) {
-        [self showCircuitListView];
+        [_circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+            NSLog(@"heeeye");
+        }];
     }
 }
 -(void)switchMapAndVideoViews:(UITapGestureRecognizer*) tap{
@@ -260,12 +268,12 @@
     _autopilot.FCcurrentState = state;
     
     [[[Menu instance] getTopMenu] updateGPSLabel:state.satelliteCount];
-    if (!realDrone) {
-        realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
+    if (!_realDrone) {
+        _realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
+        _realDrone.realDrone = YES;
     }
     else{
-
-        [realDrone updateDroneStateWithFlightControllerState:state];
+        [_realDrone updateDroneStateWithFlightControllerState:state];
     }
     
     lastFCUpdateDate = [[NSDate alloc] init];
@@ -289,15 +297,7 @@
             }
         }
     });
-//    
-//    if (state.isUltrasonicBeingUsed) {
-//        [_bottomStatusBar updateAltitudeLabelWithAltitude:state.ultrasonicHeight];
-//    }
-//    else{
-        [_bottomStatusBar updateWith:state andPhoneLocation:_phoneLocation];
-//        [_bottomStatusBar updateDistanceToRCLabelWithDistance:-1];
-//    }
-    
+
 }
 
 
@@ -360,26 +360,6 @@
             NSDictionary *aDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:swipedCircuit,@"locations", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"panCircuitEnded" object:nil userInfo:aDictionary];
             return;
-            
-            UINavigationController* navC = (UINavigationController*)menuRevealVC.frontViewController;
-            NSArray* arrayOfControllers = navC.viewControllers;
-            
-            circuitDefinitionTVC* tvc = (circuitDefinitionTVC*)arrayOfControllers[1];
-            tvc.loadedCircuit.locations = swipedCircuit;
-            
-            
-            if (tvc.loadedCircuit.circuitName) {
-                [cm saveCircuit:tvc.loadedCircuit];
-                DVLog(@"saving circuit %@ ,count ,%d",tvc.loadedCircuit.circuitName,(int)swipedCircuit.count);
-            }
-            
-            [mainRevealVC setFrontViewPosition:FrontViewPositionRight];
-            
-            
-            
-            [tvc.tableView reloadData];
-            
-            
         }
     }
 }
@@ -446,16 +426,7 @@
 }
 
 
--(void) showCircuitListView{
-    
-    [_circuitsList initWithDefaultsProperties];
-    
-    mapVCTapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnMapVC:)];
-    
-    [self.view addGestureRecognizer:mapVCTapGR];
-    
-    [_circuitsList showCircuitList:YES];
-}
+
 
 -(void) didTapOnMapVC:(UITapGestureRecognizer*) tapGR{
     NSLog(@"tap on mapVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
@@ -511,24 +482,165 @@
     if ([_GoButton isHidden]) {
         [_GoButton setHidden:NO];
         [_simulatedCarSpeedSlider setHidden:NO];
+        
+        
     }
     else{
         [_GoButton setHidden:YES];
         [_simulatedCarSpeedSlider setHidden:YES];
     }
 }
+
 - (IBAction)didClickOnGoButton:(id)sender {
     // when detected driving .. popup to ask if drone should start following/ moving
-    [self startMission];
+    [self startMissionWithCompletion:^(BOOL started) {
+        if (started) {
+            [self hideGoButtonWithCompletion:^{
+                [self showStopButtonWithCompletion:^{
+                    
+                }];
+            }];
+        }
+    }];
+    
+    
+}
+- (IBAction)didClickOnStopButton:(id)sender {
+    if ([pathPlanningTimer isValid]) {
+        [pathPlanningTimer invalidate];
+    }
+    [self hideStopButtonWithCompletion:^{
+        [self showResumeGoHomeStackWithCompletion:^{
+            
+        }];
+    }];
+    
+}
+- (IBAction)didClickOnResumeButton:(id)sender {
+    pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    [self hideResumeGoHomeStackWithCompletion:^{
+       [self showStopButtonWithCompletion:^{
+           
+       }];
+    }];
+}
+- (IBAction)didClickOnGoHomeButton:(id)sender {
+    
 }
 
 
--(void) startMission{
-    _isRealDrone = NO;
-    _isRealCar = NO;
+-(void) hideGoButtonWithCompletion:(void (^)()) callback{
+    if (_GoButton.alpha == 0.0 || [_GoButton isHidden]) {
+        [_GoButton setHidden:YES];
+        [_GoButton setAlpha:0];
+        callback();
+        NSLog(@"go button already hidden");
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimation.fromValue = @(1.0);
+    opacityAnimation.toValue = @(0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        [_GoButton setHidden:YES];
+        callback();
+    }];
+    [_GoButton.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+-(void) showGoButtonWithCompletion:(void (^)()) callback{
+    if (_GoButton.alpha == 1.0 && ![_GoButton isHidden]) {
+        callback();
+        [_StopButton setHidden:YES];
+        [_StopButton setAlpha:0];
+        [_resumeGoHomeStack setHidden:YES];
+        [_resumeGoHomeStack setAlpha:YES];
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    [_GoButton setHidden:NO];
+    opacityAnimation.fromValue = @(0.0);
+    opacityAnimation.toValue = @(1.0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        
+        callback();
+    }];
+    [_GoButton.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+
+-(void) hideStopButtonWithCompletion:(void (^)() )callback{
+    if (_StopButton.alpha == 0.0 || [_StopButton isHidden]) {
+        [_StopButton setHidden:YES];
+        [_StopButton setAlpha:0];
+        callback();
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimation.fromValue = @(1.0);
+    opacityAnimation.toValue = @(0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        [_StopButton setHidden:YES];
+        callback();
+    }];
+    [_StopButton.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+-(void) showStopButtonWithCompletion:(void (^)()) callback{
+    if (_StopButton.alpha == 1.0 && ![_StopButton isHidden]) {
+        callback();
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    [_StopButton setHidden:NO];
+    opacityAnimation.fromValue = @(0.0);
+    opacityAnimation.toValue = @(1.0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        
+        callback();
+    }];
+    [_StopButton.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+
+-(void) hideResumeGoHomeStackWithCompletion:(void (^)() )callback{
+    if (_resumeGoHomeStack.alpha == 0.0 || [_resumeGoHomeStack isHidden]) {
+        [_resumeGoHomeStack setHidden:YES];
+        [_resumeGoHomeStack setAlpha:0];
+        callback();
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    
+    opacityAnimation.fromValue = @(1.0);
+    opacityAnimation.toValue = @(0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        [_resumeGoHomeStack setHidden:YES];
+        callback();
+    }];
+    [_resumeGoHomeStack.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+-(void) showResumeGoHomeStackWithCompletion:(void (^)()) callback{
+    if (_resumeGoHomeStack.alpha == 1.0 && ![_resumeGoHomeStack isHidden]) {
+        callback();
+        return;
+    }
+    POPBasicAnimation* opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    [_resumeGoHomeStack setHidden:NO];
+    opacityAnimation.fromValue = @(0.0);
+    opacityAnimation.toValue = @(1.0);
+    [opacityAnimation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+        
+        callback();
+    }];
+    [_resumeGoHomeStack.layer pop_addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+
+
+-(void) startMissionWithCompletion:(void (^)(BOOL started)) callback{
+    _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
     
     if (!_circuit || !_circuit.locations.count) {
         NSLog(@"no circuit");
+        callback(NO);
         return;
     }
     
@@ -543,6 +655,7 @@
         CLLocation* droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:[_circuit.locations[0] coordinate] altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
         
         _simulatedDrone = [[Drone alloc] initWithLocation:droneSimulatedLoc];
+        _simulatedDrone.realDrone = NO;
     }
     else{
         if (!appD.isReceivingFlightControllerStatus) {
@@ -558,6 +671,7 @@
     }
     
     pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    callback(YES);
     
     pathPlanningTimer.tolerance = 0.01;
     
@@ -573,40 +687,62 @@
 }
 
 -(void) carAtLocation:(CLLocation*) location{
-    
+    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
     if (_isRealCar) {
+        
         if (location.speed < 0) {
+            [_topMenu updateDistDroneCarLabelWith:nil andDroneLoc:nil];
             NSLog(@"location with negative speed");
             _carLocation = nil;
             return;
         }
         else{
+            
             _carLocation = location;
             // display the speed !!!
         }
     }
     else{
         _carLocation = location;
+        
     }
     [mapView updateCarLocation:_carLocation];
     
+    if (_drone.droneLoc) {
+        [_topMenu updateDistDroneCarLabelWith:location andDroneLoc:_drone.droneLoc];
+    }
 }
 
 -(void) onPathPlanningTimerTicked{
-    _isRealDrone = NO;
-    _isRealCar = NO;
-        
+    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+    
+    _drone = _simulatedDrone;
+    
+    if (_isRealDrone) {
+        _drone = _realDrone;
+    }
+    
+    [mapView CenterViewOnCar:_carLocation andDrone:_drone.droneLoc];
+    
+    [self follow:_carLocation onCircuit:_circuit droneLoc:_drone];
+    
+    [mapView updateDroneAnnotation:_drone];
+    [mapView updateDrone:_drone Vec_Anno_WithTargetSpeed:_drone.targSp AndTargetHeading:_drone.targHeading];
+    
+    
+    
     if (!_isRealDrone) {// SIMULATED DRONE
         
-        [mapView CenterViewOnCar:_carLocation andDrone:_simulatedDrone.droneLoc];
+//        _simulatedDrone.targSp = 25;
+//        _simulatedDrone.targHeading = _simulatedDrone.droneCar_Vec.angle;
         
-        _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:25 andTargetAngle:_simulatedDrone.droneCar_Vec.angle andTargAltitude:10 during:0.1];
-        [mapView updateDroneAnnotation:_simulatedDrone];
+        _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:_simulatedDrone.targSp andTargetAngle:_simulatedDrone.targHeading andTargAltitude:10 during:0.1];
         
-        [self follow:_carLocation onCircuit:_circuit droneLoc:_simulatedDrone];
         
         if (commandByTargetLocation) {
             // MOVE SIMULATED DRONE WITH TARGET LOCATION
+            
             
         }
         else{
@@ -616,6 +752,9 @@
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********
+        _drone.targSp = 25;
+        _drone.targHeading = _drone.droneCar_Vec.angle;
+        
         
         
         // ********* PATH PLANNING ************
@@ -659,11 +798,6 @@
 -(CLLocation*) calculateNextTargetLocation:(CLLocation*) carLoc onCircuit:(Circuit*) circuit drone:(Drone*) predictedDrone{
     
     CLLocation* target = nil;
-    _drone = _simulatedDrone;
-    
-    if (_isRealDrone) {
-        _drone = realDrone;
-    }
     
     carIndexOnCircuit = [self carIndexOnCircuit:circuit forCarLoc:carLoc];
     
@@ -671,14 +805,21 @@
     
     [_predictedDrone calculateDroneInfoOnCircuit:circuit forCarLocation:carLoc carIndex:carIndexOnCircuit];
     
-    CLLocation* loc = [circuit.locations objectAtIndex:_drone.droneIndexOnCircuit];
+    CLLocation* loc = [circuit.locations objectAtIndex:(_drone.droneIndexOnCircuit)%circuit.locations.count];
     [mapView movePinNamed:@"droneIndex" toCoord:loc andColor:yellowColorString];
     
     [mapView updateDroneSensCircuit_PerpAnnotations:_drone];
+    [mapView updateDroneSensCircuit_PerpAnnotations:_predictedDrone];
     
     
     [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circuit];
     
+    if (_drone.isCloseTracking) {
+        [self performCloseTracking];
+    }
+    else{
+        [self performShortcutting];
+    }
     return target;
 }
 
@@ -748,7 +889,6 @@
 
 -(void) setCloseTrackingOrShortcutting:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circuit{
     
-    
     float maxDistOnCircuitForCloseTracking = 9*40;
     float minDistOnCircuitForCloseTracking = -75;
     float droneSpeedSensCircuit = [drone.droneSpeed_Vec dotProduct:drone.sensCircuit];
@@ -757,7 +897,8 @@
     
     
     if (drone.isCloseTracking) {
-//        // décider si on arrete le close tracking : voiture est partie/ index loin
+        [_topMenu setStatusLabelText:@"Close tracking"];
+        // décider si on arrete le close tracking : voiture est partie/ index loin
 
         if (drone.distanceOnCircuitToCar > -75 && drone.distanceOnCircuitToCar < 35) {
             // en fct de la vitesse de la voiture dire si la voiture est partie...
@@ -778,6 +919,8 @@
 
     }
     else{
+        [_topMenu setStatusLabelText:@"Shortcutting"];
+        
         if (drone.carSpeed_Vec.norm < 2 && (drone.droneCar_Vec.norm < 20 || (drone.distanceOnCircuitToCar >- 50 && drone.distanceOnCircuitToCar < 50 && drone.droneDistToItsIndex < 20)) ) {
             
             drone.isCloseTracking = YES;
@@ -792,6 +935,7 @@
             if (drone.distanceOnCircuitToCar > minDistOnCircuitForCloseTracking && drone.distanceOnCircuitToCar < maxDistOnCircuitForCloseTracking) {
                 if (diffSp < 0.5*drone.distanceOnCircuitToCar+10) {
                     DVLog(@"CloseTracking: peut suivre la voiture");
+                    
                     drone.isCloseTracking = YES;
 //                    arrayTargetBearingCloseTracking = nil;
                 }
@@ -814,6 +958,108 @@
         }
     }
     
+}
+
+-(void) performCloseTracking{
+    commandByTargetLocation = NO;
+    
+    // if drone should strictly follow the circuit locations then choose
+
+    float targ_V_perp = _predictedDrone.droneDistToItsIndex/2;;
+    
+    targ_V_perp = bindBetween(targ_V_perp, 0, 16); // doit être continue
+    
+    float diffSp = _drone.carSpeed_Vec.norm - _drone.V_parralele;
+    float totalDist = _drone.distanceOnCircuitToCar-20*(1+diffSp/10);
+    
+    float speedFromDist = -16*sign(totalDist)*(1-expf(-fabsf(totalDist)/25));
+    float targ_V_Parallel = speedFromDist + _drone.carSpeed_Vec.norm;
+    
+    
+    targ_V_Parallel = bindBetween(targ_V_Parallel, -sqrt(256-targ_V_perp*targ_V_perp), sqrt(256-targ_V_perp*targ_V_perp));
+    
+    
+    Vec* V_parallele_Vec = [[Vec alloc] initWithNorm:targ_V_Parallel andAngle:_drone.sensCircuit.angle];
+    Vec* V_Perp_Vec = [[Vec alloc] initWithNorm:targ_V_perp andAngle:_drone.versCircuit.angle];
+    Vec* targetDroneSpeed_Vec = [V_parallele_Vec addVector:V_Perp_Vec];
+    
+    _drone.targSp = targetDroneSpeed_Vec.norm;
+    _drone.targHeading = targetDroneSpeed_Vec.angle;
+}
+
+-(void) performShortcutting{
+    
+    _drone.targSp = 16;
+    _drone.targHeading = _drone.droneCar_Vec.angle;
+    CLLocation* target = [self shortcuttingPhase:_carLocation drone:_drone onCircuit:_circuit];
+    
+    if (target) {
+        float dist = [[Calc Instance] distanceFromCoords2D:_drone.droneLoc.coordinate toCoords2D:target.coordinate];
+        float bearing = [[Calc Instance] headingTo:target.coordinate fromPosition:_drone.droneLoc.coordinate];
+        
+        
+        _drone.targHeading = bearing;
+        _drone.targSp = 16*(1-expf(-dist/16));
+        
+        
+        [mapView movePinNamed:@"shortcuttingPin" toCoord:target andColor:yellowColorString];
+    }
+}
+
+//  *************** SHORTCUTTING ****************
+-(CLLocation*) shortcuttingPhase:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circuit{
+    CLLocation* target = nil;
+    
+    // WHEN SHORTCUTTING MAX ALT
+    
+    // FIND TARGET SPEED AND BEARING
+    
+    for (int i=0; i< circuit.locations.count; i++) { // OUTPUTS target loc
+
+        CLLocation* loci = [circuit locationAtIndex:(carIndexOnCircuit+i+1)];
+        float carDistanceToLoci = [circuit distanceOnCircuitfromIndex:carIndexOnCircuit toIndex:(carIndexOnCircuit+i+1)];
+        
+        float carTimeToReachLoci = carDistanceToLoci/(carLoc.speed+0.5);
+        
+        
+        Vec* droneToLoci = [_drone.drone_Loc0_Vec addVector:circuit.Loc0_Loci_Vecs[i]];
+        
+        float distance = droneToLoci.norm;
+        
+        float droneTimeToReachLoci = [_drone timeForDroneToReachLoc:loci andTargetSpeed:0];
+    
+        
+        
+        if (carTimeToReachLoci < droneTimeToReachLoci) {
+            continue;
+        }
+        else{
+            if (droneTimeToReachLoci +1.5 < carTimeToReachLoci ) { // drone arrives very early .. then there to go
+                target = loci;
+                NSLog(@"locindex good ,%lu",[circuit.locations indexOfObject:loci]);
+                if (droneTimeToReachLoci < 2) {
+//                    isShortcutting = NO;
+//                    isCloseTracking = YES;
+                    NSLog(@"droneTime , %0.3f",droneTimeToReachLoci);
+                    NSLog(@"close Tracking .. target almost reached");
+                }
+                
+//                NSTimeInterval shortcuttingTime = -[startShortcuttingDate timeIntervalSinceNow];
+//                DVLoggerLog(@"shortcutting", [NSString stringWithFormat:@"time, %0.3f, distOncircuit, %0.3f,droneDistToTarget,%0.3f",shortcuttingTime,distanceOnCircuit,distance]);
+                
+                
+                break;
+            }
+            else{
+                continue;
+            }
+        }
+    }
+    
+    commandByTargetLocation = YES;
+    
+    
+    return target;
 }
 
 @end

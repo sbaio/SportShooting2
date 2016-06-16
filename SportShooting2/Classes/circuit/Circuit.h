@@ -37,6 +37,8 @@
 
 -(float) length;
 -(MKCoordinateRegion) region;
+-(CLLocation*) locationAtIndex:(int) index;
+-(float) distanceOnCircuitfromIndex:(int) startIndex toIndex:(int) endIndex;
 
 -(void) update;
 

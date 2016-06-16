@@ -38,6 +38,8 @@
     
     __weak MapVC* mapVC;
     
+    DJIRCHardwareFlightModeSwitchState prevSwitchState;
+    
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
@@ -47,6 +49,8 @@
 @property BOOL isReceivingRCUpdates;
 @property BOOL isReceivingFlightControllerStatus;
 @property BOOL isDroneRecording;
+
+@property BOOL isRCSwitch_F;
 
 @property BOOL isLocationsServicesEnabled;
 @property(nonatomic,strong) DJIBatteryState* batteryState;

@@ -18,11 +18,13 @@
 @interface GeneralMenuVC : UITableViewController <MGSwipeTableCellDelegate>
 {
     
+    
 }
 
 @property BOOL realDrone;
 @property BOOL isCameraConnected;
-
+@property UISwitch* carSwitch;
+@property UISwitch* droneSwitch;
 
 -(void) mapWentRightMost;
 -(void) mapWentRight;

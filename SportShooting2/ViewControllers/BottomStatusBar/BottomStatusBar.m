@@ -102,7 +102,7 @@
         [_altitudeLabel setText:[NSString stringWithFormat:@"%0.1f m",altitude]];
     }
 }
--(void) updateDistanceToRCLabelWithDistance:(float) distance{
+-(void) updateDistanceToUserLabelWithDistance:(float) distance{
     if (!distance) {
         [_distanceLabel setText:[NSString stringWithFormat:@"0 m"]];
     }
@@ -130,7 +130,7 @@
 
 -(void) updateWith:(DJIFlightControllerCurrentState*)state andPhoneLocation:(CLLocation*) phoneLoc{
     if (phoneLoc) { // if phoneLoc is valid
-        [self updateDistanceToRCLabelWithDistance:[[Calc Instance] distanceFromCoords2D:phoneLoc.coordinate toCoords2D:state.aircraftLocation]];
+        [self updateDistanceToUserLabelWithDistance:[[Calc Instance] distanceFromCoords2D:phoneLoc.coordinate toCoords2D:state.aircraftLocation]];
     }
     [self updateAltitudeLabelWithAltitude:state.altitude];
     

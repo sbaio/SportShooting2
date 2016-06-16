@@ -251,7 +251,8 @@
         [self.versCircuit updateWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:(angleSens-90)]];
     }
     
-    
+    self.V_perp = [self.droneSpeed_Vec dotProduct:self.versCircuit];
+    self.V_parralele = [self.droneSpeed_Vec dotProduct:self.sensCircuit];
     
 }
 
@@ -345,7 +346,8 @@
     // state should be first initialized to : initial position , sp = 0, targang = 0
     
     Vec* newSpeed_Vec = [self newDroneSpeedFromSpeed:droneLoc targetSpeed:targSp targetAngle:targAngle];
-    float sp = bindBetween(newSpeed_Vec.norm, 0, 17);
+//    float sp = bindBetween(newSpeed_Vec.norm, 0, 17);
+    float sp = newSpeed_Vec.norm;
     
     [newSpeed_Vec updateWithNorm:sp andAngle:newSpeed_Vec.angle];
     
@@ -364,6 +366,87 @@
     
     
     return newLoc;
+}
+
+
+#pragma mark - time estimation
+
+-(float) timeForDroneToReachLoc:(CLLocation*) targetLoc andTargetSpeed:(float) targSpeed{
+    
+    CLLocation* droneLoc = self.droneLoc;
+    Vec* droneSpeed = [[Vec alloc] initWithNorm:droneLoc.speed andAngle:droneLoc.course];
+    float dist = [[Calc Instance] distanceFromCoords2D:droneLoc.coordinate toCoords2D:targetLoc.coordinate];
+    float heading = [[Calc Instance] headingTo:targetLoc.coordinate fromPosition:droneLoc.coordinate];
+    Vec* droneToLoc = [[Vec alloc] initWithNorm:dist andAngle:heading];
+    
+    Vec* droneToLocUnity = [droneToLoc unityVector];
+    
+    float droneSpeedInLocDir = [droneToLocUnity dotProduct:droneSpeed];
+    
+    return [self timeForDrone_linear:droneSpeedInLocDir toReachLocAtDist:dist withSpAtTarg:targSpeed];
+}
+
+-(float) timeForDrone_linear:(float) droneSpeed toReachLocAtDist:(float) dist withSpAtTarg:(float) speedAtTarget{
+    
+    // dist should be positive because its along with dronetoLoc vec
+    // pour simplifier speedAtTarget >= 0
+    
+    float timeToTarget = 0;
+    
+    if (droneSpeed >= 0) {
+        
+        droneSpeed = bindBetween(droneSpeed, 0, 16);
+        float distTo16mps = 75.8 - 1.63*expf(0.24*droneSpeed);
+        float distFreinageFrom16mps = (16-speedAtTarget)*1.2356; //
+        
+        if (dist > distTo16mps + distFreinageFrom16mps) {
+            float distAt16 = dist - distTo16mps - distFreinageFrom16mps;
+            timeToTarget = distAt16/16 + 0.36*(16-droneSpeed) + 0.17*fabsf(16-speedAtTarget);
+            
+            //            NSLog(@"timeToTarg , %0.2f, dist , %0.1f ,droneSp , %0.2f",timeToTarget,dist,droneSpeed);
+            
+        }
+        else{
+            if (speedAtTarget == 0) {
+                
+                float maxSpeed = 0;
+                if (dist >= 10) {
+                    maxSpeed = 5.06*logf(dist)-7.1;
+                }
+                else{
+                    maxSpeed = 0.455*dist;
+                }
+                
+                maxSpeed = bindBetween(maxSpeed, 0, 16);
+                // maxSpeed to reach before starting braking
+                
+                if (droneSpeed < maxSpeed) {
+                    // temps accélération
+                    float Tacc = 0.36*(maxSpeed-droneSpeed);
+                    float Tdec = 0.17*maxSpeed;
+                    
+                    timeToTarget = Tacc + Tdec;
+                }
+                else{
+                    timeToTarget = dist/((droneSpeed+speedAtTarget)/2);
+                }
+            }
+            else{
+                timeToTarget = dist/((droneSpeed+speedAtTarget)/2);
+            }
+            
+        }
+        
+        
+    }
+    else{
+        // freinage
+        float timeToBrake = -0.17*droneSpeed;
+        float distAfterBraking = -1.2356*droneSpeed;
+        timeToTarget = timeToBrake + [self timeForDrone_linear:0 toReachLocAtDist:dist+distAfterBraking withSpAtTarg:speedAtTarget];
+    }
+    
+    return timeToTarget;
 }
 
 @end

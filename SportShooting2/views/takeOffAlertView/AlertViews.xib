@@ -9,7 +9,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="alertsView">
             <connections>
+                <outlet property="confirmTakeoffButton" destination="nXM-a5-gCg" id="1Ab-Mr-i0p"/>
                 <outlet property="switchGIF" destination="qls-uX-4d4" id="anp-lE-GNx"/>
+                <outlet property="switchStack" destination="BOr-X2-4N7" id="eXd-qY-Qmg"/>
                 <outlet property="takeOffAlertView" destination="iN0-l3-epB" id="hN5-yO-5lb"/>
             </connections>
         </placeholder>
@@ -60,7 +62,7 @@
                                 <constraint firstItem="2Qb-Aa-31Y" firstAttribute="centerX" secondItem="aIX-FZ-sIc" secondAttribute="centerX" id="vx2-uu-FIV"/>
                             </constraints>
                         </stackView>
-                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BOr-X2-4N7">
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BOr-X2-4N7" userLabel="Switch stack">
                             <rect key="frame" x="0.0" y="150" width="600" height="174"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fjo-eM-neg">
@@ -69,7 +71,7 @@
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Please turn switch on RC to F to enable automatic flight, switch back to P or A to stop it in emergency" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TDW-PV-Ma7">
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Please turn switch on RC to F to enable automatic flight, switch back to P or A to stop it in emergency." selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TDW-PV-Ma7">
                                     <rect key="frame" x="60" y="0.0" width="246" height="174"/>
                                     <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="15"/>
                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>

@@ -87,6 +87,7 @@
         [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
     }
     
+    [self updateSwitchStack];
 }
 
 -(void) dismissTakeOffAlertY{
@@ -130,6 +131,8 @@
 
 - (IBAction)didClickOnTakeOffButton:(id)sender {
     
+    DVLog(@"ok");
+    return;
     DJIFlightController* fc = [ComponentHelper fetchFlightController];
     if (fc && [[Menu instance] getAppDelegate].isReceivingFlightControllerStatus) {
         DVLog(@"taking off");
@@ -155,6 +158,18 @@
 
 // land
 
+-(void) updateSwitchStack{
+    if ([[Menu instance] getAppDelegate].isRCSwitch_F) {
+        // good
+        [switchStack setHidden:YES];
+        [confirmTakeoffButton setEnabled:YES];
+    }
+    else{
+        // show switch alert
+        [switchStack setHidden:NO];
+        [confirmTakeoffButton setEnabled:NO];
+    }
+}
 
 
 -(id) initWithCoder:(NSCoder *)aDecoder{
@@ -164,8 +179,11 @@
     dismissTapGRAlertView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnAlertView:)];
     
     [self addGestureRecognizer:dismissTapGRAlertView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RCSwitchStateChanged:) name:@"RCSwitchStateChanged" object:nil];
+    
     return self;
 }
+
 
 -(BOOL) isShowingAnAlert{
     NSArray* arrayOfSiblings = self.superview.subviews;
@@ -181,5 +199,8 @@
     }
 }
 
+-(void) RCSwitchStateChanged:(NSNotification*) notif{
+    [self updateSwitchStack];
+}
 
 @end

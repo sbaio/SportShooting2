@@ -9,8 +9,6 @@
 #import "circuitDefinitionTVC.h"
 #import "MapVC.h"
 
-#import "CircuitsTVC.h"
-
 @interface circuitDefinitionTVC ()
 {
     NSMutableArray* cellIDs;
@@ -150,10 +148,9 @@
             [[circuitManager Instance] saveCircuit:_loadedCircuit];
             
             UINavigationController* navC = (UINavigationController*) MenuRevealController.frontViewController;
-            CircuitsTVC* circuitListTVC = (CircuitsTVC*)navC.viewControllers[1];
-            CircuitMenuTVC* circuitMenuTVC = (CircuitMenuTVC*)navC.viewControllers[0];
-            [circuitMenuTVC updateCircuitList];
-            [circuitListTVC.tableView reloadData];
+
+        
+
     
             
         }

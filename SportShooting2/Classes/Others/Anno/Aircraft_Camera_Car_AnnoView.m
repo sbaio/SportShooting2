@@ -46,9 +46,7 @@
         else if(annotation.type==4)
         {
             self.typeView = 4;
-//            self.image = [UIImage imageNamed:@"flagDrone.png"]; //
-//            self.image = [UIImage imageNamed:@"targetDronePosition.png"];//
-//            self.image = [UIImage imageNamed:@"droneTargetLocation.png"];
+
             self.image = [UIImage imageNamed:@"droneTargetLocation50.png"];
             annotation.identifier = @"droneTarget";
         }

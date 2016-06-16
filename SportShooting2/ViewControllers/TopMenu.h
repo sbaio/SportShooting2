@@ -12,6 +12,7 @@
 #import "Menu.h"
 #import "ComponentHelper.h"
 #import "MapVC.h"
+#import "Calc.h"
 
 @class AppDelegate;
 @class MapVC;
@@ -34,6 +35,9 @@
 -(void) updateGPSLabel:(int) satelliteCount;
 -(void) setStatusLabelText:(NSString*) textStatus;
 
+-(void) updateDistDroneCarLabel;
+-(void) updateDistDroneCarLabelWith:(CLLocation*) carLoc andDroneLoc:(CLLocation*) droneLoc;
+
 
 // other buttons management
 -(void)showTakeOffButton;
@@ -46,5 +50,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gpsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *batteryLabel;
+@property (weak, nonatomic) IBOutlet UILabel *distDroneCarLabel;
 
 @end

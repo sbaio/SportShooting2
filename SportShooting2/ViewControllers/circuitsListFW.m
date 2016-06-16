@@ -34,6 +34,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(panCircuitEnded:) name:@"panCircuitEnded" object:nil];
     
     showSwipeAnimation = YES;
+    isInit = NO;
     return self;
 }
 
@@ -48,6 +49,9 @@
     _tableView.delegate = self;
     _tableView.alpha = 0.7;
     
+    defineTableView = [[UITableView alloc] initWithFrame:_tableView.frame];
+    defineTableView.dataSource = self;
+    
     UIPanGestureRecognizer *topPanGR = [[UIPanGestureRecognizer alloc]
                                         initWithTarget:self action:@selector(topBorderPanGesture:)];
     [_titleLabel addGestureRecognizer:topPanGR];
@@ -60,6 +64,7 @@
     [_addBut addTarget:self action:@selector(onAddButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     _addBut.isAdd = YES;
     
+    isInit = YES;
     
 }
 
@@ -77,21 +82,32 @@
 
 -(void) onCloseButtonClicked:(id) sender{
     [self hideCircuitList:YES];
-    
 }
 
 -(void) onAddButtonClicked:(id) sender{
-
-    if (!defineTableView) {
-        defineTableView = [[UITableView alloc] initWithFrame:_tableView.frame];
-        defineTableView.dataSource = self;
-    }
-    [defineTableView reloadData];
     
-    POPBasicAnimation* entranceAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
-                                            
     if (_addBut.status ==  2) {
 
+        [self openDefineTableView];
+    }
+    else if (_addBut.status == 3){
+
+        [self closeDefineTableView];
+    }
+
+    
+}
+
+-(void) openDefineTableView{
+    
+    [defineTableView reloadData];
+    
+    [defineTableView setFrame:_tableView.frame];
+    
+    POPBasicAnimation* entranceAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    
+    if (_addBut.status ==  2) {
+        
         entranceAnimation.fromValue = @(_tableView.center.x+_tableView.frame.size.width);
         entranceAnimation.toValue = @(_tableView.center.x);
         entranceAnimation.duration = 1;
@@ -102,14 +118,18 @@
             
         }];
     }
-    else if (_addBut.status == 3){
+}
+-(void) closeDefineTableView{
+    POPBasicAnimation* closeAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    
+    if (_addBut.status == 3){
         isDefiningNewCircuit = NO;
-        entranceAnimation.toValue = @(_tableView.center.x + _tableView.frame.size.width);
-        entranceAnimation.duration = 0.5;
-        [entranceAnimation setCompletionBlock:^(POPAnimation * anim, BOOL finished) {
+        closeAnimation.toValue = @(_tableView.center.x + _tableView.frame.size.width);
+        closeAnimation.duration = 0.5;
+        [closeAnimation setCompletionBlock:^(POPAnimation * anim, BOOL finished) {
             [defineTableView removeFromSuperview];
         }];
-        [defineTableView.layer pop_addAnimation:entranceAnimation forKey:@"entranceAlpha"];
+        [defineTableView.layer pop_addAnimation:closeAnimation forKey:@"closeAlpha"];
         
         
         [_addBut animateToAddWithCompletion:^(BOOL finished) {
@@ -118,8 +138,79 @@
         allCircuits = [self loadExistingCircuitsNames_coder];
         [_tableView reloadData];
     }
+}
 
+-(void) openCircuitListWithCompletion:(void (^)(BOOL finished))callback{
+    if (!isInit) {
+        [self initWithDefaultsProperties];
+    }
+    [self closeDefineTableView];
     
+    MapView* mapView = (MapView*)[[Menu instance] getMap];
+    [mapView setMapViewMaskImage:NO];
+    
+    [[[UIApplication sharedApplication]keyWindow] addSubview:self];
+    
+    POPSpringAnimation *positionAnimationY = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionY];
+    
+    positionAnimationY.fromValue = @(0.5*self.superview.center.y + self.superview.frame.size.height/10);
+    positionAnimationY.toValue = @(0.5*self.superview.center.y + self.superview.frame.size.height/10);
+    positionAnimationY.springBounciness = 25;
+    [positionAnimationY setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
+        
+    }];
+    POPSpringAnimation *positionAnimationX = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
+    
+    positionAnimationX.fromValue = @(-self.superview.center.x*0.4);
+    positionAnimationX.toValue = @(self.superview.center.x*0.4);
+    positionAnimationX.springBounciness = 15;
+    [positionAnimationX setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
+        [_closeBut animateToCloseWithCompletion:^(BOOL finished) {
+            
+        }];
+        
+        if ([self.subviews containsObject:defineTableView]) {
+            [_addBut animateToMinusWithCompletion:^(BOOL finished) {
+                
+            }];
+        }
+        else{
+            [_addBut animateToAddWithCompletion:^(BOOL finished) {
+                
+            }];
+        }
+        
+        if (showSwipeAnimation) {
+            MGSwipeTableCell* firstCell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            
+            showSwipeAnimation = NO;
+            
+            
+            
+            [firstCell showSwipe:MGSwipeDirectionLeftToRight animated:YES completion:^(BOOL finished) {
+                
+            }];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [firstCell hideSwipeAnimated:YES completion:^(BOOL finished) {
+                    
+                }];
+            });
+            
+        }
+        
+        callback(finished);
+        
+    }];
+    
+    
+    POPBasicAnimation *fadeAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
+    fadeAnimation.duration = 1.0;
+    fadeAnimation.toValue = @1;
+    
+    [self.layer pop_addAnimation:positionAnimationY forKey:@"positionAnimationY"];
+    [self.layer pop_addAnimation:positionAnimationX forKey:@"positionAnimationX"];
+    [self.layer pop_addAnimation:fadeAnimation forKey:@"fadeAnimation"];
 }
 
 
@@ -463,6 +554,7 @@
 
 -(void) showCircuitList:(BOOL)animated{
 
+    [self closeDefineTableView];
     MapView* mapView = (MapView*)[[Menu instance] getMap];
     [mapView setMapViewMaskImage:NO];
     

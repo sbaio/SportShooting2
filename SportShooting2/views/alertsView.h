@@ -16,6 +16,8 @@
     __weak MapVC* mapVC;
     UITapGestureRecognizer* dismissTapGRAlertView;
     
+    __weak IBOutlet UIStackView *switchStack;
+    __weak IBOutlet UIButton *confirmTakeoffButton;
 }
 
 @property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;

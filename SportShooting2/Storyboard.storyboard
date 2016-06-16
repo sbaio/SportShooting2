@@ -120,6 +120,14 @@
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="inspire_drone.png" translatesAutoresizingMaskIntoConstraints="NO" id="IiU-Hh-m0N">
                                             <rect key="frame" x="8" y="5" width="50" height="30"/>
                                         </imageView>
+                                        <switch opaque="NO" alpha="0.050000000000000003" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oKi-Fn-KOa">
+                                            <rect key="frame" x="8" y="5" width="51" height="31"/>
+                                            <color key="onTintColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="thumbTintColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="0.0" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="onCarSwitchChanged:" destination="zjD-BM-aSh" eventType="valueChanged" id="14J-vV-Mld"/>
+                                            </connections>
+                                        </switch>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.70957868140000002" green="0.69769161810000002" blue="0.71881135470000002" alpha="0.0" colorSpace="calibratedRGB"/>
@@ -137,6 +145,14 @@
                                             <color key="textColor" red="0.58095037940000005" green="0.56880778070000004" blue="0.59271144870000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <switch opaque="NO" alpha="0.050000000000000003" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Nj-u8-QSb">
+                                            <rect key="frame" x="8" y="4" width="51" height="31"/>
+                                            <color key="onTintColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="thumbTintColor" red="0.72714358568191528" green="0.48846310377120972" blue="0.13676784932613373" alpha="0.0" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="onCarSwitchChanged:" destination="zjD-BM-aSh" eventType="valueChanged" id="Teo-Cx-1yW"/>
+                                            </connections>
+                                        </switch>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="carSpeed.png" translatesAutoresizingMaskIntoConstraints="NO" id="QuQ-yR-NUq">
                                             <rect key="frame" x="8" y="12" width="50" height="19"/>
                                         </imageView>
@@ -334,73 +350,6 @@
             </objects>
             <point key="canvasLocation" x="2171" y="296"/>
         </scene>
-        <!--List of tracks TVC-->
-        <scene sceneID="wSP-C9-wEA">
-            <objects>
-                <tableViewController storyboardIdentifier="TrackListVC" title="List of tracks TVC" id="UeH-VE-ejL" customClass="CircuitsTVC" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" sectionIndexMinimumDisplayRowCount="1" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="9ne-aZ-05Y">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="circuitListCell" id="3u9-DA-1Dt" customClass="MGSwipeTableCell">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3u9-DA-1Dt" id="VmC-K1-C6Z">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Track Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hJa-hw-Eui">
-                                            <rect key="frame" x="16" y="6" width="120" height="31"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="swipeableCellTrackSelection" id="5II-Bz-BTt" customClass="MGSwipeTableCell">
-                                <rect key="frame" x="0.0" y="72" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5II-Bz-BTt" id="oGb-Y8-wks">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Track Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P9W-RS-6Q6">
-                                            <rect key="frame" x="16" y="6" width="120" height="31"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3P5-PS-KSB">
-                                            <rect key="frame" x="489" y="0.0" width="42" height="43"/>
-                                            <state key="normal" title="select">
-                                                <color key="titleColor" red="0.20967585243904865" green="0.28760729962712617" blue="0.58522555401151832" alpha="1" colorSpace="calibratedRGB"/>
-                                            </state>
-                                        </button>
-                                    </subviews>
-                                    <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
-                                    <constraints>
-                                        <constraint firstItem="3P5-PS-KSB" firstAttribute="centerY" secondItem="oGb-Y8-wks" secondAttribute="centerY" id="DF6-Mq-bcs"/>
-                                        <constraint firstItem="3P5-PS-KSB" firstAttribute="height" secondItem="oGb-Y8-wks" secondAttribute="height" id="R9V-s2-UQk"/>
-                                        <constraint firstItem="3P5-PS-KSB" firstAttribute="centerX" secondItem="oGb-Y8-wks" secondAttribute="centerX" multiplier="1.7" id="rmf-Ey-FcK"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <color key="backgroundColor" red="0.84467871660000005" green="0.83112772109999999" blue="0.85822971199999998" alpha="1" colorSpace="calibratedRGB"/>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="UeH-VE-ejL" id="rle-fh-UxU"/>
-                            <outlet property="delegate" destination="UeH-VE-ejL" id="Yq4-j3-6iG"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="clV-2m-YYd"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aeV-yt-2AB" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2880" y="296"/>
-        </scene>
         <!--CircDefMenu-->
         <scene sceneID="9nZ-RY-6fq">
             <objects>
@@ -524,7 +473,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5YC-dK-ZdV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3579" y="296"/>
+            <point key="canvasLocation" x="2911" y="308"/>
         </scene>
         <!--TrackNavC-->
         <scene sceneID="tMC-ef-ID3">
@@ -564,7 +513,7 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bJm-SV-V7B" userLabel="VideoPreviewerView">
                                         <rect key="frame" x="-234" y="0.0" width="1068" height="600"/>
-                                        <color key="backgroundColor" white="0.86198747379999996" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.82710391283035278" green="0.827079176902771" blue="0.82709318399429321" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="bJm-SV-V7B" secondAttribute="height" multiplier="1/0.562219" id="3k2-74-L4L"/>
                                         </constraints>
@@ -623,7 +572,7 @@
                                             <action selector="onScrollButtonClicked:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="ZYg-6u-df7"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enq-Sg-45p">
+                                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enq-Sg-45p">
                                         <rect key="frame" x="240" y="458" width="300" height="75"/>
                                         <color key="backgroundColor" red="0.6957245990348967" green="0.80475227516884762" blue="0.88465700041570672" alpha="0.69503546099290781" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
@@ -634,10 +583,51 @@
                                             <action selector="didClickOnGoButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="J7k-Fs-yya"/>
                                         </connections>
                                     </button>
+                                    <button hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Evk-qR-BZi">
+                                        <rect key="frame" x="240" y="458" width="300" height="75"/>
+                                        <color key="backgroundColor" red="0.88465700039999995" green="0.14546425294657514" blue="0.0" alpha="0.69503546100000002" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                        <state key="normal" title="STOP">
+                                            <color key="titleColor" red="0.78352398339999996" green="0.56522478129999998" blue="0.17839329330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="didClickOnStopButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="LMD-PN-9Vi"/>
+                                        </connections>
+                                    </button>
+                                    <stackView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dhb-Um-6Xb">
+                                        <rect key="frame" x="240" y="458" width="300" height="75"/>
+                                        <subviews>
+                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="53Q-8E-Pe5">
+                                                <rect key="frame" x="0.0" y="0.0" width="150" height="75"/>
+                                                <color key="backgroundColor" red="0.47575948732574941" green="0.88465700039999995" blue="0.39628144526952996" alpha="0.69503546100000002" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                                <state key="normal" title="Resume">
+                                                    <color key="titleColor" red="0.78352398339999996" green="0.26200066589246762" blue="0.20571188716097208" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didClickOnResumeButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="v8W-9g-0T1"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mzj-VH-kuH">
+                                                <rect key="frame" x="150" y="0.0" width="150" height="75"/>
+                                                <color key="backgroundColor" red="0.2457144456682778" green="0.48736534611050064" blue="0.88465700039999995" alpha="0.69503546100000002" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                                <state key="normal" title="Go Home">
+                                                    <color key="titleColor" red="0.73168444236920693" green="0.78352398339999996" blue="0.24415387434180097" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didClickOnGoHomeButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="7lV-yi-CZO"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="53Q-8E-Pe5" firstAttribute="width" secondItem="Mzj-VH-kuH" secondAttribute="width" id="1DJ-lc-WXp"/>
+                                        </constraints>
+                                    </stackView>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="40" translatesAutoresizingMaskIntoConstraints="NO" id="x74-Ra-ao7">
                                         <rect key="frame" x="238" y="373" width="304" height="76"/>
                                         <color key="tintColor" red="0.88465700039999995" green="0.34825751610383221" blue="0.3531187942797045" alpha="0.69503546100000002" colorSpace="calibratedRGB"/>
-                                        <color key="thumbTintColor" red="0.69572459900000005" green="0.80475227520000003" blue="0.88465700039999995" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="thumbTintColor" red="0.88465700039999995" green="0.29130610320382083" blue="0.30450706629793695" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <action selector="simulatedCarSpeedSliderDidChangeValue:" destination="uuK-nl-Nt5" eventType="valueChanged" id="c5Z-cs-1Cn"/>
                                         </connections>
@@ -647,22 +637,29 @@
                                 <constraints>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" id="1P0-TZ-SaX" userLabel="VideoLargeH"/>
                                     <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerX" secondItem="e8C-H9-eDY" secondAttribute="centerX" id="2AG-N9-vJK"/>
+                                    <constraint firstItem="Evk-qR-BZi" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.3" id="5KZ-wx-LIe"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="centerX" secondItem="Enq-Sg-45p" secondAttribute="centerX" id="5YG-7P-Kxp"/>
                                     <constraint firstAttribute="bottom" secondItem="987-yS-3Vw" secondAttribute="bottom" constant="15" id="5h7-jL-2Yb"/>
+                                    <constraint firstItem="Evk-qR-BZi" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="1/2" id="9U1-bH-8SO"/>
                                     <constraint firstItem="oSQ-Oa-i31" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="0.4" id="A4l-Yb-voZ"/>
+                                    <constraint firstItem="dhb-Um-6Xb" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="1/8" id="Bmz-1L-49O"/>
                                     <constraint firstItem="Enq-Sg-45p" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.65" id="DyB-48-4rp"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.13" id="FCk-fG-jf1"/>
+                                    <constraint firstItem="dhb-Um-6Xb" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.3" id="IAY-VI-bXu"/>
                                     <constraint firstItem="e8C-H9-eDY" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.8" id="JVC-Iv-3Dt"/>
                                     <constraint firstItem="Enq-Sg-45p" firstAttribute="top" secondItem="x74-Ra-ao7" secondAttribute="bottom" constant="10" id="LMp-LT-gdU"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="M7N-A2-jtw" userLabel="MapSmallY"/>
                                     <constraint firstItem="Enq-Sg-45p" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.3" id="N76-Uh-HSF"/>
+                                    <constraint firstItem="Evk-qR-BZi" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="1/8" id="NTv-ap-OjW"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="PTE-DV-Vbo"/>
                                     <constraint firstItem="Enq-Sg-45p" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="1/8" id="Rlx-Iu-Dfh"/>
                                     <constraint firstItem="ORS-EC-wpQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.135" id="ShP-vN-9Jf"/>
                                     <constraint firstItem="Enq-Sg-45p" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="1/2" id="TEf-f4-m20"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="UGm-Jm-mdr" userLabel="MapLargeY"/>
                                     <constraint firstItem="oSQ-Oa-i31" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.07" id="UrO-nl-PPq"/>
+                                    <constraint firstItem="dhb-Um-6Xb" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.65" id="Wos-LB-lyz"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.6" id="Zfd-LJ-AaF" userLabel="VideoSmallY"/>
+                                    <constraint firstItem="dhb-Um-6Xb" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="1/2" id="bIu-h2-0Qt"/>
                                     <constraint firstItem="e8C-H9-eDY" firstAttribute="width" secondItem="a9h-25-Hyk" secondAttribute="width" multiplier="0.18" id="cqI-Qf-PLD"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" id="eiG-gg-aYu" userLabel="VideoLargeX"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="fZP-dH-p7x" userLabel="VideoLargeY"/>
@@ -670,6 +667,7 @@
                                     <constraint firstItem="e8C-H9-eDY" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="ifV-ru-ixB"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" id="mZ5-kd-nZn" userLabel="MapLargeH"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.4" id="nFa-Rg-pwn" userLabel="MapSmallX"/>
+                                    <constraint firstItem="Evk-qR-BZi" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="1.65" id="psB-c1-V7z"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="0.33" id="rhw-9Z-rkp" userLabel="MapSmallH"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="width" secondItem="Enq-Sg-45p" secondAttribute="width" id="tgN-lM-5pS"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="height" secondItem="Enq-Sg-45p" secondAttribute="height" id="uLn-W5-1LA"/>
@@ -708,6 +706,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="GoButton" destination="Enq-Sg-45p" id="f4i-1v-8Gz"/>
+                        <outlet property="StopButton" destination="Evk-qR-BZi" id="wda-p0-2dq"/>
                         <outlet property="alertsView" destination="8LS-Of-6mA" id="wgI-oG-GBZ"/>
                         <outlet property="contentView" destination="a9h-25-Hyk" id="rCj-1M-zLg"/>
                         <outlet property="landButton" destination="ORS-EC-wpQ" id="h4c-wu-1dP"/>
@@ -721,6 +720,7 @@
                         <outlet property="mapViewAspectRatio" destination="ltJ-j7-4Zs" id="WID-n2-QiN"/>
                         <outlet property="recButton" destination="e8C-H9-eDY" id="Lb2-65-fxi"/>
                         <outlet property="recordingTimeLabel" destination="5D2-VJ-R2r" id="EHf-QG-qrQ"/>
+                        <outlet property="resumeGoHomeStack" destination="dhb-Um-6Xb" id="nBy-eK-uFO"/>
                         <outlet property="scrollButton" destination="987-yS-3Vw" id="jzq-v5-QOG"/>
                         <outlet property="simulatedCarSpeedSlider" destination="x74-Ra-ao7" id="Irn-fk-f34"/>
                         <outlet property="takeOffButton" destination="oSQ-Oa-i31" id="hek-aW-lBm"/>

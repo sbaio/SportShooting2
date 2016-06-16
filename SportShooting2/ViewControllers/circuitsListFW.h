@@ -12,7 +12,6 @@
 #import "MGSwipeButton.h"
 #import "MGSwipeTableCell.h"
 
-#import "CircuitsTVC.h"
 #import "Menu.h"
 #import "MapView.h"
 
@@ -36,12 +35,18 @@
     BOOL isDefiningNewCircuit;
     
     BOOL showSwipeAnimation;
+    BOOL isInit;
 }
 -(void) showCircuitList:(BOOL)animated;
 
 -(void) hideCircuitList:(BOOL)animated;
 
 -(void) initWithDefaultsProperties;
+
+-(void) openDefineTableView;
+-(void) closeDefineTableView;
+
+-(void) openCircuitListWithCompletion:(void (^)(BOOL finished))callback;
 
 
 

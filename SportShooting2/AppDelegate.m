@@ -62,7 +62,7 @@
     
     
     DVWindowShow();
-
+    DVWindowHide();
     DVWindowActivationLongPress(1, 0.5);
     return YES;
 }
@@ -213,7 +213,11 @@
     mainRevealController.delegate = self;
     
     [mainRevealController.frontViewController.view addGestureRecognizer:mainRevealController.panGestureRecognizer];
-    //    [mainRevealController setFrontViewPosition:FrontViewPositionRight animated:NO];
+        [mainRevealController setFrontViewPosition:FrontViewPositionRight animated:NO];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [mainRevealController setFrontViewPosition:FrontViewPositionLeft animated:YES];
+        // we do this to load the general menu and especially have the init of the switch for car simul state
+    });
 }
 
 -(void) initPermissionLocationWhileInUse{
@@ -258,8 +262,33 @@
 
 - (void)revealController:(SWRevealViewController *)revealController panGestureBeganFromLocation:(CGFloat)location progress:(CGFloat)progress overProgress:(CGFloat)overProgress{
     [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
+    
+    if (revealController == menuRevealController) {
+        [mainRevealController _handleRevealGestureStateBeganWithRecognizer:menuRevealController.panGestureRecognizer];
+    }
 }
 
+- (void)revealController:(SWRevealViewController *)revealController panGestureMovedToLocation:(CGFloat)location progress:(CGFloat)progress overProgress:(CGFloat)overProgress{
+    
+    if (revealController == mainRevealController) {
+        
+    }
+    else if(revealController == menuRevealController){
+        
+        [mainRevealController _handleRevealGestureStateChangedWithRecognizer:menuRevealController.panGestureRecognizer];
+    }
+}
+-(void) revealControllerPanGestureEnded:(SWRevealViewController *)revealController{
+    
+    if (revealController == menuRevealController) {
+        [mainRevealController _handleRevealGestureStateEndedWithRecognizer:menuRevealController.panGestureRecognizer];
+    }
+    if (mainRevealController.frontViewPosition == FrontViewPositionRightMost) {
+        
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MyCacheUpdatedNotification" object:self];
+    
+}
 
 -(void) revealControllerPanGestureWillSwipeLeft:(SWRevealViewController*) revealController{
 }
@@ -278,6 +307,19 @@
 - (void)remoteController:(DJIRemoteController *)rc didUpdateHardwareState:(DJIRCHardwareState)state{
     // based on state.leftHorizontal / state.leftVertical /state.rightHorizontal / state.rightVertical
     // send commands to override automatic mode !! and more
+    
+    
+    if (state.flightModeSwitch.mode == DJIRCHardwareFlightModeSwitchStateF) {
+        _isRCSwitch_F = YES;
+    }
+    else{
+        _isRCSwitch_F = NO;
+    }
+    if (state.flightModeSwitch.mode != prevSwitchState) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RCSwitchStateChanged" object:nil];
+    }
+    
+    prevSwitchState = state.flightModeSwitch.mode;
     lastRCUpdateDate = [[NSDate alloc] init];
     self.isReceivingRCUpdates = YES;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

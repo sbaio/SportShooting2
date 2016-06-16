@@ -7,9 +7,6 @@
 //
 
 #import "CircuitMenuTVC.h"
-#import "CircuitsTVC.h"
-#import "circuitDefinitionTVC.h"
-#import "SWRevealViewController.h"
 #import "UIColor+CustomColors.h"
 #import "Menu.h"
 
@@ -22,20 +19,15 @@
 {
     NSMutableArray* items;
 }
-@synthesize loadedCircuit;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
     items = [@[@"Select track", @"Define new track",@"Record: blank lap",@"play"] mutableCopy];
-    loadedCircuit = [[Circuit alloc] init];
 }
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -57,6 +49,9 @@
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     [cell setSelectedBackgroundView:bgColorView];
     
+    UILabel* label = [cell.contentView.subviews objectAtIndex:0];
+    label.textColor = [UIColor colorWithHue:0.67 saturation:0 brightness:0.86 alpha:1];
+    
     return cell;
 }
 
@@ -70,14 +65,20 @@
         case 0:
         {// select circuti .. open
             [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
-            [[[Menu instance] getMapVC] showCircuitListView];
+            [[[Menu instance] getMapVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+                
+            } ];
             break;
         }
         case 1:
         {// push circuit definition vc
-            circuitDefinitionTVC* circDefTVC = [[[Menu instance] getStoryboard] instantiateViewControllerWithIdentifier:@"CircDefMenu"];
-            [self.navigationController pushViewController:circDefTVC animated:YES];
+            [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
+            [[[Menu instance] getMapVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+                [[[Menu instance] getMapVC].circuitsList openDefineTableView];
+            }];
+            
             break;
+
         }
         case 2:
         {
@@ -90,14 +91,7 @@
 }
 
 
--(void) updateCircuitList{
-    NSArray* arrayOfControllers = self.navigationController.viewControllers;
-    for (UIViewController* vc in arrayOfControllers) {
-        if ([vc isKindOfClass:[CircuitsTVC class]]) {
-            NSLog(@"found !");
-        }
-    }
-}
+
 
 
 @end

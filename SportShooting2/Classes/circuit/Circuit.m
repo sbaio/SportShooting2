@@ -24,6 +24,7 @@
     self.circuitLength = [self length];
     self.circuitName = circuitName;
     
+    // NOT HERE
     if (calc) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
@@ -113,11 +114,11 @@
             CLLocation* loci = self.locations[i];
             CLLocation* loc0 = self.locations[0];
             
-            float distLociToLoc0 = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:loci.coordinate];
+            float distLoc0ToLoci = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:loci.coordinate];
             float headingLoc0ToLoci = [[Calc Instance] headingTo:loci.coordinate fromPosition:loc0.coordinate];
             
-            NSLog(@"%0.3f  , %0.3f ",distLociToLoc0,headingLoc0ToLoci);
-            Vec* Loc0ToLoci_Vec = [[Vec alloc] initWithNorm:distLociToLoc0 andAngle:headingLoc0ToLoci];
+            NSLog(@"%0.3f  , %0.3f ",distLoc0ToLoci,headingLoc0ToLoci);
+            Vec* Loc0ToLoci_Vec = [[Vec alloc] initWithNorm:distLoc0ToLoci andAngle:headingLoc0ToLoci];
             [self.Loc0_Loci_Vecs addObject:Loc0ToLoci_Vec];
         }
     }
@@ -254,6 +255,28 @@
     
     return length;
 }
+
+
+
+
+-(CLLocation*) locationAtIndex:(int) index{
+
+    CLLocation* locindex = (CLLocation*)[self.locations objectAtIndex:(index%self.locations.count)];
+    return locindex;
+}
+
+-(float) distanceOnCircuitfromIndex:(int) startIndex toIndex:(int) endIndex{
+    
+    NSMutableArray* startIndexArray = self.interIndexesDistance[startIndex%self.locations.count];
+    float dist = [[startIndexArray objectAtIndex:endIndex%self.locations.count] floatValue];
+    
+    return dist;
+}
+
+
+
+
+
 
 -(MKCoordinateRegion) circuitRegionFromLocations:(NSMutableArray*) locs{
     CLLocation* loc0 = locs[0];

@@ -43,6 +43,7 @@
 -(void) updateCarLocation:(CLLocation*) carLoc;
 -(void) updateDroneAnnotation:(Drone*) drone;
 -(void) updateDroneSensCircuit_PerpAnnotations:(Drone*) drone;
+-(void) updateDrone:(Drone*) drone Vec_Anno_WithTargetSpeed:(float) targSp AndTargetHeading:(float) targHeading;
 
 
 // mapview methods

@@ -20,19 +20,14 @@
                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lTE-vn-wtt">
-                            <rect key="frame" x="0.0" y="0.0" width="45" height="600"/>
+                            <rect key="frame" x="0.0" y="0.0" width="162" height="600"/>
+                            <color key="backgroundColor" red="0.22938511095387712" green="0.22445209781508405" blue="0.23431812409267017" alpha="0.0" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="onMenuButtonClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="5Pj-LV-BvD"/>
                             </connections>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disconnected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZL9-Xl-qOM">
-                            <rect key="frame" x="45" y="0.0" width="198" height="600"/>
-                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="17"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
                         <stackView opaque="NO" contentMode="scaleToFill" restorationIdentifier="BatteryStack" translatesAutoresizingMaskIntoConstraints="NO" id="EsV-JC-J6y" userLabel="BatteryStack">
-                            <rect key="frame" x="243" y="0.0" width="54" height="600"/>
+                            <rect key="frame" x="162" y="0.0" width="54" height="600"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XlK-CR-hre">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
@@ -50,7 +45,7 @@
                             </constraints>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6rz-fB-CuZ" userLabel="GPSStack">
-                            <rect key="frame" x="297" y="0.0" width="54" height="600"/>
+                            <rect key="frame" x="216" y="0.0" width="54" height="600"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Bg-rP-1LQ">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
@@ -67,25 +62,26 @@
                                 <constraint firstItem="4Bg-rP-1LQ" firstAttribute="width" secondItem="yan-wD-ceT" secondAttribute="width" multiplier="0.75" id="Wa2-Zt-720"/>
                             </constraints>
                         </stackView>
-                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f6f-61-gxq" userLabel="stack1">
-                            <rect key="frame" x="351" y="0.0" width="54" height="600"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f6f-61-gxq" userLabel="Distance drone car stack">
+                            <rect key="frame" x="270" y="0.0" width="81" height="600"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nfc-jg-NUo">
-                                    <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="32" height="600"/>
+                                    <state key="normal" backgroundImage="distDroneCar.png"/>
                                 </button>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7eA-re-Zxi" userLabel="GPSLabel">
-                                    <rect key="frame" x="23" y="0.0" width="31" height="600"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="N/A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7eA-re-Zxi" userLabel="distDroneCar">
+                                    <rect key="frame" x="32" y="0.0" width="49" height="600"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
                             <constraints>
-                                <constraint firstItem="Nfc-jg-NUo" firstAttribute="width" secondItem="7eA-re-Zxi" secondAttribute="width" multiplier="0.75" id="9om-yM-ztI"/>
+                                <constraint firstItem="Nfc-jg-NUo" firstAttribute="width" secondItem="7eA-re-Zxi" secondAttribute="width" multiplier="0.65" id="9om-yM-ztI"/>
                             </constraints>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5dZ-u6-xow" userLabel="stack2">
-                            <rect key="frame" x="405" y="0.0" width="54" height="600"/>
+                            <rect key="frame" x="351" y="0.0" width="54" height="600"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CNk-E4-b8K">
                                     <rect key="frame" x="0.0" y="0.0" width="23" height="600"/>
@@ -102,15 +98,21 @@
                             </constraints>
                         </stackView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ezJ-1H-eW9">
-                            <rect key="frame" x="459" y="0.0" width="141" height="600"/>
+                            <rect key="frame" x="405" y="0.0" width="45" height="600"/>
                         </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disconnected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZL9-Xl-qOM">
+                            <rect key="frame" x="450" y="0.0" width="150" height="600"/>
+                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="17"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <constraints>
                         <constraint firstItem="5dZ-u6-xow" firstAttribute="width" secondItem="EsV-JC-J6y" secondAttribute="width" id="3Ip-Ma-4EO"/>
-                        <constraint firstItem="lTE-vn-wtt" firstAttribute="width" secondItem="7Fx-pe-Cfa" secondAttribute="width" multiplier="0.075" id="9N4-KT-txp"/>
+                        <constraint firstItem="lTE-vn-wtt" firstAttribute="width" secondItem="7Fx-pe-Cfa" secondAttribute="width" multiplier="0.27" id="9N4-KT-txp"/>
                         <constraint firstItem="EsV-JC-J6y" firstAttribute="width" secondItem="7Fx-pe-Cfa" secondAttribute="width" multiplier="0.09" id="Ekz-vV-qAF"/>
-                        <constraint firstItem="f6f-61-gxq" firstAttribute="width" secondItem="EsV-JC-J6y" secondAttribute="width" id="HkW-9s-CA3"/>
-                        <constraint firstItem="ZL9-Xl-qOM" firstAttribute="width" secondItem="7Fx-pe-Cfa" secondAttribute="width" multiplier="0.33" id="pUY-Jz-mpl"/>
+                        <constraint firstItem="f6f-61-gxq" firstAttribute="width" secondItem="EsV-JC-J6y" secondAttribute="width" multiplier="1.5" id="HkW-9s-CA3"/>
+                        <constraint firstItem="ZL9-Xl-qOM" firstAttribute="width" secondItem="7Fx-pe-Cfa" secondAttribute="width" multiplier="0.25" id="pUY-Jz-mpl"/>
                         <constraint firstItem="6rz-fB-CuZ" firstAttribute="width" secondItem="EsV-JC-J6y" secondAttribute="width" id="ryv-20-PdF"/>
                     </constraints>
                 </stackView>
@@ -123,6 +125,7 @@
             </constraints>
             <connections>
                 <outlet property="batteryLabel" destination="8EG-xY-n8J" id="VP7-3g-CJm"/>
+                <outlet property="distDroneCarLabel" destination="7eA-re-Zxi" id="7ka-3x-cKU"/>
                 <outlet property="gpsLabel" destination="yan-wD-ceT" id="LfH-3t-rNu"/>
                 <outlet property="menuButton" destination="lTE-vn-wtt" id="PDC-1u-M4I"/>
                 <outlet property="statusLabel" destination="ZL9-Xl-qOM" id="zhT-xp-ObS"/>
@@ -133,5 +136,6 @@
     <resources>
         <image name="GPS_satellite-512.png" width="512" height="512"/>
         <image name="batteryicon.png" width="512" height="512"/>
+        <image name="distDroneCar.png" width="356" height="262"/>
     </resources>
 </document>

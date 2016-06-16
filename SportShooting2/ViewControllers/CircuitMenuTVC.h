@@ -13,10 +13,7 @@
 
 @interface CircuitMenuTVC : UITableViewController
 {
-    Circuit* loadedCircuit;
+    
 }
 
-@property Circuit* loadedCircuit;
-
--(void) updateCircuitList;
 @end

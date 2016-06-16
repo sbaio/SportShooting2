@@ -136,7 +136,22 @@
     }
 }
 
+-(void) updateDistDroneCarLabelWith:(CLLocation*) carLoc andDroneLoc:(CLLocation*) droneLoc{
+    if (!carLoc || !droneLoc) {
+        [_distDroneCarLabel setText:@"N/A"];
+    }
+    float dist = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:droneLoc.coordinate];
+    if (dist < 100) {
+        [_distDroneCarLabel setText:[NSString stringWithFormat:@"%0.1fm",dist]];
+    }
+    else{
+        [_distDroneCarLabel setText:[NSString stringWithFormat:@"%0.0fm",dist]];
+    }
+}
 
+-(void) updateDistDroneCarLabel{
+    
+}
 -(void) setStatusLabelText:(NSString*) textStatus{
     [_statusLabel setText:textStatus];
 }
@@ -221,9 +236,6 @@
 
 
 
-
-
-
 -(void) handleNotification:(NSNotification*) notification{
     BOOL respond = NO;
     for (NSString* notifName  in arrayOfNotifsNames) {
@@ -252,22 +264,6 @@
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @end

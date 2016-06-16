@@ -8,6 +8,8 @@
 
 #define RADIAN(x) ((x)*M_PI/180.0)
 #define bindBetween(a,b,c) ((a > c) ? c: ((a<b)? b:a))
+#define MERCATOR_RADIUS 85445659.44705395
+#define MAX_GOOGLE_LEVELS 20
 
 #import "MapView.h"
 #import "UIColor+CustomColors.h"
@@ -61,7 +63,9 @@
 
 -(void) tap:(id)sender{
     // did click on mapview button
-    [_mapVC showCircuitListView];
+    [_mapVC.circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+        
+    }];
 }
 -(void) setMapViewMaskImage:(BOOL) set {
     
@@ -220,8 +224,20 @@
     }
     else return nil;
 }
+- (double)getZoomLevel
+{
+    CLLocationDegrees longitudeDelta = self.region.span.longitudeDelta;
+    CGFloat mapWidthInPixels = self.bounds.size.width;
+    double zoomScale = longitudeDelta * MERCATOR_RADIUS * M_PI / (180.0 * mapWidthInPixels);
+    double zoomer = MAX_GOOGLE_LEVELS - log2( zoomScale );
+    if ( zoomer < 0 ) zoomer = 0;
+    //  zoomer = round(zoomer);
+    return zoomer;
+}
 
-
+-(void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
+   
+}
 -(void) disableMapViewScroll{
     [self setScrollEnabled:NO];
     [_mapVC.scrollButton setImage:[UIImage imageNamed:@"pan_50.png"] forState:UIControlStateNormal];
@@ -239,7 +255,6 @@
 -(void) updateCarLocation:(CLLocation*) carLoc{
     if (!carAnnotation) {
         carAnnotation = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:carLoc.coordinate andType:1];
-        [self addAnnotation:carAnnotation];
     }
     else{
         
@@ -247,45 +262,97 @@
         float carHeading = (carLoc.course < 180) ? carLoc.course : carLoc.course-360;
         [carAnnotation updateHeading:RADIAN(carHeading)];
     }
+    [self addAnnotation:carAnnotation];
 }
 
 -(void) updateDroneAnnotation:(Drone*) drone{
     if (!drone.droneAnno) {
         drone.droneAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:0];
-        
-        [self addAnnotation:drone.droneAnno];
     }
     else{
         [drone.droneAnno setCoordinate:drone.droneLoc.coordinate];
     }
          [drone.droneAnno.annotationView updateHeading:RADIAN(drone.droneYaw)];
     
+    [self addAnnotation:drone.droneAnno];
+    
     if (!drone.droneSpeed_vecAnno) {
         drone.droneSpeed_vecAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:9];
-        [self addAnnotation:drone.droneSpeed_vecAnno];
+        drone.droneSpeed_vecAnno.identifier = @"droneSpeed_vecAnno";
     }
     else{
         [drone.droneSpeed_vecAnno setCoordinate:drone.droneLoc.coordinate];
         [drone.droneSpeed_vecAnno.annotationView updateHeading:RADIAN(drone.droneLoc.course) andScale:drone.droneLoc.speed/17];
+    }
+    [self addAnnotation:drone.droneSpeed_vecAnno];
+    for ( id <MKAnnotation> annotation in [self annotations]) {
+        if ([annotation isKindOfClass:[Aircraft_Camera_Car_Annotation class]] && annotation!= drone.droneSpeed_vecAnno) {
+            Aircraft_Camera_Car_Annotation* anno = (Aircraft_Camera_Car_Annotation*) annotation;
+            if (anno.type == 9 && [anno.identifier isEqualToString:@"droneSpeed_vecAnno"]) {
+                [self removeAnnotation:annotation];
+            }
+        }
     }
 }
 
 -(void) updateDroneSensCircuit_PerpAnnotations:(Drone*) drone{
     if (!drone.sensCircuit_Anno) {
         drone.sensCircuit_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneIndexLocation.coordinate andType:9];
-        [self addAnnotation:drone.sensCircuit_Anno];
+        drone.sensCircuit_Anno.identifier = @"sensCircuit_Anno";
+        
     }
     else{
         [drone.sensCircuit_Anno setCoordinate:drone.droneIndexLocation.coordinate];
         [drone.sensCircuit_Anno updateHeading:RADIAN(drone.sensCircuit.angle) andScale:0.5];
     }
+    [self addAnnotation:drone.sensCircuit_Anno];
+    for ( id <MKAnnotation> annotation in [self annotations]) {
+        if ([annotation isKindOfClass:[Aircraft_Camera_Car_Annotation class]] && annotation!= drone.sensCircuit_Anno) {
+            Aircraft_Camera_Car_Annotation* anno = (Aircraft_Camera_Car_Annotation*) annotation;
+            if (anno.type == 9 && [anno.identifier isEqualToString:@"sensCircuit_Anno"]) {
+                [self removeAnnotation:annotation];
+            }
+        }
+    }
+    
     if (!drone.versCircuit_Anno) {
         drone.versCircuit_Anno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneIndexLocation.coordinate andType:8];
-        [self addAnnotation:drone.versCircuit_Anno];
+        drone.versCircuit_Anno.identifier = @"versCircuit_Anno";
     }
     else{
         [drone.versCircuit_Anno setCoordinate:drone.droneIndexLocation.coordinate];
         [drone.versCircuit_Anno updateHeading:RADIAN(drone.versCircuit.angle) andScale:0.5];
+    }
+    [self addAnnotation:drone.versCircuit_Anno];
+    for ( id <MKAnnotation> annotation in [self annotations]) {
+        if ([annotation isKindOfClass:[Aircraft_Camera_Car_Annotation class]] && annotation!= drone.versCircuit_Anno) {
+            Aircraft_Camera_Car_Annotation* anno = (Aircraft_Camera_Car_Annotation*) annotation;
+            if (anno.type == 8 && [anno.identifier isEqualToString:@"versCircuit_Anno"]) {
+                [self removeAnnotation:annotation];
+            }
+        }
+    }
+}
+
+-(void) updateDrone:(Drone*) drone Vec_Anno_WithTargetSpeed:(float) targSp AndTargetHeading:(float) targHeading{
+    if (!drone.droneTargSpeed_vecAnno) {
+        drone.droneTargSpeed_vecAnno = [[Aircraft_Camera_Car_Annotation alloc] initWithCoordiante:drone.droneLoc.coordinate andType:9];
+        drone.droneTargSpeed_vecAnno.identifier = @"droneTargSpeed_vecAnno";
+    }
+    else{
+        
+        [drone.droneTargSpeed_vecAnno setCoordinate:drone.droneLoc.coordinate];
+        [drone.droneTargSpeed_vecAnno.annotationView updateHeading:RADIAN(targHeading) andScale:targSp/17];
+    }
+    
+    [self addAnnotation:drone.droneTargSpeed_vecAnno];
+    for ( id <MKAnnotation> annotation in [self annotations]) {
+        if ([annotation isKindOfClass:[Aircraft_Camera_Car_Annotation class]] && annotation!= drone.droneTargSpeed_vecAnno) {
+            Aircraft_Camera_Car_Annotation* anno = (Aircraft_Camera_Car_Annotation*) annotation;
+            if (anno.type == 9 && [anno.identifier isEqualToString:@"droneTargSpeed_vecAnno"]) {
+                [self removeAnnotation:annotation];
+            }
+        }
     }
 }
 

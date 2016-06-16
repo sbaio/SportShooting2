@@ -21,7 +21,7 @@
 
 
 -(void) updateAltitudeLabelWithAltitude:(float) altitude;
--(void) updateDistanceToRCLabelWithDistance:(float) distance;
+-(void) updateDistanceToUserLabelWithDistance:(float) distance;
 -(void) updateHorizontalSpeedWithHorizontalSpeed:(float) hSp;
 -(void) updateVerticalSpeedWithHorizontalSpeed:(float) vSp;
 

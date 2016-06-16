@@ -26,7 +26,6 @@
 #import "MapView.h"
 
 #import "AppDelegate.h"
-#import "CircuitsTVC.h"
 #import "circuitsListFW.h"
 #import "TopMenu.h"
 #import "BottomStatusBar.h"
@@ -49,7 +48,6 @@
     __weak SWRevealViewController* menuRevealVC;
     
     
-    Drone* realDrone;
     NSString* yellowColorString;
     NSString* redColorString;
     UIPanGestureRecognizer * swipeGR;
@@ -63,7 +61,6 @@
     
     CircuitsTVC* circuitListTVC;
     
-    UITapGestureRecognizer* mapVCTapGR;
     
     __weak IBOutlet UIView *videoPreviewerView;
     
@@ -126,13 +123,15 @@
 @property (strong, nonatomic) IBOutlet BottomStatusBar *bottomStatusBar;
 @property(strong,nonatomic) CLLocation * phoneLocation;
 @property(strong,nonatomic) CLLocation * carLocation; // maybe simulated
-//@property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
 
 @property (weak, nonatomic) IBOutlet UIButton *takeOffButton;
 @property (weak, nonatomic) IBOutlet UIButton *landButton;
 @property (weak, nonatomic) IBOutlet UIButton *GoButton;
+@property (weak, nonatomic) IBOutlet UIButton *StopButton;
 
 @property (weak, nonatomic) IBOutlet UISlider *simulatedCarSpeedSlider;
+
+@property (weak, nonatomic) IBOutlet UIStackView *resumeGoHomeStack;
 
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic,strong) Autopilot* autopilot;
@@ -143,6 +142,7 @@
 @property BOOL isRealDrone;
 
 @property Drone* drone;
+@property Drone* realDrone;
 @property Drone* simulatedDrone;
 @property Drone* predictedDrone;
 
@@ -150,7 +150,6 @@
 -(void) disableMainMenuPan;
 
 -(void) startUpdatingLoc;
--(void) showCircuitListView;
 
 -(void) switchToVideo;
 -(void) switchToMap;

@@ -62,8 +62,12 @@
 @property Vec* sensCircuit;
 @property Vec* versCircuit;
 
+@property float targSp;
+@property float targHeading;
+
 @property float V_parralele;
 @property float V_perp;
+
 @property BOOL isCloseTracking;
 @property BOOL realDrone;
 
@@ -76,5 +80,7 @@
 -(void) updateDroneStateWithFlightControllerState:(DJIFlightControllerCurrentState*) state;
 
 -(Drone*) newDroneStateFrom:(Drone*) currentDroneState withTargetSpeed:(float) targSp andTargetAngle:(float) targHeading andTargAltitude:(float) targAlt during:(float) dt;
+
+-(float) timeForDroneToReachLoc:(CLLocation*) targetLoc andTargetSpeed:(float) targSpeed;
 
 @end

@@ -40,7 +40,6 @@
     if (self.annotationView) {
         [self.annotationView updateScale:scale];
     }
-    NSLog(@"update Scale");
 }
 -(void) updateHeading:(float)heading andScale:(float) scale{
     if (self.annotationView) {

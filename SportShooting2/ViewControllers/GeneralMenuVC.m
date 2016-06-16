@@ -21,6 +21,8 @@
     
     NSInteger _previouslySelectedRow;
     NSMutableArray* rowsArray;
+    UILabel* carLabel;
+    UILabel* droneLabel;
 }
 
 
@@ -28,6 +30,7 @@
     [super viewDidLoad];
     
     rowsArray = [@[@"Track",@"Video",@"Drone",@"Car"] mutableCopy];
+    
 
 }
 
@@ -58,18 +61,52 @@
     bgColorView.backgroundColor = [UIColor customGrayForCellSelection];
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     [cell setSelectedBackgroundView:bgColorView];
+    
+    UILabel* textLabel = [cell.contentView.subviews objectAtIndex:0];
+    if ([textLabel.text containsString:@"Car"]) {
+        carLabel = textLabel;
+        _carSwitch = [cell.contentView.subviews objectAtIndex:1];
+        if ([_carSwitch isOn]) {
+            [carLabel setText:@"Car sim"];
+        }
+        else{
+            [carLabel setText:@"Car"];
+        }
+    }
+    if ([textLabel.text containsString:@"Drone"]) {
+        droneLabel = textLabel;
+        _droneSwitch = [cell.contentView.subviews objectAtIndex:2];
+        if ([_droneSwitch isOn]) {
+            [droneLabel setText:@"Drone sim"];
+        }
+        else{
+            [droneLabel setText:@"Drone"];
+        }
+    }
+    
+    
+    textLabel.textColor = [UIColor colorWithHue:0.67 saturation:0 brightness:0.86 alpha:1];
     return cell;
 }
-
--(void) onSwitchChanged:(id) sender{
-    
-    if (_realDrone) {
-        DVLog(@"real drone");
+- (IBAction)onCarSwitchChanged:(id)sender {
+    if (sender == _carSwitch) {
+        if ([sender isOn]) {
+            [carLabel setText:@"Car sim"];
+        }
+        else{
+            [carLabel setText:@"Car"];
+        }
     }
-    else{
-        DVLog(@"simulated drone");
+    else if(sender == _droneSwitch) {
+        if ([sender isOn]) {
+            [droneLabel setText:@"Drone sim"];
+        }
+        else{
+            [droneLabel setText:@"Drone"];
+        }
     }
 }
+
 
 -(void) mapWentRightMost{
     
@@ -79,6 +116,8 @@
 -(void) mapWentRight{
     [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:_previouslySelectedRow inSection:0] animated:YES];
 }
+
+
 
 
 #pragma mark - Table view delegate
