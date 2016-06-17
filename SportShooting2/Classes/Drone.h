@@ -29,6 +29,8 @@
     float prevDroneYaw;
     NSMutableArray* arrayOfDroneYawDiff;
     NSMutableArray* arrayOfDroneYawSp;
+    
+    int freqCalcIndex;
 }
 
 //@property (weak, nonatomic) MKMapView* mapView;
@@ -71,10 +73,13 @@
 @property BOOL isCloseTracking;
 @property BOOL realDrone;
 
+@property NSMutableArray* arrayOfKeyLocations;
+
 -(void) initWithDrone:(DJIAircraft*) realDrone;
 -(id) initWithLocation:(CLLocation*) loc;
 -(void) updateDroneStateWithLoc:(CLLocation*) droneLoc andYaw:(float) yaw;
--(void) calculateDroneInfoOnCircuit:(Circuit*) circuit forCarLocation:(CLLocation*) carLoc carIndex:(int) carIndex;
+//-(void) calculateDroneInfoOnCircuit:(Circuit*) circuit forCarLocation:(CLLocation*) carLoc carIndex:(int) carIndex;
+-(void) calculateDroneInfoOnCircuit:(Circuit*) circuit forCarLocation:(CLLocation*) carLoc carIndex:(int) carIndex calcIndex:(BOOL) calc;
 -(void) estimateDroneYawSpeed:(float) currentYaw;
 
 -(void) updateDroneStateWithFlightControllerState:(DJIFlightControllerCurrentState*) state;

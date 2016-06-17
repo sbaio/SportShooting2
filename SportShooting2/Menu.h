@@ -47,6 +47,7 @@
 -(AppDelegate*) getAppDelegate;
 
 -(MKMapView*) getMap;
+-(MapView*) getMapView;
 
 -(UINavigationController*) getNavC;
 

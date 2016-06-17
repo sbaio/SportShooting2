@@ -10,6 +10,7 @@
 		D612D1A61D0CC51200CC6D14 /* cells.xib in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A51D0CC51200CC6D14 /* cells.xib */; };
 		D612D1AA1D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */; };
 		D612D1AC1D11C55D00CC6D14 /* distDroneCar.png in Resources */ = {isa = PBXBuildFile; fileRef = D612D1AB1D11C55D00CC6D14 /* distDroneCar.png */; };
+		D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1B11D1354DB00CC6D14 /* pathPlanner.m */; };
 		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
 		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
 		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
@@ -129,8 +130,6 @@
 		D699023B1D04054B0038D05B /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = D699023A1D04054B0038D05B /* MapView.m */; };
 		D69902411D0405770038D05B /* MGSwipeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D699023E1D0405770038D05B /* MGSwipeButton.m */; };
 		D69902421D0405770038D05B /* MGSwipeTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D69902401D0405770038D05B /* MGSwipeTableCell.m */; };
-		D69902481D0406330038D05B /* DismissingAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = D69902451D0406330038D05B /* DismissingAnimationController.m */; };
-		D69902491D0406330038D05B /* PresentingAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = D69902471D0406330038D05B /* PresentingAnimationController.m */; };
 		D69902511D0407850038D05B /* LUT_XB.png in Resources */ = {isa = PBXBuildFile; fileRef = D699024B1D0407850038D05B /* LUT_XB.png */; };
 		D69902521D0407850038D05B /* LUT_XG.png in Resources */ = {isa = PBXBuildFile; fileRef = D699024C1D0407850038D05B /* LUT_XG.png */; };
 		D69902531D0407850038D05B /* LUT_XR.png in Resources */ = {isa = PBXBuildFile; fileRef = D699024D1D0407850038D05B /* LUT_XR.png */; };
@@ -177,6 +176,8 @@
 		D612D1A51D0CC51200CC6D14 /* cells.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = cells.xib; sourceTree = "<group>"; };
 		D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackGroundImage_contentView_MenuReveal.png; sourceTree = "<group>"; };
 		D612D1AB1D11C55D00CC6D14 /* distDroneCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = distDroneCar.png; path = droneVoiture/distDroneCar.png; sourceTree = "<group>"; };
+		D612D1B01D1354DB00CC6D14 /* pathPlanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathPlanner.h; sourceTree = "<group>"; };
+		D612D1B11D1354DB00CC6D14 /* pathPlanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = pathPlanner.m; sourceTree = "<group>"; };
 		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
 		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
 		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
@@ -461,10 +462,6 @@
 		D699023E1D0405770038D05B /* MGSwipeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGSwipeButton.m; sourceTree = "<group>"; };
 		D699023F1D0405770038D05B /* MGSwipeTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGSwipeTableCell.h; sourceTree = "<group>"; };
 		D69902401D0405770038D05B /* MGSwipeTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGSwipeTableCell.m; sourceTree = "<group>"; };
-		D69902441D0406330038D05B /* DismissingAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DismissingAnimationController.h; sourceTree = "<group>"; };
-		D69902451D0406330038D05B /* DismissingAnimationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DismissingAnimationController.m; sourceTree = "<group>"; };
-		D69902461D0406330038D05B /* PresentingAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentingAnimationController.h; sourceTree = "<group>"; };
-		D69902471D0406330038D05B /* PresentingAnimationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresentingAnimationController.m; sourceTree = "<group>"; };
 		D699024B1D0407850038D05B /* LUT_XB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_XB.png; sourceTree = "<group>"; };
 		D699024C1D0407850038D05B /* LUT_XG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_XG.png; sourceTree = "<group>"; };
 		D699024D1D0407850038D05B /* LUT_XR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_XR.png; sourceTree = "<group>"; };
@@ -589,7 +586,6 @@
 				D69902291D04050A0038D05B /* ViewControllers */,
 				D632D52D1D0402B100B12946 /* Classes */,
 				D699023C1D0405770038D05B /* MGSwipeableCell */,
-				D69902431D0406330038D05B /* Animators */,
 				D632D52B1D04019800B12946 /* Storyboard.storyboard */,
 				D632D4181D03F5CB00B12946 /* Main.storyboard */,
 				D632D41B1D03F5CB00B12946 /* Assets.xcassets */,
@@ -984,6 +980,8 @@
 			children = (
 				D69902851D0410540038D05B /* MapVC.h */,
 				D69902861D0410540038D05B /* MapVC.m */,
+				D612D1B01D1354DB00CC6D14 /* pathPlanner.h */,
+				D612D1B11D1354DB00CC6D14 /* pathPlanner.m */,
 				D632D5311D04030700B12946 /* Autopilot.h */,
 				D632D5321D04030700B12946 /* Autopilot.m */,
 				D632D5331D04030700B12946 /* Drone.h */,
@@ -1092,17 +1090,6 @@
 				D69902401D0405770038D05B /* MGSwipeTableCell.m */,
 			);
 			path = MGSwipeableCell;
-			sourceTree = "<group>";
-		};
-		D69902431D0406330038D05B /* Animators */ = {
-			isa = PBXGroup;
-			children = (
-				D69902441D0406330038D05B /* DismissingAnimationController.h */,
-				D69902451D0406330038D05B /* DismissingAnimationController.m */,
-				D69902461D0406330038D05B /* PresentingAnimationController.h */,
-				D69902471D0406330038D05B /* PresentingAnimationController.m */,
-			);
-			path = Animators;
 			sourceTree = "<group>";
 		};
 		D699024A1D0407850038D05B /* LUTs */ = {
@@ -1315,6 +1302,7 @@
 				D632D4F21D03F6A200B12946 /* POPAnimationTracer.mm in Sources */,
 				D632D55E1D04042200B12946 /* Aircraft_Camera_Car_AnnoView.m in Sources */,
 				D69902411D0405770038D05B /* MGSwipeButton.m in Sources */,
+				D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */,
 				D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */,
 				D632D52A1D03FD2900B12946 /* SWRevealViewController.m in Sources */,
 				D632D5351D04030700B12946 /* Autopilot.m in Sources */,
@@ -1326,14 +1314,12 @@
 				D69902421D0405770038D05B /* MGSwipeTableCell.m in Sources */,
 				D69902871D0410540038D05B /* MapVC.m in Sources */,
 				D632D51D1D03F71900B12946 /* MovieGLView.m in Sources */,
-				D69902481D0406330038D05B /* DismissingAnimationController.m in Sources */,
 				D632D50F1D03F6D900B12946 /* DVLogger.m in Sources */,
 				D69902351D04050A0038D05B /* GeneralMenuVC.m in Sources */,
 				D6218CDC1D0A0A2E00DF1E55 /* UIColor+CustomColors.m in Sources */,
 				D6218CF11D0B328D00DF1E55 /* UIImage+animatedGIF.m in Sources */,
 				D632D4F01D03F6A200B12946 /* POPAnimationExtras.mm in Sources */,
 				D632D4EF1D03F6A200B12946 /* POPAnimationEvent.mm in Sources */,
-				D69902491D0406330038D05B /* PresentingAnimationController.m in Sources */,
 				D632D55D1D04042200B12946 /* Aircraft_Camera_Car_Annotation.m in Sources */,
 				D632D5101D03F6D900B12946 /* DVLoggerConfiguration.m in Sources */,
 				D632D50E1D03F6D900B12946 /* DVFloatingWindow.m in Sources */,

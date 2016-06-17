@@ -55,4 +55,6 @@
 // CAR SIMULATION
 -(void) simulateCarOnCircuit:(Circuit*) circuit;
 
+-(void) pauseCarMovement;
+-(void) resumeCarMovement;
 @end

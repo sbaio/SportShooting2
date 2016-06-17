@@ -57,6 +57,7 @@
     static const signed char b_b[12] = { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
     
     float R[4] = { _state.R , 0, 0, _state.R };
+    // R is The measurement noise covariance
     
     double B[12];
     double a22;
@@ -183,7 +184,7 @@
             }
         }
     }
-    
+    // updated State Covariance
     for (r2 = 0; r2 < 6; r2++) {
         for (i0 = 0; i0 < 6; i0++) {
             a21 = 0.0;

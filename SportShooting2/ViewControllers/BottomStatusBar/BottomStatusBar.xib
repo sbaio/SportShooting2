@@ -44,14 +44,12 @@
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="V.S:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JfF-Wk-9T3">
                                     <rect key="frame" x="0.0" y="0.0" width="54" height="600"/>
-                                    <color key="backgroundColor" red="0.78352398339999996" green="0.16104407257247738" blue="0.13004445643646623" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <color key="textColor" red="0.85898642020000004" green="0.85898642020000004" blue="0.85898642020000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 m/s" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JSj-bk-P1d">
                                     <rect key="frame" x="54" y="0.0" width="90" height="600"/>
-                                    <color key="backgroundColor" red="0.78352398339999996" green="0.39676586217292559" blue="0.55723606908918699" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" red="0.85898642020000004" green="0.85898642020000004" blue="0.85898642020000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
@@ -66,14 +64,12 @@
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="H:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8kh-d6-DNd">
                                     <rect key="frame" x="0.0" y="0.0" width="36" height="600"/>
-                                    <color key="backgroundColor" red="0.78352398339999996" green="0.64734246195216327" blue="0.24377566049375046" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <color key="textColor" red="0.85898642020000004" green="0.85898642020000004" blue="0.85898642020000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10 m" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AmF-8K-gIa">
                                     <rect key="frame" x="36" y="0.0" width="60" height="600"/>
-                                    <color key="backgroundColor" red="0.7500655651" green="0.64797592159999995" blue="0.4306710064" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" red="0.85898642020000004" green="0.85898642020000004" blue="0.85898642020000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
@@ -88,7 +84,6 @@
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="D:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ROq-xY-Huc">
                                     <rect key="frame" x="0.0" y="0.0" width="53" height="600"/>
-                                    <color key="backgroundColor" red="0.69497644901275635" green="0.12292060511618334" blue="0.41445139385912066" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <color key="textColor" red="0.85898642020000004" green="0.85898642020000004" blue="0.85898642020000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>

@@ -6,7 +6,9 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
-// problem when glview doesnt update when stream ended .. need to ask for adjustSize
+// add vec operation : 1.6*10^-5
+// dist coord operation : 2.2*10^-4
+
 
 #define WeakRef(__obj) __weak typeof(self) __obj = self
 #define WeakReturn(__obj) if(__obj ==nil)return;
@@ -15,10 +17,6 @@
 
 #import "MapVC.h"
 #import "GeneralMenuVC.h"
-
-
-#import "PresentingAnimationController.h"
-#import "DismissingAnimationController.h"
 
 #import "UIImage+animatedGIF.h"
 #import "UIColor+CustomColors.h"
@@ -49,6 +47,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
+    
+ 
 }
 
 -(void) loadNibs{
@@ -75,7 +75,8 @@
 -(void) showTopMenu{
     
     [_topMenu showOn:self.view];
-    
+//    [_topMenu showTakeOffButton];
+//    [_topMenu showLandButton];
     
     [_bottomStatusBar showOn:self.view];
 
@@ -243,7 +244,7 @@
     // circuit selection part
     if (!self.circuit) {
         [_circuitsList openCircuitListWithCompletion:^(BOOL finished) {
-            NSLog(@"heeeye");
+            
         }];
     }
 }
@@ -362,8 +363,25 @@
             return;
         }
     }
-}
+    else{
+        if ([pathPlanningTimer isValid]) {
+            return;
+        }
+        // with the pan button we will control the location of simulated drone ..
+    
+        else if(pan.state == UIGestureRecognizerStateChanged){
+            CGPoint point = [pan locationInView:mapView];
+            CLLocationCoordinate2D newCoord =[mapView convertPoint:point toCoordinateFromView:mapView];
+//            CLLocation* newLoc = [[Calc Instance] locationWithCoordinates:newCoord];
+            CLLocation* newLoc = [[CLLocation alloc] initWithCoordinate:newCoord altitude:_simulatedDrone.droneLoc.altitude horizontalAccuracy:_simulatedDrone.droneLoc.horizontalAccuracy verticalAccuracy:_simulatedDrone.droneLoc.verticalAccuracy course:_simulatedDrone.droneLoc.course speed:_simulatedDrone.droneLoc.speed timestamp:[[NSDate alloc]init]];
+            _simulatedDrone.droneLoc = newLoc;
+            [mapView updateDroneAnnotation:_simulatedDrone];
+            
+           
+        }
 
+    }
+}
 
 
 -(void) setCameraRecordMode{
@@ -432,15 +450,7 @@
     NSLog(@"tap on mapVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
 }
 
-- (id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source
-{
-    return [[PresentingAnimationController alloc] init];
-}
 
-- (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
-{
-    return [[DismissingAnimationController alloc] init];
-}
 
 - (IBAction)onTakeOffButtonClicked:(id)sender {
     [_alertsView showTakeOffAlert];
@@ -506,9 +516,7 @@
     
 }
 - (IBAction)didClickOnStopButton:(id)sender {
-    if ([pathPlanningTimer isValid]) {
-        [pathPlanningTimer invalidate];
-    }
+    [self pauseMission];
     [self hideStopButtonWithCompletion:^{
         [self showResumeGoHomeStackWithCompletion:^{
             
@@ -517,7 +525,7 @@
     
 }
 - (IBAction)didClickOnResumeButton:(id)sender {
-    pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    [self resumeMission];
     [self hideResumeGoHomeStackWithCompletion:^{
        [self showStopButtonWithCompletion:^{
            
@@ -670,6 +678,8 @@
         pathPlanningTimer = nil;
     }
     
+    _planner = [[pathPlanner alloc]init];
+    
     pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
     callback(YES);
     
@@ -678,6 +688,16 @@
     startMissionDate = [[NSDate alloc] init]; // initialisation de la date reference de start mission
     countFollow = 0;
     refDate = [[NSDate alloc] init];
+}
+-(void) pauseMission{
+    if ([pathPlanningTimer isValid]) {
+        [pathPlanningTimer invalidate];
+    }
+    [[circuitManager Instance] pauseCarMovement];
+}
+-(void) resumeMission{
+     pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    [[circuitManager Instance] resumeCarMovement];
 }
 
 - (IBAction)simulatedCarSpeedSliderDidChangeValue:(id)sender {
@@ -722,32 +742,22 @@
     if (_isRealDrone) {
         _drone = _realDrone;
     }
+    // here we have _drone , _carLocation , _circuit
     
-    [mapView CenterViewOnCar:_carLocation andDrone:_drone.droneLoc];
+//    [mapView CenterViewOnCar:_carLocation andDrone:_drone.droneLoc];
     
-    [self follow:_carLocation onCircuit:_circuit droneLoc:_drone];
+    
+    [_planner follow:_carLocation onCircuit:_circuit drone:_drone];
+    
+    [_planner follow2:_carLocation onCircuit:_circuit drone:_drone];
     
     [mapView updateDroneAnnotation:_drone];
     [mapView updateDrone:_drone Vec_Anno_WithTargetSpeed:_drone.targSp AndTargetHeading:_drone.targHeading];
     
-    
-    
+
     if (!_isRealDrone) {// SIMULATED DRONE
         
-//        _simulatedDrone.targSp = 25;
-//        _simulatedDrone.targHeading = _simulatedDrone.droneCar_Vec.angle;
-        
         _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:_simulatedDrone.targSp andTargetAngle:_simulatedDrone.targHeading andTargAltitude:10 during:0.1];
-        
-        
-        if (commandByTargetLocation) {
-            // MOVE SIMULATED DRONE WITH TARGET LOCATION
-            
-            
-        }
-        else{
-            
-        }
 
     }
     else{ // REAL DRONE
@@ -759,15 +769,6 @@
         
         // ********* PATH PLANNING ************
     }
-}
-
--(void) follow:(CLLocation*) carLoc onCircuit:(Circuit*) circuit droneLoc:(Drone*) drone{
-    
-    
-    [self updatePredictedDrone:drone];
-    
-    CLLocation* target = [self calculateNextTargetLocation:carLoc onCircuit:circuit drone:_predictedDrone];
-    
     
     // CALCULER LA FREQ D'exec
     countFollow ++;
@@ -775,291 +776,10 @@
     if (!countFollow) {
         NSTimeInterval time = -[refDate timeIntervalSinceNow];
         float freqRuntime = 10/time;
-        NSLog(@"freq , %0.3f",freqRuntime);
+//        NSLog(@"freq , %0.3f",freqRuntime);
         refDate = [[NSDate alloc] init];
     }
 }
 
--(void) updatePredictedDrone:(Drone*) drone{
-    CLLocationCoordinate2D predictCoord = [[Calc Instance] predictedGPSPositionFromCurrentPosition:drone.droneLoc.coordinate andCourse:drone.droneLoc.course andSpeed:drone.droneLoc.speed during:1.5];
-    
-    CLLocation* dronePredictedLocation = [[CLLocation alloc] initWithCoordinate:predictCoord altitude:drone.droneLoc.altitude horizontalAccuracy:0 verticalAccuracy:0 course:drone.droneLoc.course speed:drone.droneLoc.speed timestamp:drone.droneLoc.timestamp];
-    
-    if (!_predictedDrone) {
-        _predictedDrone = [[Drone alloc] initWithLocation:dronePredictedLocation];
-    }
-    else{
-        [_predictedDrone updateDroneStateWithLoc:dronePredictedLocation andYaw:dronePredictedLocation.course];
-    }
-
-    [mapView movePinNamed:@"dronePredictedLoc" toCoord:dronePredictedLocation andColor:@"RGB 129 22 89"];
-}
-
--(CLLocation*) calculateNextTargetLocation:(CLLocation*) carLoc onCircuit:(Circuit*) circuit drone:(Drone*) predictedDrone{
-    
-    CLLocation* target = nil;
-    
-    carIndexOnCircuit = [self carIndexOnCircuit:circuit forCarLoc:carLoc];
-    
-    [_drone calculateDroneInfoOnCircuit:circuit forCarLocation:carLoc carIndex:carIndexOnCircuit];
-    
-    [_predictedDrone calculateDroneInfoOnCircuit:circuit forCarLocation:carLoc carIndex:carIndexOnCircuit];
-    
-    CLLocation* loc = [circuit.locations objectAtIndex:(_drone.droneIndexOnCircuit)%circuit.locations.count];
-    [mapView movePinNamed:@"droneIndex" toCoord:loc andColor:yellowColorString];
-    
-    [mapView updateDroneSensCircuit_PerpAnnotations:_drone];
-    [mapView updateDroneSensCircuit_PerpAnnotations:_predictedDrone];
-    
-    
-    [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circuit];
-    
-    if (_drone.isCloseTracking) {
-        [self performCloseTracking];
-    }
-    else{
-        [self performShortcutting];
-    }
-    return target;
-}
-
--(int) carIndexOnCircuit:(Circuit*) circuit forCarLoc:(CLLocation*) carLoc{
-    int carIndex = 0;
-    
-    // sort with distance
-    NSArray* sortedWithDistance = [circuit.locations sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
-        CLLocation* loc1 = (CLLocation*)obj1;
-        CLLocation* loc2 = (CLLocation*)obj2;
-        
-        float dist1 = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loc1.coordinate];
-        float dist2 = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loc2.coordinate];
-        
-        if (dist1 < dist2) {
-            return NSOrderedAscending;
-        } else if (dist1 > dist2) {
-            return NSOrderedDescending;
-        } else {
-            return NSOrderedSame;
-        }
-    }];
-    
-    float carCourse = carLoc.course;
-    
-    CLLocation* loci = sortedWithDistance[0];
-    int index = (int)[circuit.locations indexOfObject:loci];
-    
-    
-    carIndex = index;
-    
-    // search in the closest locations which one has the same course ...
-    for (int i = 0 ; i < sortedWithDistance.count; i++) {
-        
-        CLLocation* loci = sortedWithDistance[i];
-        int index = (int)[circuit.locations indexOfObject:loci];
-        
-        
-        float dist = [[Calc Instance] distanceFromCoords2D:carLoc.coordinate toCoords2D:loci.coordinate];
-        
-        if (dist < 50) {
-            
-            Vec* courseVec = [[Vec alloc] initWithNorm:1 andAngle:carCourse];
-            Vec* sensCircuitVec = [[Vec alloc] initWithNorm:1 andAngle:[circuit.interAngle[index] floatValue]];
-            float dot = [sensCircuitVec dotProduct:courseVec];
-            
-            if (dot > 0.9) {
-                
-                carIndex = index;
-                break;
-            }
-            else {
-                continue;
-            }
-        }
-        else{
-            break;
-        }
-    }
-    
-    // DISPLAY
-    CLLocation* loc = circuit.locations[carIndex];
-    [mapView movePinNamed:@"carIndex" toCoord:loc andColor:redColorString];
-    
-    return carIndex;
-}
-
--(void) setCloseTrackingOrShortcutting:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circuit{
-    
-    float maxDistOnCircuitForCloseTracking = 9*40;
-    float minDistOnCircuitForCloseTracking = -75;
-    float droneSpeedSensCircuit = [drone.droneSpeed_Vec dotProduct:drone.sensCircuit];
-    
-    float diffSp = drone.carSpeed_Vec.norm - droneSpeedSensCircuit;
-    
-    
-    if (drone.isCloseTracking) {
-        [_topMenu setStatusLabelText:@"Close tracking"];
-        // décider si on arrete le close tracking : voiture est partie/ index loin
-
-        if (drone.distanceOnCircuitToCar > -75 && drone.distanceOnCircuitToCar < 35) {
-            // en fct de la vitesse de la voiture dire si la voiture est partie...
-            
-            if (diffSp > 0.5*drone.distanceOnCircuitToCar +20) {
-                DVLog(@"Shortcutting: la voiture est partie");
-                drone.isCloseTracking = NO;
-            }
-            else {
-                
-            }
-        }
-        
-        if (drone.distanceOnCircuitToCar < minDistOnCircuitForCloseTracking -20) {
-            
-            drone.isCloseTracking = NO;
-        }
-
-    }
-    else{
-        [_topMenu setStatusLabelText:@"Shortcutting"];
-        
-        if (drone.carSpeed_Vec.norm < 2 && (drone.droneCar_Vec.norm < 20 || (drone.distanceOnCircuitToCar >- 50 && drone.distanceOnCircuitToCar < 50 && drone.droneDistToItsIndex < 20)) ) {
-            
-            drone.isCloseTracking = YES;
-            
-//            arrayTargetBearingCloseTracking = nil;
-            DVLog(@"voiture proche");
-            return;
-        }
-        // décider si on peut reprendre la voiture
-        if (drone.droneDistToItsIndex < 15) {
-
-            if (drone.distanceOnCircuitToCar > minDistOnCircuitForCloseTracking && drone.distanceOnCircuitToCar < maxDistOnCircuitForCloseTracking) {
-                if (diffSp < 0.5*drone.distanceOnCircuitToCar+10) {
-                    DVLog(@"CloseTracking: peut suivre la voiture");
-                    
-                    drone.isCloseTracking = YES;
-//                    arrayTargetBearingCloseTracking = nil;
-                }
-            }
-        }
-        else{
-            // if have the right altitude then go
-            
-            // else just gain altitude
-            
-            
-            // prendre de l'altitude et freiner ...
-            //***********************************
-            // SHORTCUT if have the right altitude
-            //***********************************
-            // else
-            //***********************************
-            //      isShortcutting = NO;
-            //      isCloseTracking = NO;
-        }
-    }
-    
-}
-
--(void) performCloseTracking{
-    commandByTargetLocation = NO;
-    
-    // if drone should strictly follow the circuit locations then choose
-
-    float targ_V_perp = _predictedDrone.droneDistToItsIndex/2;;
-    
-    targ_V_perp = bindBetween(targ_V_perp, 0, 16); // doit être continue
-    
-    float diffSp = _drone.carSpeed_Vec.norm - _drone.V_parralele;
-    float totalDist = _drone.distanceOnCircuitToCar-20*(1+diffSp/10);
-    
-    float speedFromDist = -16*sign(totalDist)*(1-expf(-fabsf(totalDist)/25));
-    float targ_V_Parallel = speedFromDist + _drone.carSpeed_Vec.norm;
-    
-    
-    targ_V_Parallel = bindBetween(targ_V_Parallel, -sqrt(256-targ_V_perp*targ_V_perp), sqrt(256-targ_V_perp*targ_V_perp));
-    
-    
-    Vec* V_parallele_Vec = [[Vec alloc] initWithNorm:targ_V_Parallel andAngle:_drone.sensCircuit.angle];
-    Vec* V_Perp_Vec = [[Vec alloc] initWithNorm:targ_V_perp andAngle:_drone.versCircuit.angle];
-    Vec* targetDroneSpeed_Vec = [V_parallele_Vec addVector:V_Perp_Vec];
-    
-    _drone.targSp = targetDroneSpeed_Vec.norm;
-    _drone.targHeading = targetDroneSpeed_Vec.angle;
-}
-
--(void) performShortcutting{
-    
-    _drone.targSp = 16;
-    _drone.targHeading = _drone.droneCar_Vec.angle;
-    CLLocation* target = [self shortcuttingPhase:_carLocation drone:_drone onCircuit:_circuit];
-    
-    if (target) {
-        float dist = [[Calc Instance] distanceFromCoords2D:_drone.droneLoc.coordinate toCoords2D:target.coordinate];
-        float bearing = [[Calc Instance] headingTo:target.coordinate fromPosition:_drone.droneLoc.coordinate];
-        
-        
-        _drone.targHeading = bearing;
-        _drone.targSp = 16*(1-expf(-dist/16));
-        
-        
-        [mapView movePinNamed:@"shortcuttingPin" toCoord:target andColor:yellowColorString];
-    }
-}
-
-//  *************** SHORTCUTTING ****************
--(CLLocation*) shortcuttingPhase:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circuit{
-    CLLocation* target = nil;
-    
-    // WHEN SHORTCUTTING MAX ALT
-    
-    // FIND TARGET SPEED AND BEARING
-    
-    for (int i=0; i< circuit.locations.count; i++) { // OUTPUTS target loc
-
-        CLLocation* loci = [circuit locationAtIndex:(carIndexOnCircuit+i+1)];
-        float carDistanceToLoci = [circuit distanceOnCircuitfromIndex:carIndexOnCircuit toIndex:(carIndexOnCircuit+i+1)];
-        
-        float carTimeToReachLoci = carDistanceToLoci/(carLoc.speed+0.5);
-        
-        
-        Vec* droneToLoci = [_drone.drone_Loc0_Vec addVector:circuit.Loc0_Loci_Vecs[i]];
-        
-        float distance = droneToLoci.norm;
-        
-        float droneTimeToReachLoci = [_drone timeForDroneToReachLoc:loci andTargetSpeed:0];
-    
-        
-        
-        if (carTimeToReachLoci < droneTimeToReachLoci) {
-            continue;
-        }
-        else{
-            if (droneTimeToReachLoci +1.5 < carTimeToReachLoci ) { // drone arrives very early .. then there to go
-                target = loci;
-                NSLog(@"locindex good ,%lu",[circuit.locations indexOfObject:loci]);
-                if (droneTimeToReachLoci < 2) {
-//                    isShortcutting = NO;
-//                    isCloseTracking = YES;
-                    NSLog(@"droneTime , %0.3f",droneTimeToReachLoci);
-                    NSLog(@"close Tracking .. target almost reached");
-                }
-                
-//                NSTimeInterval shortcuttingTime = -[startShortcuttingDate timeIntervalSinceNow];
-//                DVLoggerLog(@"shortcutting", [NSString stringWithFormat:@"time, %0.3f, distOncircuit, %0.3f,droneDistToTarget,%0.3f",shortcuttingTime,distanceOnCircuit,distance]);
-                
-                
-                break;
-            }
-            else{
-                continue;
-            }
-        }
-    }
-    
-    commandByTargetLocation = YES;
-    
-    
-    return target;
-}
 
 @end

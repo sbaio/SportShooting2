@@ -240,7 +240,7 @@
         
         MGSwipeTableCell *cell = [parts objectAtIndex:0];
         
-        NSLog(@"cell for row ------>  %d <-------",(int)indexPath.row);
+//        NSLog(@"cell for row ------>  %d <-------",(int)indexPath.row);
         cell.delegate = self;
         UILabel* textLabel = [self labelOfCell:cell];
         [textLabel setText:[allCircuits objectAtIndex:indexPath.row]];
@@ -250,7 +250,7 @@
         return cell;
     }
     else if (tableView == defineTableView){
-        NSLog(@"cell for row ------>define  %d <-------",(int)indexPath.row);
+//        NSLog(@"cell for row ------>define  %d <-------",(int)indexPath.row);
         int row = (int)indexPath.row;
         
         UITableViewCell* cell = [parts objectAtIndex:(row+1)];

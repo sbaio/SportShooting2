@@ -32,6 +32,7 @@
 #import "alertsView.h"
 
 #import "POP.h"
+#import "pathPlanner.h"
 
 @class MapView;
 @class Drone;
@@ -40,6 +41,7 @@
 @class BottomStatusBar;
 @class alertsView;
 @class AppDelegate;
+@class pathPlanner;
 @class CircuitsTVC;
 
 @interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
@@ -100,8 +102,6 @@
 //    float distDroneCar;
     int carIndexOnCircuit;
 
-    
-    BOOL commandByTargetLocation;
     //
     
     NSDate* lastFCUpdateDate;
@@ -145,6 +145,8 @@
 @property Drone* realDrone;
 @property Drone* simulatedDrone;
 @property Drone* predictedDrone;
+
+@property pathPlanner* planner;
 
 -(void) enableMainMenuPan;
 -(void) disableMainMenuPan;

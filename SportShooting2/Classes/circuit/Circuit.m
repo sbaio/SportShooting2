@@ -94,6 +94,10 @@
     }
     if (!self.interDistance) {
         self.interDistance = [self calculateInterDistancesOfCircuit:self.locations];
+        NSLog(@"%@",_interDistance);
+    }
+    else{
+        NSLog(@"%@",_interDistance);
     }
     self.circuitLength = [self length];
     if (!self.interAngle) {
@@ -117,7 +121,7 @@
             float distLoc0ToLoci = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:loci.coordinate];
             float headingLoc0ToLoci = [[Calc Instance] headingTo:loci.coordinate fromPosition:loc0.coordinate];
             
-            NSLog(@"%0.3f  , %0.3f ",distLoc0ToLoci,headingLoc0ToLoci);
+//            NSLog(@"%0.3f  , %0.3f ",distLoc0ToLoci,headingLoc0ToLoci);
             Vec* Loc0ToLoci_Vec = [[Vec alloc] initWithNorm:distLoc0ToLoci andAngle:headingLoc0ToLoci];
             [self.Loc0_Loci_Vecs addObject:Loc0ToLoci_Vec];
         }

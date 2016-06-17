@@ -507,6 +507,15 @@
     
 }
 
+-(void) pauseCarMovement{
+    if ([carSimulationTimer isValid]) {
+        [carSimulationTimer invalidate];
+    }
+}
+-(void) resumeCarMovement{
+    carSimulationTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(moveCarOnCircuit:) userInfo:nil repeats:YES];
+}
+
 -(CLLocation*) moveSimulatedCarFrom:(CLLocation*) carLoc byDistance:(float) distance onCircuit:(Circuit*) circuit{
     
     CLLocation* nextLoc  = [[CLLocation alloc] init];
