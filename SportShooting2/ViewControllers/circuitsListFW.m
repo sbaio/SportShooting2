@@ -88,7 +88,7 @@
     
     if (_addBut.status ==  2) {
 
-        [self openDefineTableView];
+        [self openDefineTableViewForCircuit:nil];
     }
     else if (_addBut.status == 3){
 
@@ -98,7 +98,18 @@
     
 }
 
--(void) openDefineTableView{
+-(void) openDefineTableViewForCircuit:(Circuit*) circuit{
+    
+    if (!circuit) {
+        newCirc = YES;
+        newCircuit = [[Circuit alloc] init];
+        isDefiningNewCircuit = YES;
+    }
+    else{
+        newCircuit = loadedCircuit;
+        newCirc = NO;
+        isDefiningNewCircuit = NO;
+    }
     
     [defineTableView reloadData];
     
@@ -260,8 +271,8 @@
             {
                 txtFieldCircuitName = [self textFieldOfCell:cell];
                 txtFieldCircuitName.delegate = self;
-                if (loadedCircuit.circuitName) {
-                    [txtFieldCircuitName setText:loadedCircuit.circuitName];
+                if (newCircuit.circuitName) {
+                    [txtFieldCircuitName setText:newCircuit.circuitName];
                 }
             }
                 break;
@@ -270,8 +281,8 @@
                 txtFieldCircuitLength = [self textFieldOfCell:cell];
                 txtFieldCircuitLength.delegate = self;
                 
-                if (loadedCircuit.locations) {
-                    [txtFieldCircuitLength setText:[NSString stringWithFormat:@"%0.1fm",[loadedCircuit length]]];
+                if (newCircuit.locations) {
+                    [txtFieldCircuitLength setText:[NSString stringWithFormat:@"%0.1fm",[newCircuit length]]];
                 }
             }
                 break;
@@ -279,8 +290,8 @@
             {
                 txtFieldRTH_Alt = [self textFieldOfCell:cell];
                 txtFieldRTH_Alt.delegate = self;
-                if (loadedCircuit.RTH_altitude) {
-                    [txtFieldRTH_Alt setText:[NSString stringWithFormat:@"%0.1fm",loadedCircuit.RTH_altitude]];
+                if (newCircuit.RTH_altitude) {
+                    [txtFieldRTH_Alt setText:[NSString stringWithFormat:@"%0.1fm",newCircuit.RTH_altitude]];
                 }
             }
                 break;
@@ -304,7 +315,7 @@
         return NO;
     }
     else {
-        
+//        [_tableView selectRowAtIndexPath:[_tableView indexPathForCell:cell] animated:YES scrollPosition:UITableViewScrollPositionNone];
         return YES;
     }
 }
@@ -341,6 +352,26 @@
     return result;
 }
 
+-(BOOL) swipeTableCell:(MGSwipeTableCell*) cell tappedButtonAtIndex:(NSInteger) index direction:(MGSwipeDirection)direction fromExpansion:(BOOL) fromExpansion{
+    circuitManager* cm = [circuitManager Instance];
+    
+    if (index == 0) {
+        [cm removeCircuitNamed:[self txtOfCell:cell]];
+        allCircuits = [self loadExistingCircuitsNames_coder];
+        [_tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[_tableView indexPathForCell:cell]]  withRowAnimation:UITableViewRowAnimationFade];
+        selectRow = -1;
+        
+        [_tableView reloadData];
+        
+    }
+    else if(index == 1 ){
+        [self tableView:_tableView didDeselectRowAtIndexPath:[_tableView indexPathForSelectedRow]];
+        [self tableView:_tableView didSelectRowAtIndexPath:[_tableView indexPathForCell:cell]];
+        [self openDefineTableViewForCircuit:loadedCircuit];
+    }
+    return NO;
+}
+
 // DEFINE TABLE VIEW
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     if (textField == txtFieldCircuitLength) {
@@ -374,21 +405,39 @@
     }
     
     else if (textFieldloc == txtFieldCircuitName){
-        if (!loadedCircuit) {
-            loadedCircuit = [[Circuit alloc]init];
+        if (!newCircuit) {
+            newCircuit = [[Circuit alloc] init];
         }
-        loadedCircuit.circuitName = string;
-        
-        if (!loadedCircuit.locations) {
-            // launch pan circuit to get
-            isDefiningNewCircuit = YES;
-            [self startPan];
+        if (isDefiningNewCircuit) {
+            
+            newCircuit.circuitName = string;
+            if (!newCircuit.locations) {
+                [self startPan];
+            }
+            else{
+                [[circuitManager Instance] saveCircuit:newCircuit];
+            }
+            
         }
         else{
-            [[circuitManager Instance] saveCircuit:loadedCircuit];
             
-            
+            newCircuit.circuitName = string;
         }
+//        if (!loadedCircuit) {
+//            loadedCircuit = [[Circuit alloc]init];
+//        }
+//        loadedCircuit.circuitName = string;
+//        
+//        if (!loadedCircuit.locations) {
+//            // launch pan circuit to get
+//            isDefiningNewCircuit = YES;
+//            [self startPan];
+//        }
+//        else{
+//            [[circuitManager Instance] saveCircuit:loadedCircuit];
+//            
+//            
+//        }
     }
     
     return NO;
@@ -452,6 +501,22 @@
     [selectButton addTarget:self action:@selector(didSelectCircuitAtSelectedRow:) forControlEvents:UIControlEventTouchUpInside];
     int row = (int)indexPath.row;
     
+//    if (!loadedCircuit) {
+//        selectedRow = -1;
+//    }
+//    else{
+//        if ([loadedCircuit.circuitName isEqualToString:[self txtOfCell:cell]]) {
+//            [selectButton setTitle:@"selected" forState:UIControlStateNormal];
+//            [selectButton setHidden:NO];
+//        }
+//    }
+//    if ([_tableView indexPathForSelectedRow] == [_tableView indexPathForCell:cell] ) {
+//        [selectButton setTitle:@"select" forState:UIControlStateNormal];
+//        [selectButton setHidden:NO];
+//    }
+//    else{
+//        [selectButton setHidden:YES];
+//    }
     if (row == selectedRow) {
         [selectButton setTitle:@"selected" forState:UIControlStateNormal];
         [selectButton setHidden:NO];
@@ -639,19 +704,12 @@
     NSMutableArray* locations = [dict objectForKey:@"locations"];
     
     if (isDefiningNewCircuit) {
-        loadedCircuit.locations = locations;
-        [[circuitManager Instance] saveCircuit:loadedCircuit];
+        newCircuit.locations = locations;
+        [[circuitManager Instance] saveCircuit:newCircuit];
         [defineTableView reloadData];
+        [_tableView reloadData];
     }
-    
-    
-    
 }
-
-
-
-
-
 
 
 #pragma mark -  Supporting methods
@@ -663,6 +721,7 @@
     
     for(NSString* key in keys){
         if ([key hasSuffix:@"_c"]) {
+            
             NSArray* arrayFromCircuitPath = [key componentsSeparatedByString:@"_"];
             NSString* circuitN = arrayFromCircuitPath[0];
             [arrayOfCircuitsNames addObject:circuitN];

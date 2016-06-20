@@ -74,7 +74,7 @@
         {// push circuit definition vc
             [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
             [[[Menu instance] getMapVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
-                [[[Menu instance] getMapVC].circuitsList openDefineTableView];
+                [[[Menu instance] getMapVC].circuitsList openDefineTableViewForCircuit:nil];
             }];
             
             break;

@@ -27,6 +27,7 @@
     int selectRow;
     
     UITableView* defineTableView;
+    BOOL newCirc;
     
     UITextField* txtFieldCircuitName;
     UITextField *txtFieldRTH_Alt;
@@ -43,7 +44,7 @@
 
 -(void) initWithDefaultsProperties;
 
--(void) openDefineTableView;
+-(void) openDefineTableViewForCircuit:(Circuit*) circuit;
 -(void) closeDefineTableView;
 
 -(void) openCircuitListWithCompletion:(void (^)(BOOL finished))callback;
