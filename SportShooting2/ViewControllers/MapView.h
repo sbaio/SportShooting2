@@ -14,6 +14,7 @@
 
 @class MapVC;
 @class Drone;
+@class Circuit;
 
 @interface MapView : MKMapView <MKMapViewDelegate>
 {

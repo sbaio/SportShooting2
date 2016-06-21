@@ -22,6 +22,7 @@
 @class GeneralMenuVC;
 @class AppDelegate;
 @class CircuitsTVC;
+@class MapView;
 
 
 @interface Menu : NSObject

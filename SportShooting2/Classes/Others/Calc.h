@@ -12,6 +12,8 @@
 #import "DVFloatingWindow.h"
 #import "Circuit.h"
 
+@class Circuit;
+
 @interface Calc : NSObject
 
 + (Calc *) Instance;

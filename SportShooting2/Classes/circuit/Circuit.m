@@ -5,6 +5,7 @@
 //  Created by Othman Sbai on 5/9/16.
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
+#define sign(a) ( ( (a) < 0 )  ?  -1   : ( (a) > 0 ) )
 
 #import "Circuit.h"
 #import <CoreLocation/CLLocation.h>
@@ -28,7 +29,7 @@
     if (calc) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
-            [self calculateCourbureCircuit:self.locations];
+//            [self calculateCourbureCircuit:self.locations];
             self.interIndexesDistance = [[Calc Instance] loadArrayNamed:[NSString stringWithFormat:@"distances%@",self.circuitName]];
             if (!self.interIndexesDistance) {
                 self.interIndexesDistance = [self calculateInterIndexesDistances:self.locations];
@@ -94,12 +95,11 @@
     }
     if (!self.interDistance) {
         self.interDistance = [self calculateInterDistancesOfCircuit:self.locations];
-        NSLog(@"%@",_interDistance);
+//        NSLog(@"%@",_interDistance);
     }
-    else{
-        NSLog(@"%@",_interDistance);
-    }
+    
     self.circuitLength = [self length];
+    
     if (!self.interAngle) {
         self.interAngle = [self calculateSensCircuitAnglesOfCircuit:self.locations];
     }
@@ -109,9 +109,26 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             self.interIndexesDistance = [self calculateInterIndexesDistances2];
             NSLog(@"finished");
+            if (!self.courbures) {
+                [self calculateCourbure];
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_mapView removePinsNamed:@"turnLoc"];
+                for (CLLocation* loci in self.turnLocs) {
+                    NSUInteger indexInLocs = [self.turnLocs indexOfObject:loci];
+                    CLLocation* centeri = [self.turnCenters objectAtIndex:indexInLocs];
+                    [_mapView addPin:centeri andTitle:@"turnLoc" andColor:@"RGB 255 0 0"];
+                    NSUInteger index = (int)[self.locations indexOfObject:loci];
+                    NSLog(@"%d -> courb : %0.3f ",(int)index,[self.courbures[index]floatValue]);
+                }
+            });
+            
         });
         
     }
+    
+    
     if (!self.Loc0_Loci_Vecs) {
         self.Loc0_Loci_Vecs = [[NSMutableArray alloc] init];
         for (int i = 0; i<self.locations.count; i++) {
@@ -157,34 +174,23 @@
         for (int j =-7; j<7; j++) {
             CLLocation* loci = circuit[(i+j+circuit.count)%circuit.count];
             CLLocation* locip = circuit[(i+j+1+circuit.count)%circuit.count];
-            float dist = [[Calc Instance] distanceFromCoords2D:loci.coordinate toCoords2D:locip.coordinate];
-            
-            int k = 0;
-            while (!dist) {
-                k++;
-                locip = circuit[(i+j+1+k+circuit.count)%circuit.count];
-                dist = [[Calc Instance] distanceFromCoords2D:loci.coordinate toCoords2D:locip.coordinate];
-            }
+
             float heading = [[Calc Instance] headingTo:locip.coordinate fromPosition:loci.coordinate];
-            if (i< 2) {
-//                                NSLog(@"i = %d ,j = %d , %0.3f ",i,j,heading);
-            }
-            
+
             
             [array addObject:[NSNumber numberWithFloat:heading]];
         }
         float angle = [[Calc Instance] avgAngleOfArray:array];
-//                NSLog(@"index, %d, angle , %0.3f",i,angle);
+
         [returnArray addObject:[NSNumber numberWithFloat:angle]];
     }
-    
     
     // FILTER 7 angles
     NSMutableArray* avgedInterAngle = [[NSMutableArray alloc] init];
     
     NSMutableArray* sevenFloats = [[NSMutableArray alloc] init];
     
-    for (int i = 0; i<circuit.count; i++) {
+    for (int i = 0; i<returnArray.count; i++) {
         float anglei = [returnArray[i] floatValue];
         
         float newAvgedAngle = [[Calc Instance] filterVar:anglei inArray:sevenFloats angles:YES withNum:7];
@@ -195,32 +201,105 @@
     return avgedInterAngle;
 }
 
--(NSMutableArray*) calculateCourbureCircuit:(NSMutableArray*) circuit{
-    // start from interAngle and interDistance
+-(void) calculateCourbure{
     KalmanFilter1D* KF = [[KalmanFilter1D alloc] init];
     [KF setQ:50 andR:1000000];
     
     
     NSMutableArray* courbure = [[NSMutableArray alloc] init];
-
+    
     NSLog(@"calculate courbure");
     for (int i = 0; i<self.locations.count; i++) {
-
-        float anglei = [self.interAngle[(i)%circuit.count] floatValue];
-        float angleip1 = [self.interAngle[(i+1)%circuit.count] floatValue];
+        
+        float anglei = [self.interAngle[(i)%self.locations.count] floatValue];
+        float angleip1 = [self.interAngle[(i+1)%self.locations.count] floatValue];
         
         float diffi_ip1 = [[Calc Instance] closestDiffAngle:angleip1 toAngle:anglei];// TO BE FILTERED
         
-        [KF filter:diffi_ip1];
+        float disti = [self.interDistance[i] floatValue];
+        float courb = (diffi_ip1/disti);
+        [KF filter:courb];
         
         float filtered = KF.state.y[0];
         
-//        NSLog(@"dist , %0.3f , angle , %0.3f,filtered, %0.3f,couriip1 , %0.3f",[self.interDistance[i] floatValue],[self.interAngle[i] floatValue],filtered,diffi_ip1);
+//        NSLog(@"dist , %0.3f , angle , %0.3f,filtered, %0.3f,couriip1 , %0.3f",disti,[self.interAngle[i] floatValue],filtered,courb);
         
         [courbure addObject:[NSNumber numberWithFloat:filtered]];
     }
-    return courbure;
+    self.courbures = courbure;
+    [self fetchTurnCenters];
 }
+
+-(void) fetchTurnCenters{
+    NSMutableArray* turnLocs = [[NSMutableArray alloc] init];
+    
+    
+    
+    NSArray* sortedLocsWithMaxCourb = [self.locations sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        
+        NSNumber* num1 = self.courbures[[self.locations indexOfObject:obj1]];
+        NSNumber* num2 = self.courbures[[self.locations indexOfObject:obj2]];
+        
+        float absCourb1 = fabsf([num1 floatValue]);
+        float absCourb2 = fabsf([num2 floatValue]);
+        
+        if (absCourb1 < absCourb2) {
+            return NSOrderedDescending;
+        }
+        else if (absCourb2 < absCourb1){
+            return NSOrderedAscending;
+        }
+        else{
+            return NSOrderedSame;
+        }
+    }];
+    
+    
+    [turnLocs addObject:sortedLocsWithMaxCourb[0]];
+    
+    for (int i = 0; i<sortedLocsWithMaxCourb.count && turnLocs.count < 5; i++) {
+        BOOL fitsInAGroup = NO;
+        
+        NSUInteger indexi = [self.locations indexOfObject:sortedLocsWithMaxCourb[i]];
+        float courbure = [self.courbures[indexi] floatValue];
+
+        NSMutableArray* starti = self.interIndexesDistance[indexi];
+        
+        for (int j = 0; j< turnLocs.count; j++) {
+            NSUInteger indexj = [self.locations indexOfObject:turnLocs[j]];
+            float dist = [[starti objectAtIndex:indexj] floatValue];
+
+            if (fabsf(dist) < 80) {
+                fitsInAGroup = YES;
+            }
+        }
+        
+        if (fabsf(courbure) < 2) {
+            break;
+        }
+        if (!fitsInAGroup ) {
+            [turnLocs addObject:sortedLocsWithMaxCourb[i]];
+        }
+        
+    }
+    
+    NSMutableArray* centers = [[NSMutableArray alloc] init];
+    
+    for (CLLocation* turnLoci in turnLocs) {
+        NSUInteger indexi = [self.locations indexOfObject:turnLoci];
+        float courb = [[self.courbures objectAtIndex:indexi] floatValue];
+        float angleSens = [self.interAngle[indexi] floatValue];
+        
+        Vec* angle90 = [[Vec alloc] initWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:angleSens+sign(courb)*90]];
+        
+        CLLocation* locCenteri = [[Calc Instance] locationFrom:turnLoci atDistance:20 atBearing:angle90.angle];
+        [centers addObject:locCenteri];
+        
+    }
+    self.turnLocs = turnLocs;
+    self.turnCenters = centers;
+}
+
 
 -(float) length{
    

@@ -454,7 +454,7 @@
         NSString* circuitName = [self txtOfCell:cell];
         
         MapVC* mapVC = [[Menu instance] getMapVC];
-        MKMapView* mapView = [[Menu instance] getMap];
+        MapView* mapView = [[Menu instance] getMapView];
         
         circuitManager* cm = [circuitManager Instance];
         
@@ -468,6 +468,7 @@
         }
         
         [[Calc Instance] map:mapView showCircuit:loadedCircuit];
+        
         if (mapVC.phoneLocation) {
             float dist = 1000000;
             int i = 0;
@@ -559,6 +560,8 @@
     
     MapVC* mapVC = [[Menu instance] getMapVC];
     if (loadedCircuit) {
+        
+        loadedCircuit.mapView = [[Menu instance] getMapView];
         
         [loadedCircuit update];
         

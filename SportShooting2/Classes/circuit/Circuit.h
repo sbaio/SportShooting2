@@ -6,9 +6,13 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "MapView.h"
+
+@class MapView;
 
 @interface Circuit : NSObject{
     
@@ -19,10 +23,13 @@
 @property NSMutableArray* interDistance;
 @property NSMutableArray* interIndexesDistance;
 @property NSMutableArray* interAngle;
-@property NSMutableArray* diffAngle;
+@property NSMutableArray* courbures;
+@property NSMutableArray* turnLocs;
+@property NSMutableArray* turnCenters;
 @property NSMutableArray* Loc0_Loci_Vecs;
 @property (nonatomic) MKCoordinateRegion region;
 @property float RTH_altitude; // need to be set
+@property __weak MapView* mapView;
 
 // NFZ regions
 // type of obstacles

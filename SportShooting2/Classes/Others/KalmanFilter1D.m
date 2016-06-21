@@ -54,7 +54,7 @@
     
     double klm_gain[12];
     
-    // c_a is the measurement matrix (6x2) takes the state x$ and gives only (x,y) --> H
+    // c_a is the measurement matrix (2*6) takes the state x$ and gives only (x,y) --> H
     static const signed char c_a[12] = { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
     
     double S[4];
@@ -82,7 +82,7 @@
     }
     
     for (k = 0; k < 6; k++) {
-        // previous
+        
         Q[k + 6 * k] = _state.Q;
         
         /*  Initial state conditions */
@@ -123,16 +123,16 @@
     // 2. Measurement prediction covariance ... calcul de S(k+1)
     // 1 ere étape de calcul intermédiaire P(k+1)H(k+1)'
     for (r2 = 0; r2 < 2; r2++) {
+
         for (i0 = 0; i0 < 6; i0++) {
             klm_gain[r2 + (i0 << 1)] = 0.0;
             for (r1 = 0; r1 < 6; r1++) {
-                klm_gain[r2 + (i0 << 1)] += (double)c_a[r2 + (r1 << 1)] * p_prd[i0 + 6 *
-                                                                                r1];
+                klm_gain[r2 + (i0 << 1)] += (double)c_a[r2 + (r1 << 1)] * p_prd[i0 + 6 *r1];
             }
         }
     }
     
-    // 2 eme étape ---->  S(k+1) = H(k+1)P(k+1)H(k+1)' +R(k+1)
+    // 2 eme étape ---->  S(k+1) = H(k+1)P(k+1)H(k+1)' + R(k+1)
     for (r2 = 0; r2 < 2; r2++) {
         for (i0 = 0; i0 < 2; i0++) {
             a21 = 0.0;

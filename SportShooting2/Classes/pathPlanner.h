@@ -13,19 +13,27 @@
 #import "MapView.h"
 
 @class MapView;
+@class Circuit;
+@class Drone;
+
 
 typedef struct{
     BOOL isInit;     
     BOOL isRunning;
     
+    BOOL carStopped;
     BOOL carIsComing;
     BOOL carLeft;
+    BOOL catchingCar;
     
-    
+    // drone
     BOOL isDroneCloseToItsIndex;
     BOOL isDroneCloseToCar;
     
     BOOL isDroneShortcutting;
+    BOOL isDroneCloseTracking;
+    
+    
 } pathPlannerStatus;
 
 @interface pathPlanner : NSObject
@@ -42,7 +50,10 @@ typedef struct{
     Drone* _drone;
     
     // dates
+    NSDate* lastFollowDate;
     NSDate* lastCarIsComingNotifDate;
+    NSDate* lastCarHasLeftNotifDate;
+    NSDate* lastCatchingCarNotifDate;
 }
 
 @property int carIndexOnCircuit;

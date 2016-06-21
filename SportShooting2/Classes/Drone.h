@@ -16,6 +16,8 @@
 #import <DJISDK/DJISDK.h>
 #import "Vec.h"
 
+@class Circuit;
+
 @protocol droneDelegate <NSObject>
 
 @optional

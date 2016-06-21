@@ -90,62 +90,62 @@
         [mapVC.topMenu setStatusLabelText:@"Close tracking"];
         // décider si on arrete le close tracking : voiture est partie/ index loin
         
-        if (drone.distanceOnCircuitToCar > -75 && drone.distanceOnCircuitToCar < 35) {
-            // en fct de la vitesse de la voiture dire si la voiture est partie...
-            
-            if (diffSp > 0.5*drone.distanceOnCircuitToCar +20) {
-//                DVLog(@"Shortcutting: la voiture est partie");
-                drone.isCloseTracking = NO;
-            }
-            else {
-                
-            }
-        }
+//        if (drone.distanceOnCircuitToCar > -75 && drone.distanceOnCircuitToCar < 35) {
+//            // en fct de la vitesse de la voiture dire si la voiture est partie...
+//            
+//            if (diffSp > 0.5*drone.distanceOnCircuitToCar +20) {
+////                DVLog(@"Shortcutting: la voiture est partie");
+//                drone.isCloseTracking = NO;
+//            }
+//            else {
+//                
+//            }
+//        }
         
-        if (drone.distanceOnCircuitToCar < minDistOnCircuitForCloseTracking -20) {
-            
-            drone.isCloseTracking = NO;
-        }
-        
+//        if (drone.distanceOnCircuitToCar < minDistOnCircuitForCloseTracking -20) {
+//            
+//            drone.isCloseTracking = NO;
+//        }
+//        
     }
     else{
         [mapVC.topMenu setStatusLabelText:@"Shortcutting"];
         
-        if (drone.carSpeed_Vec.norm < 2 && (drone.droneCar_Vec.norm < 20 || (drone.distanceOnCircuitToCar >- 50 && drone.distanceOnCircuitToCar < 50 && drone.droneDistToItsIndex < 20)) ) {
-            
-            drone.isCloseTracking = YES;
-            
-            //            arrayTargetBearingCloseTracking = nil;
-            DVLog(@"voiture proche");
-            return;
-        }
+//        if (drone.carSpeed_Vec.norm < 2 && (drone.droneCar_Vec.norm < 20 || (drone.distanceOnCircuitToCar >- 50 && drone.distanceOnCircuitToCar < 50 && drone.droneDistToItsIndex < 20)) ) {
+//            
+//            drone.isCloseTracking = YES;
+//            
+//            //            arrayTargetBearingCloseTracking = nil;
+////            DVLog(@"voiture proche");
+//            return;
+//        }
         // décider si on peut reprendre la voiture
-        if (drone.droneDistToItsIndex < 15) {
-            
-            if (drone.distanceOnCircuitToCar > minDistOnCircuitForCloseTracking && drone.distanceOnCircuitToCar < maxDistOnCircuitForCloseTracking) {
-                if (diffSp < 0.5*drone.distanceOnCircuitToCar+10) {
-                    DVLog(@"CloseTracking: peut suivre la voiture");
-                    
-                    drone.isCloseTracking = YES;
-                    //                    arrayTargetBearingCloseTracking = nil;
-                }
-            }
-        }
-        else{
-            // if have the right altitude then go
-            
-            // else just gain altitude
-            
-            
-            // prendre de l'altitude et freiner ...
-            //***********************************
-            // SHORTCUT if have the right altitude
-            //***********************************
-            // else
-            //***********************************
-            //      isShortcutting = NO;
-            //      isCloseTracking = NO;
-        }
+//        if (drone.droneDistToItsIndex < 15) {
+//            
+//            if (drone.distanceOnCircuitToCar > minDistOnCircuitForCloseTracking && drone.distanceOnCircuitToCar < maxDistOnCircuitForCloseTracking) {
+//                if (diffSp < 0.5*drone.distanceOnCircuitToCar+10) {
+////                    DVLog(@"CloseTracking: peut suivre la voiture");
+//                    
+//                    drone.isCloseTracking = YES;
+//                    //                    arrayTargetBearingCloseTracking = nil;
+//                }
+//            }
+//        }
+//        else{
+//            // if have the right altitude then go
+//            
+//            // else just gain altitude
+//            
+//            
+//            // prendre de l'altitude et freiner ...
+//            //***********************************
+//            // SHORTCUT if have the right altitude
+//            //***********************************
+//            // else
+//            //***********************************
+//            //      isShortcutting = NO;
+//            //      isCloseTracking = NO;
+//        }
     }
 }
 
@@ -253,33 +253,132 @@
 #pragma mark - method 2 of path planning
 
 -(void) follow2:(CLLocation*) carLoc onCircuit:(Circuit*) circ drone:(Drone*) drone{
+    {
+        lastFollowDate = [NSDate new];
+    _status.isRunning = YES;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (-[lastFollowDate timeIntervalSinceNow]> 0.2) {
+            if (_status.isRunning) {
+                DVLog(@"path planner stopped");
+                _status.isRunning = NO;
+            }
+        }
+    });
+    }
+    _drone.droneDistToItsIndex = [[Calc Instance] distanceFromCoords2D:_drone.droneLoc.coordinate toCoords2D:_drone.droneIndexLocation.coordinate];
+    
     if (carLoc.speed == 0) {
-        NSLog(@"car Stopped");
+        if (!_status.carStopped) {
+            DVLog(@"carStopped");
+            // launch sequence to go in front of the car !!!
+        }
+        _status.carStopped = YES;
         _status.carIsComing = NO;
     }
     else{
-
-        if (_drone.distanceOnCircuitToCar > 0 && _drone.distanceOnCircuitToCar/carLoc.speed < 15 && _drone.droneDistToItsIndex < 100) {
+        _status.carStopped = NO;
+        if (_drone.distanceOnCircuitToCar > carLoc.speed*2 && _drone.distanceOnCircuitToCar/carLoc.speed < 15 && _drone.droneDistToItsIndex < 100) {
             lastCarIsComingNotifDate = [NSDate new];
-            if (!_status.carIsComing) {
-                DVLog(@"car is coming : YES");
+            if (!_status.carIsComing && !_drone.isCloseTracking){// && !_status.isDroneCloseTracking) {
+                
+                if (_status.isDroneCloseToItsIndex) {
+                    // switch to close tracking
+                    DVLog(@"car is coming : YES--> closeTracking");
+                    _drone.isCloseTracking = YES;
+                }
+                else{
+                    DVLog(@"car is coming : YES --> drone far from index");
+                }
                 _status.carIsComing = YES;
+                _status.carLeft = NO;
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                if ((-[lastCarIsComingNotifDate timeIntervalSinceNow] >0.3) && _status.carIsComing) {
-                    DVLog(@"car is coming : NO");
-                    _status.carIsComing = NO;
+                if (_status.isRunning) {
+                    
+                    if ((-[lastCarIsComingNotifDate timeIntervalSinceNow] >0.3) && _status.carIsComing) {
+                        DVLog(@"car is coming : NO");
+                        _status.carIsComing = NO;
+                    }
                 }
             });
         }
         
-        if (1) {
-            NSLog(@"distSur Circ , %0.3f",_drone.distanceOnCircuitToCar);
+        // CAR LEFT
+        if (_drone.distanceOnCircuitToCar > -75 && _drone.distanceOnCircuitToCar < 35) {
+            // en fct de la vitesse de la voiture dire si la voiture est partie...
+            float droneSpeedSensCircuit = [drone.droneSpeed_Vec dotProduct:drone.sensCircuit];
+            
+            float diffSp = drone.carSpeed_Vec.norm - droneSpeedSensCircuit;
+
+            if (diffSp > 0.5*drone.distanceOnCircuitToCar +20) {
+                lastCarHasLeftNotifDate = [NSDate new];
+                if (!_status.carLeft && _drone.isCloseTracking) {
+                    DVLog(@"car left : YES --> shortcutting");
+                    _status.carLeft = YES;
+                    _status.carIsComing = NO;
+                    _drone.isCloseTracking = NO;
+                }
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    if (_status.isRunning) {
+                        if ((-[lastCarHasLeftNotifDate timeIntervalSinceNow] >0.3) && _status.carLeft) {
+                            _status.carLeft = NO;
+                        }
+                    }
+                    
+                });
+            }
+            
+            else if (_drone.distanceOnCircuitToCar < 0 && _drone.distanceOnCircuitToCar > -40 ){
+                
+                // can be done with time to shortcutting location !!!! 
+                if (diffSp < 2) {
+                    lastCatchingCarNotifDate = [NSDate new];
+                    if (!_status.catchingCar && !_drone.isCloseTracking) {
+                        _status.catchingCar = YES;
+                        _drone.isCloseTracking = YES;
+                        _status.carLeft = NO;
+                        DVLog(@"catching car");
+                    }
+                    
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        if (_status.isRunning) {
+                            if ((-[lastCatchingCarNotifDate timeIntervalSinceNow] >0.3) && _status.catchingCar) {
+                                _status.catchingCar = NO;
+                            }
+                        }
+                        
+                    });
+                    
+                }
+            }
         }
+     
     }
     
     
+    if (_drone.droneDistToItsIndex > 50) { // sets max eloignement lors du close tracking
+        if (_status.isDroneCloseToItsIndex && _drone.isCloseTracking) {
+            DVLog(@"drone far from its index --> shotcutting");
+            _drone.isCloseTracking = NO;
+        }
+        _status.isDroneCloseToItsIndex = NO;
+        
+    }
+    else if(_drone.droneDistToItsIndex < 40){
+        _status.isDroneCloseToItsIndex = YES;
+        
+        if (_status.carIsComing) {
+            if (!_drone.isCloseTracking) {
+                _drone.isCloseTracking = YES;
+                DVLog(@"drone close to its index, car is coming --> close tracking");
+            }
+            
+            
+        }
+    }
+    NSLog(@"%0.3f",_drone.droneDistToItsIndex);
 }
 
 

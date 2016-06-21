@@ -12,6 +12,8 @@
 #import "Calc.h"
 #import "Menu.h"
 
+@class Circuit;
+
 @interface circuitManager : NSObject
 {
     Circuit* simulationCircuit;

@@ -33,6 +33,7 @@
 
 #import "POP.h"
 #import "pathPlanner.h"
+#import "KF1D.h"
 
 @class MapView;
 @class Drone;

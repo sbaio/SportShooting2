@@ -22,6 +22,7 @@
 #import "UIColor+CustomColors.h"
 
 
+
 @interface MapVC ()
 
 @end
@@ -47,9 +48,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
-    
- 
+
 }
+
 
 -(void) loadNibs{
     [[[NSBundle mainBundle] loadNibNamed:@"TopMenu" owner:self options:nil] firstObject];
@@ -746,7 +747,6 @@
     
 //    [mapView CenterViewOnCar:_carLocation andDrone:_drone.droneLoc];
     
-    
     [_planner follow:_carLocation onCircuit:_circuit drone:_drone];
     
     [_planner follow2:_carLocation onCircuit:_circuit drone:_drone];
@@ -782,4 +782,8 @@
 }
 
 
+
+/*
+ Test reponse à l'accéleration a partir de stopped position
+ */
 @end

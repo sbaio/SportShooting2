@@ -11,6 +11,7 @@
 		D612D1AA1D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png in Resources */ = {isa = PBXBuildFile; fileRef = D612D1A91D10E9B200CC6D14 /* BackGroundImage_contentView_MenuReveal.png */; };
 		D612D1AC1D11C55D00CC6D14 /* distDroneCar.png in Resources */ = {isa = PBXBuildFile; fileRef = D612D1AB1D11C55D00CC6D14 /* distDroneCar.png */; };
 		D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1B11D1354DB00CC6D14 /* pathPlanner.m */; };
+		D612D1B51D18970E00CC6D14 /* KF1D.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1B41D18970E00CC6D14 /* KF1D.m */; };
 		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
 		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
 		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
@@ -178,6 +179,8 @@
 		D612D1AB1D11C55D00CC6D14 /* distDroneCar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = distDroneCar.png; path = droneVoiture/distDroneCar.png; sourceTree = "<group>"; };
 		D612D1B01D1354DB00CC6D14 /* pathPlanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathPlanner.h; sourceTree = "<group>"; };
 		D612D1B11D1354DB00CC6D14 /* pathPlanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = pathPlanner.m; sourceTree = "<group>"; };
+		D612D1B31D18970E00CC6D14 /* KF1D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KF1D.h; sourceTree = "<group>"; };
+		D612D1B41D18970E00CC6D14 /* KF1D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KF1D.m; sourceTree = "<group>"; };
 		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
 		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
 		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
@@ -1009,6 +1012,8 @@
 				D632D53D1D04033300B12946 /* Vec.m */,
 				D6218CEF1D0B328D00DF1E55 /* UIImage+animatedGIF.h */,
 				D6218CF01D0B328D00DF1E55 /* UIImage+animatedGIF.m */,
+				D612D1B31D18970E00CC6D14 /* KF1D.h */,
+				D612D1B41D18970E00CC6D14 /* KF1D.m */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1304,6 +1309,7 @@
 				D69902411D0405770038D05B /* MGSwipeButton.m in Sources */,
 				D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */,
 				D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */,
+				D612D1B51D18970E00CC6D14 /* KF1D.m in Sources */,
 				D632D52A1D03FD2900B12946 /* SWRevealViewController.m in Sources */,
 				D632D5351D04030700B12946 /* Autopilot.m in Sources */,
 				D632D4F81D03F6A200B12946 /* POPGeometry.mm in Sources */,
