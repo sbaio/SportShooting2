@@ -7,58 +7,6 @@
 //
 
 
-/* Notes et remarques:
- 
- --> flexibilité quant au switch P-GPS , F mode 
-    * si error == please switch to F mode --> retry each 3s
-    * si switch goes from P-GPS to F mode --> drone will stop responding to commands
- 
- 
- Add observer to switch changes from F to P
- */
-
-// always check if _flightCOntroller so to be sure that drone is connected
-
-// we need a functin that transforms/dispatches button commands to commands to autopilot
-// first when drone !isFlying (landed) -> takeOff
-
-
-
-/* HINTS for a efficient flight thread
- 
- TODO ... Organized :
- 
- --> compare d(RC,drone) , d(iOS device, drone) knowing that d(iOS device,RC) = 0 --> Done
- --> Test Flight control data method
- --> Fix the switch P-GPS, F modes --> Done
- --> integrate the previous autopilot methods && test'em
- 
- Random Ideas:
- 
- --> when should we reset the gimbal --> when gimbal detected
- 
- --> What happens when user switches to P GPS instead on F mode, and then back to F mode.. hover
- 
- --> whenever in F-Mode and drone is flying and no special command is being sent, -----> Maintain position otherwise drone sways
- 
- --> Multiple Flight Mode needs to be enables in DJI GO App
- 
- --> Think about when we are going to be using : body coordinate, earth coordinate --------> DONE
- $ when just maintaining certain position, earth coordinate are better
- $ when going to a position, following a trajectory --> body coordinate system
- $ combine flightCommands to send with a timer
- --> use DJIRCHardwareFlightModeSwitchState , DJIRCHardwareFlightModeSwitch
- 
- 
- 
- 
- --> Think about if tracker learnt bad  examples, how to reinit tracker
- 
- ==> ISSUES
- 
- -->  How to wait for takeOff callback to return, ---> Bool isTakingOff !
- */
-
 #define sign(a) ( ( (a) < 0 )  ?  -1   : ( (a) > 0 ) )
 
 #define DEGREE(x) ((x)*180.0/M_PI)
@@ -92,6 +40,7 @@
     return self;
 }
 
+
 -(void) initFlightVariables{
     radiusBrakingZone = 60;
     
@@ -100,545 +49,184 @@
     _gimbalYawMode = 1;
 }
 
--(void) startTakeOff{
-    if (_flightModeSwitch.mode == DJIRCHardwareFlightModeSwitchStateA){
-        DVLog(@"Please move flightMode switch to F mode, A mode is not safe to fly autonoumously");
-    }
-    else if (_flightModeSwitch.mode == DJIRCHardwareFlightModeSwitchStateP)
-    {
-        DVLog(@"Please mode flightMode switch to F mode, P mode doesn't enable sending flight commands");
-    }
-    else if(_flightModeSwitch.mode == DJIRCHardwareFlightModeSwitchStateF && !_FCcurrentState.areMotorsOn){
+-(void) sendFlightCtrlCommands:(struct PitchRoll) pitchAndRoll withAltitude:(struct Altitude) altitude andYaw:(struct Yaw) yaw{
     
-        // check if RC drone GPS is still in warming phase
-        DVLog(@"--> taking off in F-mode , to stop autonomous mode switch to P mode");
-        
-        _autopilotStatus.isTakingOff = YES;
-//        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error){
-//            DVLog(@"virtial Stick control mode enabled");
-//        }];
-        
-        takeOffCheckTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(checkTakeOffState) userInfo:nil repeats:YES];
-        
-        [_flightController takeoffWithCompletion:^(NSError * _Nullable error) { // startTakeOff
-            // UI : give a button to cancel takeoff
+    // with this centralized flight ctrl sending we can modify commands for NoFlyZone or for geoFencing ...
+    if (!_flightController) {
+        _flightController = [ComponentHelper fetchFlightController];
+        if (!_flightController) {
             
-            // takeOff error
-            if (error) {
-                DVLog(@"takeOff error : %@",error.localizedDescription);
-                
-                DVLog(@"drone still landed");
-                _statusSegmented.selectedSegmentIndex = 0; // wait again, still landed
-                _autopilotStatus.isTakingOff = NO;
-            }
-            // take Off succeded
-            else{
-                
-                // save takeOff position
-                if (CLLocationCoordinate2DIsValid(_FCcurrentState.aircraftLocation)) {
-                    takeOffPosition = _FCcurrentState.aircraftLocation;
-                    DVLog(@"takeOff position saved");
-                }
-                
-                // move to next
-                _autopilotStatus.isTakingOff = NO; // callback received
-                
-            }
-            
-        }];
+            return;
+        }
     }
-}
-
--(void) checkTakeOffState{
+    // CHange
+    _flightController = [ComponentHelper fetchFlightController];
+    if (!_flightController) {
+        
+        return;
+    }
+    // end change
     
-    DVLog(@"\n TAKEOFF CHECK ");
-
-    
-    if (_FCcurrentState.isFlying && !_autopilotStatus.isTakingOff) {
-        
-        //update current segmented status --> flying (takeOff succeded)
-        _statusSegmented.selectedSegmentIndex = 2;
-        
-    // check if takeOff coord is valid -  and set it if not
-        
-        if (!CLLocationCoordinate2DIsValid(takeOffPosition)) {
-            DVLog(@"takeOff position non valid, setting current one as takeOff position");
-            if (CLLocationCoordinate2DIsValid(_FCcurrentState.aircraftLocation)) {
-                takeOffPosition = _FCcurrentState.aircraftLocation;
-                DVLog(@"updated takeoff location");
-            }
-        }
-        
-    // if switch change warn - stop sending data in not F mode
-        
-        if (_flightModeSwitch.mode != DJIRCHardwareFlightModeSwitchStateF) {
-            DVLog(@"flight mode switch not in F mode, drone will hover");
-            if (timerSendCtrlData) {
-                [timerSendCtrlData invalidate];
-                timerSendCtrlData = nil;
-            }
-        }
-        
-    //  init tracker
-        
-        if(_delegate!=nil && [_delegate respondsToSelector:@selector(notifyMissionVC:)]){
-            DVLog(@"drone flying, starting tracker ...");
-            [_delegate notifyMissionVC:1]; // instanciates the tracker, sets its delegates and starts it
-        }
-        else{
-            if (!_delegate) {
-                DVLog(@"autopilot delegate not set");
-            }
-            else
-            {
-                DVLog(@"delegate doesnt respond to delegate method");
-            }
-        }
-        
-    // start sending ctrl data - hovering timer
-//        if (!timerSendCtrlData) { // can hover without sending flight control data
-//            DVLog(@"starting timer sendCtrlData");
-//            timerSendCtrlData = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(hoverPhase) userInfo:nil repeats:YES];
-//        }
-        
-    // kill the takeOffTimer
-        if (takeOffCheckTimer) {
-            [takeOffCheckTimer invalidate];
-            takeOffCheckTimer = nil;
-        }
-        
-    }
-    else{
-        if (!_autopilotStatus.isTakingOff) {
-            DVLog(@"drone not flying, retry taking Off, maybe you need to turn off/on the drone");
-            if (timerSendCtrlData) {
-                [timerSendCtrlData invalidate];
-                timerSendCtrlData = nil;
-                DVLog(@"stopping timer sendCtrl data");
-            }
-        }
-        else {
-            DVLog(@"taking off");
-        }
-        
-    }
-    
-     DVLog(@" TAKEOFF CHECK end \n");
-}
-
--(void) startTracker{
-    if(_delegate!=nil && [_delegate respondsToSelector:@selector(notifyMissionVC:)]){
-        DVLog(@"debug mode no flying but starting tracker ...");
-        [_delegate notifyMissionVC:1]; // instanciates the tracker
-    }
-}
-
-#pragma mark - autopilot start mission
-
--(void) onMissionTimerTickedSendFlighControlData{
-    DVLog(@"mission timer");
     if (!_flightController.isVirtualStickControlModeAvailable) {
-        _flightController.verticalControlMode = DJIVirtualStickVerticalControlModePosition;
-        _flightController.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        _flightController.rollPitchControlMode = DJIVirtualStickRollPitchControlModeAngle;
-        _flightController.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+        //        DVLog(@"virtual stick not available .. trying to enable it");
         
         [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
             if (error) {
-                DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+                //                DVLog(@"Enter Virtual Stick Mode:%@", error.description);
             }
             else
             {
-                DVLog(@"Enter Virtual Stick Mode:Succeeded");
+                //                DVLog(@"Enter Virtual Stick Mode:Succeeded");
             }
         }];
     }
     
-    DJIVirtualStickFlightControlData ctrlData = {0};
-    ctrlData.pitch = 15;
-    ctrlData.roll = 0;
-    ctrlData.yaw = 10;
-    ctrlData.verticalThrottle = 35;
-
+    {
+        DJIVirtualStickVerticalControlMode altitudeMode = (altitude.position) ? DJIVirtualStickVerticalControlModePosition:DJIVirtualStickVerticalControlModeVelocity;
+        
+        DJIVirtualStickYawControlMode yawMode = (yaw.palstance) ? DJIVirtualStickYawControlModeAngularVelocity:DJIVirtualStickYawControlModeAngle;
+        
+        DJIVirtualStickRollPitchControlMode pitchRollMode = (pitchAndRoll.angleOrVelocity) ? DJIVirtualStickRollPitchControlModeAngle:DJIVirtualStickRollPitchControlModeVelocity;
+        
+        DJIVirtualStickFlightCoordinateSystem FlightCoordinateSystem = (pitchAndRoll.coordSystem) ? DJIVirtualStickFlightCoordinateSystemBody:DJIVirtualStickFlightCoordinateSystemGround;
+        
+        
+        if (_flightController.verticalControlMode != altitudeMode) {
+            _flightController.verticalControlMode = altitudeMode;
+        }
+        if (_flightController.yawControlMode != yawMode) {
+            _flightController.yawControlMode = yawMode;
+        }
+        if (_flightController.rollPitchControlMode != pitchRollMode) {
+            _flightController.rollPitchControlMode = pitchRollMode;
+        }
+        if (_flightController.rollPitchCoordinateSystem != FlightCoordinateSystem) {
+            _flightController.rollPitchCoordinateSystem = FlightCoordinateSystem;
+        }
+    }
+    DJIVirtualStickFlightControlData flightCtrlData = {0};
+    
+    flightCtrlData.pitch = pitchAndRoll.pitch;
+    flightCtrlData.roll = pitchAndRoll.roll;
+    flightCtrlData.yaw = yaw.yaw;
+    if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
+        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, 3, 100) ;
+    }
+    else if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity){
+        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, -5, 5);
+    }
+    
+    
+    
+    //    DVLog(@"sending : pitch %f , roll %f , yaw %f , altitude ,%f ",pitchAndRoll.pitch,pitchAndRoll.roll, yaw.yaw,altitude.altitude );
+    
     if (_flightController && _flightController.isVirtualStickControlModeAvailable) {
-        [_flightController sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
-        DVLog(@"sent flight data");
+        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                //DVLog(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+        if (_delegate && [_delegate respondsToSelector:@selector(autopilotDidSendFlightCommands:)]) {
+            
+        }
+        [_flightController sendVirtualStickFlightControlData:flightCtrlData withCompletion:nil];
+    }
+    else{
+        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                //  DVLog(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
     }
 }
-#pragma mark - flight
--(void) hoverPhase{ //gets called by timer after successfull takeOff
-    // normally after takeOff, supposed just to hover -->
-    struct PitchRoll pitchRollCom = [self pitchAndRollToMaintainPosition:takeOffPosition];
-    struct Yaw yaw = {0,YES};
-//    struct Yaw yawToAdjustDroneToGimbal = [self method to adjust drone yaw accordingly to gimbal's one] ;
-    //adjust gimbal yaw to head to userLocation ...
-    struct Altitude hoveringAltitude = {4,YES};
 
+-(void) goWithSpeed:(float)speed atBearing:(float)bearing atAltitude:(float) altitude andYaw:(float) yaw{
     
-    // if orbit is required during tracking, then start moving at slow speed, while notifying the user, keeping a reasonable distance to the car and training predator
+    speed = bindBetween(speed, 0, 17);
     
+    // bearing should be -180..180
+    if (bearing > 180 || bearing < -180) {
+        DVLog(@"bearing %0.3f out of interval -180..180",bearing);
+        bearing = bindBetween(bearing, -180, 180);
+    }
     
-    // if required accomodation with gimbal ... change Yaw
+    // earth coord sys
+    float northSpeed = speed*cosf(RADIAN(bearing));
+    float eastSpeed = speed*sinf(RADIAN(bearing));
     
-    // We send the final result of this phase
-    [self sendFlightCtrlCommands:pitchRollCom withAltitude:hoveringAltitude andYaw:yaw];
+    // commands
+    struct PitchRoll pitchRollCommands = {eastSpeed,northSpeed,NO,NO};
+    struct Altitude altitudeCommand = {altitude,YES};
+    struct Yaw yawCommand = {[self droneCommandYawForDroneTargetYaw:0],YES};
     
-}
--(void) hoverAtGPSPos:(CLLocationCoordinate2D) hoveringPosition atAltitude:(float) altitude{
+    [self sendFlightCtrlCommands:pitchRollCommands withAltitude:altitudeCommand andYaw:yawCommand];
     
-}
-
-#pragma mark - gimbal adjustment with tracker
-
--(void) adjustGimbalWithTrackerYawCorrection:(float) yawCorr andPitch:(float) pitchCorr {
-    NSLog(@"gimbal going by pitch : %f , yaw %f ",-pitchCorr,yawCorr);
-    //[self gimbalMoveWithRelativeAngle:-pitchCorr andRoll:0 andYaw:yawCorr withCompletionTime:3];
 }
 
 #pragma mark - Gimbal control methods
-
--(void) updateZoneOfGimbal{ //updates gimbal variables
-
-    previousGDDiffAngle = gimbalCurrentBearingInDroneBC; // first update may be wrong
+-(void) updateZoneOfGimbalForDrone:(Drone*) drone withGimbalState:(DJIGimbalState*) gimbalState{
     
-    gimbalCurrentYawEarth = _gimbal.attitudeInDegrees.yaw;
-    droneCurrentYawEarth = _FCcurrentState.attitude.yaw; // not a gimbal variable
-    gimbalCurrentBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalCurrentYawEarth toAngle:droneCurrentYawEarth];
+    drone.gimbalYawEarth = gimbalState.attitudeInDegrees.yaw;
+    drone.previousGDDiffAngle = drone.gimbalCurrentBearingInDroneBC;
     
-    if (fabs(gimbalCurrentBearingInDroneBC)<29) {
-        gimbalZone = 0;
+    drone.gimbalCurrentBearingInDroneBC = [[Calc Instance] closestDiffAngle:drone.gimbalYawEarth toAngle:drone.droneYaw];
+    
+    if (fabs(drone.gimbalCurrentBearingInDroneBC)<29) {
+        drone.gimbalZone = 0;
     }
-    if (fabs(gimbalCurrentBearingInDroneBC)>110){
+    else if (fabs(drone.gimbalCurrentBearingInDroneBC)>110){
         
-        if (sin(previousGDDiffAngle*M_PI/180)*sin(gimbalCurrentBearingInDroneBC*M_PI/180)<0) {
-            gimbalZone = gimbalZone + sign(sin(previousGDDiffAngle*M_PI/180));
+        if (sin(drone.previousGDDiffAngle*M_PI/180)*sin(drone.gimbalCurrentBearingInDroneBC*M_PI/180)<0) {
+            drone.gimbalZone = drone.gimbalZone + sign(sin(drone.previousGDDiffAngle*M_PI/180));
         }
     }
     
-    gimbalCurrent330Yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
-    
-    self.gimbalCurrent330yaw = gimbalCurrent330Yaw;
-    //NSLog(@"current gimbal 330 yaw %f",gimbalCurrent330Yaw);
-}
-// gimbal absolute - can be called once ! or by insiting with intervals ...
-
--(void) gimbalGoToAbsolutePitch2:(float) targetPitch andYaw:(float) targetYaw{
-    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
-    if (gimbal) {
-        targetPitch = bindBetween(targetPitch, -90, 30);
-        targetYaw = bindBetween(targetYaw, -180, 180);
-        
-        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeAbsoluteAngle;
-        
-        //pitch
-        DJIGimbalAngleRotation pitchRotation;
-        pitchRotation.direction = (targetPitch <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
-        pitchRotation.angle = targetPitch;
-        pitchRotation.enabled = YES;
-        
-        //roll
-        DJIGimbalAngleRotation rollRotation;
-        rollRotation.direction = DJIGimbalRotateDirectionClockwise;
-        rollRotation.angle = 0;
-        rollRotation.enabled = NO;
-        
-        // yaw
-        DJIGimbalAngleRotation yawRotation;
-        yawRotation.angle = targetYaw;
-        yawRotation.enabled = YES;
-        yawRotation.direction = (targetYaw >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
-        
-        // send gimbal commands
-        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
-            }
-        }];
-        
-        DVLog(@"yaw , %0.3f , gimbalYaw, %0.3f ,compTime , %0.3f,", targetYaw,_gimbal.attitudeInDegrees.yaw,_gimbal.completionTimeForControlAngleAction);
-    }
-}
--(void) gimbalGoToAbsolutePitch:(float) targetPitch andRoll:(float) targetRoll andYaw:(float) target330Yaw{
-//    NSLog(@"trying absolute once");
-    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
-    if (gimbal) {
-        targetPitch = bindBetween(targetPitch, -90, 30);
-        targetRoll = bindBetween(targetRoll, -15, 15);
-        target330Yaw = bindBetween(target330Yaw, -330, 330);
-        
-        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeAbsoluteAngle;
-        
-        //pitch
-        DJIGimbalAngleRotation pitchRotation;
-        pitchRotation.direction = (targetPitch <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
-        pitchRotation.angle = targetPitch;
-        pitchRotation.enabled = YES;
-        
-        //roll
-        DJIGimbalAngleRotation rollRotation;
-        rollRotation.direction = (targetRoll <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
-        rollRotation.angle = targetRoll;
-        rollRotation.enabled = NO;
-        
-        //yaw
-        float possible330 = bindBetween(target330Yaw, gimbalCurrent330Yaw-179, gimbalCurrent330Yaw+179);
-        
-        DJIGimbalAngleRotation yawRotation;
-        
-        yawRotation.angle = possible330;
-        yawRotation.enabled = YES;
-        yawRotation.direction = (possible330 >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
-        
-        // send gimbal commands
-        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
-            }
-        }];
-    }
-    
-}
-// cant be called once
--(void) gimbalMoveWithSpeed:(float) pitchSp andRoll:(float) rollSp andYaw:(float) yawSp{
-    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
-    if (gimbal){
-        pitchSp = bindBetween(pitchSp, -180, 180);
-        yawSp = bindBetween(yawSp, -180, 180);
-        
-        DJIGimbalSpeedRotation pitchRotation;
-        pitchRotation.angleVelocity = pitchSp;
-        pitchRotation.direction = (pitchSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
-        
-        DJIGimbalSpeedRotation rollRotation;
-        rollRotation.angleVelocity = 0.0;
-        rollRotation.direction = (rollSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
-        
-        DJIGimbalSpeedRotation yawRotation;
-        yawRotation.angleVelocity = yawSp;
-        yawRotation.direction = (yawSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
-        
-        [gimbal rotateGimbalBySpeedWithPitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR: rotateGimbalInSpeed. %@", error.description);
-            }
-        }];
-
-    }
-}
-// use only once !!!!
--(void) gimbalMoveWithRelativeAngle:(float) pitchAngle andRoll:(float) rollAngle andYaw:(float) yawAngle withCompletionTime:(float) compTime{
-    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
-    if (gimbal) {
-        // completion time for gimbal in angle mode is 1.0 second
-        
-        if (compTime!=1) {
-            compTime = bindBetween(compTime, 0.1, 25.5);
-            gimbal.completionTimeForControlAngleAction = compTime;
-        }
-        
-        pitchAngle = bindBetween(pitchAngle,-180,180);
-        rollAngle = bindBetween(rollAngle, -180, 180);
-        yawAngle = bindBetween(yawAngle, -180, 180);
-        
-        //pitch
-        DJIGimbalAngleRotation pitchRotation;
-        pitchRotation.angle = pitchAngle;
-        pitchRotation.enabled = YES;
-        pitchRotation.direction = (pitchAngle >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;;
-        
-        
-        //yaw
-        DJIGimbalAngleRotation yawRotation;
-        
-        yawRotation.angle = yawAngle;
-        yawRotation.enabled = YES;
-        yawRotation.direction = (yawAngle >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;;
-        
-        //roll
-        DJIGimbalAngleRotation rollRotation;
-        rollRotation.angle = 0.0;
-        rollRotation.enabled = NO;
-        rollRotation.direction = DJIGimbalRotateDirectionClockwise;
-        
-        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeRelativeAngle;
-        
-        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
-            }
-        }];
-    }
+    drone.gimbalCurrent330yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
 }
 
--(void) adjustGimbalToLocation2:(CLLocation *)location{
-    
-    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
-    
-}
--(void) adjustGimbalToLocation:(CLLocation*) location{
-    // inputs
-    float gimbalCompletionTime = [_gimbal completionTimeForControlAngleAction]; // 0.7 s
-    //currentDroneCoordinate = _FCcurrentState.aircraftLocation;
-    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
-    
-    //gimbalCurrentYawEarth
-    gimbalTargetBearingEarth = [[Calc Instance] headingTo:location.coordinate fromPosition:_FCcurrentState.aircraftLocation]; // absolute gimbal angle not with BC
-    distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:location.coordinate];
-    gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
-//    float firstAngle = gimbalTargetBearingEarth - gimbalCurrentYawEarth; // need to be 330
-    
-    //*******************************************
-    // find the nearest angle330 not to have a lot of rotation ... ugly
-    float angle330_0 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:0],-180,180);
-    float angle330_1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:1],180,330);
-    float angle330_m1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:-1],-330,-180);
-    
-    float diff0 = fabsf(angle330_0 - gimbalCurrent330Yaw);
-    float diff1 = fabsf(angle330_1 - gimbalCurrent330Yaw);
-    float diffm1 = fabsf(angle330_m1 - gimbalCurrent330Yaw);
-    
-    float minDiff = MIN(MIN(diff0, diff1), diffm1) ;
-    
-    if (minDiff == diffm1) {
-        gimbalTarget330Yaw = angle330_m1;
-    }
-    else if (minDiff == diff1)
-    {
-        gimbalTarget330Yaw = angle330_1;
-    }
-    else
-    {
-        gimbalTarget330Yaw = angle330_0;
-    }
-    //*******************************************
-    float firstAngle = gimbalTarget330Yaw - gimbalCurrent330Yaw;
-    
-    float speed = location.speed;// if speed < 0 return only the normal correction
-    float input_course = location.course;
-    if (speed <= 0 || input_course < 0) {
-        [self adjustGimbalAttitudeTo:location.coordinate];
-        return;
-    }
-    float course = (input_course <= 180) ? input_course:input_course-360;
-    
-    float Vr = -speed*cos(RADIAN(course))*sin(RADIAN(gimbalTargetBearingEarth)) + speed*sin(RADIAN(course))*cos(RADIAN(gimbalTargetBearingEarth)); // projection of the speed on the orthRadial component
-    float angularVel = Vr/distanceToGimbalTarget;
-    
-    float angularVel_Deg = angularVel*180.0/M_PI; //  car speed info
-    float angularVel_first = firstAngle/gimbalCompletionTime; // position info
-    //DVLog(@"omega %0.3f,first ang %0.3f",angularVel_Deg, angularVel_first);
-//    DVLog(@"comp %0.3f",gimbalCompletionTime);
-    float previousAngularSpeed = targetAngularSpeed;
-    targetAngularSpeed = angularVel_Deg + angularVel_first;
-//    targetAngularSpeed = bindBetween(angularVel_Deg + angularVel_first, previousAngularSpeed- 10,previousAngularSpeed+10) ;
-    DVLog(@"diff %0.3f",targetAngularSpeed-previousAngularSpeed);
-    [self gimbalMoveWithSpeed:0 andRoll:0 andYaw:targetAngularSpeed];
-    
-}
-
--(void) adjustGimbalAttitudeTo_new16:(CLLocationCoordinate2D)targetBearingCoordForGimbal{
-    float altitude = _FCcurrentState.altitude;
-    currentDroneCoordinate = _FCcurrentState.aircraftLocation;
-    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
-    
-    if(!CLLocationCoordinate2DIsValid(targetBearingCoordForGimbal) || targetBearingCoordForGimbal.latitude ==0 || targetBearingCoordForGimbal.longitude ==0) {
-        DVLog(@"targetBearingCoordForGimbal invalid");
-        return;
-    }
-    
-    gimbalTargetBearingEarth = [[Calc Instance] headingTo:targetBearingCoordForGimbal fromPosition:_FCcurrentState.aircraftLocation];
-    gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
-    
-    if (!arrayGimbalBearing) {
-        arrayGimbalBearing = [[NSMutableArray alloc] init];
-    }
-    avgGimbalBearing = [[Calc Instance] filterVar:gimbalTargetBearingInDroneBC inArray:arrayGimbalBearing angles:YES withNum:3];
-    
-    distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:targetBearingCoordForGimbal];
-    gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget))*180/M_PI;
-    
-    [self gimbalGoToAbsolutePitch:gimbalPitchToTargetOnTheGround andRoll:0 andYaw:avgGimbalBearing];
-}
--(void) adjustGimbalAttitudeTo:(CLLocationCoordinate2D) targetBearingCoordForGimbal {
-    //global var : distanceToGimbalTarget, gimbalTargetBearingEarth
-    
-    float altitude = _FCcurrentState.altitude;
-    currentDroneCoordinate = _FCcurrentState.aircraftLocation;
-    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
-    
-    // find  gimbalTargetBearingInDroneBC
-    
-    switch (_gimbalYawMode) {
-        case 0://towards user
-//            gimbalTargetBearingEarth = [[Calc Instance] headingTo:_userLocation.coordinate fromPosition:_FCcurrentState.aircraftLocation];
-//            gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
+//-(void) updateZoneOfGimbal{ //updates gimbal variables
 //
-//            
-//            distanceToGimbalTarget = [self distanceFromCoords2D:_FCcurrentState.aircraftLocation toCoords2D:_userLocation.coordinate];
-//            gimbalPitchToTargetOnTheGround = -atanf(altitude/distanceToGimbalTarget)*180/M_PI;
-            
-            break;
-        case 1: // gimbal to targetCamera and controls the drone ...
-            
-            // HERE
-            
-            if(!CLLocationCoordinate2DIsValid(targetBearingCoordForGimbal) || targetBearingCoordForGimbal.latitude ==0 || targetBearingCoordForGimbal.longitude ==0) {
-                DVLog(@"targetBearingCoordForGimbal invalid");
-                return;
-            }
-            
-            gimbalTargetBearingEarth = [[Calc Instance] headingTo:targetBearingCoordForGimbal fromPosition:_FCcurrentState.aircraftLocation];
-            gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
-            
-            distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:targetBearingCoordForGimbal];
-//            gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget+1.5))*180/M_PI;
-            gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget))*180/M_PI;
-            
-            break;
-        case 2: // towards drone yaw
-//            gimbalTargetBearingInDroneBC = 0;
-//            gimbalPitchToTargetOnTheGround = -10;
-            break;
-            
-        default:
-            break;
-            
-    }
-    
-    // find the nearest angle330 not to have a lot of rotation ... ugly
-    float angle330_0 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:0],-180,180);
-    float angle330_1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:1],180,330);
-    float angle330_m1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:-1],-330,-180);
-    
-    float diff0 = fabsf(angle330_0 - gimbalCurrent330Yaw);
-    float diff1 = fabsf(angle330_1 - gimbalCurrent330Yaw);
-    float diffm1 = fabsf(angle330_m1 - gimbalCurrent330Yaw);
-    
-    float minDiff = MIN(MIN(diff0, diff1), diffm1) ;
-    
-    if (minDiff == diffm1) {
-        gimbalTarget330Yaw = angle330_m1;
-    }
-    else if (minDiff == diff1)
-    {
-        gimbalTarget330Yaw = angle330_1;
-    }
-    else
-    {
-        gimbalTarget330Yaw = angle330_0;
-    }
-    
-    
+//    previousGDDiffAngle = gimbalCurrentBearingInDroneBC; // first update may be wrong
+//    
+//    gimbalCurrentYawEarth = _gimbal.attitudeInDegrees.yaw;
+//    droneCurrentYawEarth = _FCcurrentState.attitude.yaw; // not a gimbal variable
+//    gimbalCurrentBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalCurrentYawEarth toAngle:droneCurrentYawEarth];
+//    
+//    if (fabs(gimbalCurrentBearingInDroneBC)<29) {
+//        gimbalZone = 0;
+//    }
+//    if (fabs(gimbalCurrentBearingInDroneBC)>110){
+//        
+//        if (sin(previousGDDiffAngle*M_PI/180)*sin(gimbalCurrentBearingInDroneBC*M_PI/180)<0) {
+//            gimbalZone = gimbalZone + sign(sin(previousGDDiffAngle*M_PI/180));
+//        }
+//    }
+//    
+//    gimbalCurrent330Yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
+//    
+//    self.gimbalCurrent330yaw = gimbalCurrent330Yaw;
+//    //NSLog(@"current gimbal 330 yaw %f",gimbalCurrent330Yaw);
+//}
 
-    [self gimbalGoToAbsolutePitch:gimbalPitchToTargetOnTheGround andRoll:0 andYaw:gimbalTarget330Yaw];
 
-}
+
+
+
+
 
 
 #pragma mark - flight control methods
 -(void) goWithSpeed:(float) speed atBearing:(float) bearing{
-    // speed should be reasonable 0.. 20
-    speed = bindBetween(speed, 0, 20);
+    // speed should be reasonable 0.. 17
+    speed = bindBetween(speed, 0, 17);
     
     // bearing should be -180..180
     if (bearing > 180 || bearing < -180) {
@@ -658,8 +246,6 @@
     [self sendFlightCtrlCommands:pitchRollCommands withAltitude:altitudeCommand andYaw:yawCommand];
     
 //    Vec* droneSpeed_Vec = [[Vec alloc] initWithNorthComponent:_FCcurrentState.velocityX andEastComponent:_FCcurrentState.velocityY];
-
-//    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"gowith,%0.3f, atBearing , %0.3f, realSpeed, %0.3f, realCourse,%0.3f ",speed,bearing,droneSpeed_Vec.norm,droneSpeed_Vec.angle]);
     
     
 }
@@ -691,11 +277,9 @@
     
     // *******  NORTH EAST COMPONENTS  LOG *******
     
-//    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"northSp,%0.3f, eastSp , %0.3f, realN_Sp, %0.3f, realE_Sp,%0.3f ",northSpeed,eastSpeed,_FCcurrentState.velocityX,_FCcurrentState.velocityY]);
-    
     // ******** NORM ANGLE COMPONENTS  LOG ********
     
-    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"speed,%0.3f, angle , %0.3f, realSpeed, %0.3f, realAngle,%0.3f ",targetSpeed_vec.norm,targetSpeed_vec.angle,droneSpeed_Vec.norm,droneSpeed_Vec.angle]);
+//    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"speed,%0.3f, angle , %0.3f, realSpeed, %0.3f, realAngle,%0.3f ",targetSpeed_vec.norm,targetSpeed_vec.angle,droneSpeed_Vec.norm,droneSpeed_Vec.angle]);
 }
 
 -(void) goWithSpeed:(float)speed atBearing:(float)bearing andAcc:(float) acc{
@@ -718,7 +302,7 @@
     float nextAngle = nextDroneSpeed.angle;
     [self goWithSpeed:nextSpeed atBearing:nextAngle];
     
-    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"current , %0.3f , %0.3f , target , %0.3f , %0.3f ,diiff , %0.3f , %0.3f , next NE, %0.3f ,%0.3f, next, %0.3f ,%0.3f",currentDroneSpeed.norm,currentDroneSpeed.angle,targetDroneSpeed.norm,targetDroneSpeed.angle,diffNorthSp,diffEastSp,nextNorthSp,nextEastSp, nextSpeed,nextAngle]);
+//    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"current , %0.3f , %0.3f , target , %0.3f , %0.3f ,diiff , %0.3f , %0.3f , next NE, %0.3f ,%0.3f, next, %0.3f ,%0.3f",currentDroneSpeed.norm,currentDroneSpeed.angle,targetDroneSpeed.norm,targetDroneSpeed.angle,diffNorthSp,diffEastSp,nextNorthSp,nextEastSp, nextSpeed,nextAngle]);
 //    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"targetSp,%0.3f, targetAngle , %0.3f, realSpeed, %0.3f, realCourse,%0.3f  ,nextSp, %0.3f, nextAngle ,%0.3f",targetDroneSpeed.norm,targetDroneSpeed.angle,currentDroneSpeed.norm,currentDroneSpeed.angle,nextSpeed,nextAngle]);
 }
 
@@ -727,7 +311,7 @@
     float bearing = [[Calc Instance] headingTo:location.coordinate fromPosition:_FCcurrentState.aircraftLocation];
     float distance = [[Calc Instance] distanceFromCoords2D:location.coordinate toCoords2D:_FCcurrentState.aircraftLocation];
     
-    float speed = (distance < 32)? distance/2:16;
+    float speed = (distance < 32)? distance/2:16; // bad way .. only proportional
     
     [self goWithSpeed:speed atBearing:bearing andAcc:acc];
 }
@@ -836,6 +420,156 @@
     
 }
 
+-(void) gimbalGoToAbsolutePitch2:(float) targetPitch andYaw:(float) targetYaw{
+    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+    if (gimbal) {
+        targetPitch = bindBetween(targetPitch, -90, 30);
+        targetYaw = bindBetween(targetYaw, -180, 180);
+        
+        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeAbsoluteAngle;
+        
+        //pitch
+        DJIGimbalAngleRotation pitchRotation;
+        pitchRotation.direction = (targetPitch <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
+        pitchRotation.angle = targetPitch;
+        pitchRotation.enabled = YES;
+        
+        //roll
+        DJIGimbalAngleRotation rollRotation;
+        rollRotation.direction = DJIGimbalRotateDirectionClockwise;
+        rollRotation.angle = 0;
+        rollRotation.enabled = NO;
+        
+        // yaw
+        DJIGimbalAngleRotation yawRotation;
+        yawRotation.angle = targetYaw;
+        yawRotation.enabled = YES;
+        yawRotation.direction = (targetYaw >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
+        
+        // send gimbal commands
+        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
+            }
+        }];
+        
+        DVLog(@"yaw , %0.3f , gimbalYaw, %0.3f ,compTime , %0.3f,", targetYaw,_gimbal.attitudeInDegrees.yaw,_gimbal.completionTimeForControlAngleAction);
+    }
+}
+
+-(void) gimbalGoToAbsolutePitch:(float) targetPitch andRoll:(float) targetRoll andYaw:(float) target330Yaw{
+    //    NSLog(@"trying absolute once");
+    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+    if (gimbal) {
+        targetPitch = bindBetween(targetPitch, -90, 30);
+        targetRoll = bindBetween(targetRoll, -15, 15);
+        target330Yaw = bindBetween(target330Yaw, -330, 330);
+        
+        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeAbsoluteAngle;
+        
+        //pitch
+        DJIGimbalAngleRotation pitchRotation;
+        pitchRotation.direction = (targetPitch <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
+        pitchRotation.angle = targetPitch;
+        pitchRotation.enabled = YES;
+        
+        //roll
+        DJIGimbalAngleRotation rollRotation;
+        rollRotation.direction = (targetRoll <= 0) ? DJIGimbalRotateDirectionCounterClockwise:DJIGimbalRotateDirectionClockwise;
+        rollRotation.angle = targetRoll;
+        rollRotation.enabled = NO;
+        
+        //yaw
+        float possible330 = bindBetween(target330Yaw, gimbalCurrent330Yaw-179, gimbalCurrent330Yaw+179);
+        
+        DJIGimbalAngleRotation yawRotation;
+        
+        yawRotation.angle = possible330;
+        yawRotation.enabled = YES;
+        yawRotation.direction = (possible330 >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
+        
+        // send gimbal commands
+        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
+            }
+        }];
+    }
+    
+}
+
+// cant be called once
+-(void) gimbalMoveWithSpeed:(float) pitchSp andRoll:(float) rollSp andYaw:(float) yawSp{
+    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+    if (gimbal){
+        pitchSp = bindBetween(pitchSp, -180, 180);
+        yawSp = bindBetween(yawSp, -180, 180);
+        
+        DJIGimbalSpeedRotation pitchRotation;
+        pitchRotation.angleVelocity = pitchSp;
+        pitchRotation.direction = (pitchSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
+        
+        DJIGimbalSpeedRotation rollRotation;
+        rollRotation.angleVelocity = 0.0;
+        rollRotation.direction = (rollSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
+        
+        DJIGimbalSpeedRotation yawRotation;
+        yawRotation.angleVelocity = yawSp;
+        yawRotation.direction = (yawSp >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;
+        
+        [gimbal rotateGimbalBySpeedWithPitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR: rotateGimbalInSpeed. %@", error.description);
+            }
+        }];
+        
+    }
+}
+
+// use only once !!!!
+-(void) gimbalMoveWithRelativeAngle:(float) pitchAngle andRoll:(float) rollAngle andYaw:(float) yawAngle withCompletionTime:(float) compTime{
+    __weak DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+    if (gimbal) {
+        // completion time for gimbal in angle mode is 1.0 second
+        
+        if (compTime!=1) {
+            compTime = bindBetween(compTime, 0.1, 25.5);
+            gimbal.completionTimeForControlAngleAction = compTime;
+        }
+        
+        pitchAngle = bindBetween(pitchAngle,-180,180);
+        rollAngle = bindBetween(rollAngle, -180, 180);
+        yawAngle = bindBetween(yawAngle, -180, 180);
+        
+        //pitch
+        DJIGimbalAngleRotation pitchRotation;
+        pitchRotation.angle = pitchAngle;
+        pitchRotation.enabled = YES;
+        pitchRotation.direction = (pitchAngle >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;;
+        
+        
+        //yaw
+        DJIGimbalAngleRotation yawRotation;
+        
+        yawRotation.angle = yawAngle;
+        yawRotation.enabled = YES;
+        yawRotation.direction = (yawAngle >=0) ? DJIGimbalRotateDirectionClockwise:DJIGimbalRotateDirectionCounterClockwise;;
+        
+        //roll
+        DJIGimbalAngleRotation rollRotation;
+        rollRotation.angle = 0.0;
+        rollRotation.enabled = NO;
+        rollRotation.direction = DJIGimbalRotateDirectionClockwise;
+        
+        DJIGimbalRotateAngleMode angleMode = DJIGimbalAngleModeRelativeAngle;
+        
+        [gimbal rotateGimbalWithAngleMode:angleMode pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR: rotateGimbalInAngle. %@", error.description);
+            }
+        }];
+    }
+}
 
 -(void) makeCircleAround:(CLLocationCoordinate2D) center atDistance:(float) radius andSpeed:(float) speed atAltitude:(float)altitude{
     
@@ -855,12 +589,11 @@
 #pragma mark -  flight help methods
 
 -(void) enableVirtualStickControlMode{
-    
+//    DJIFlightController* flightController = [ComponentHelper fetchFlightController];
     if (_flightController) {
         [_flightController enableVirtualStickControlModeWithCompletion:nil];
     }
     else{
-//        DVLog(@"no flight controller");
     }
 }
 
@@ -872,128 +605,6 @@
     else{
 //        DVLog(@"no flight controller");
     }
-}
-
--(void) sendFlightCtrlCommands:(struct PitchRoll) pitchAndRoll withAltitude:(struct Altitude) altitude andYaw:(struct Yaw) yaw{
-    
-    // with this centralized flight ctrl sending we can modify commands for NoFlyZone or for geoFencing ...
-    if (!_flightController) {
-        _flightController = [ComponentHelper fetchFlightController];
-        if (!_flightController) {
-//            DVLog(@"no flight controller");
-            return;
-        }
-    }
-    if (!_flightController.isVirtualStickControlModeAvailable) {
-//        DVLog(@"virtual stick not available .. trying to enable it");
-
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-//                DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-//                DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-    
-    DJIVirtualStickVerticalControlMode altitudeMode = (altitude.position) ? DJIVirtualStickVerticalControlModePosition:DJIVirtualStickVerticalControlModeVelocity;
-    DJIVirtualStickYawControlMode yawMode = (yaw.palstance) ? DJIVirtualStickYawControlModeAngularVelocity:DJIVirtualStickYawControlModeAngle;
-    DJIVirtualStickRollPitchControlMode pitchRollMode = (pitchAndRoll.angleOrVelocity) ? DJIVirtualStickRollPitchControlModeAngle:DJIVirtualStickRollPitchControlModeVelocity;
-    DJIVirtualStickFlightCoordinateSystem FlightCoordinateSystem = (pitchAndRoll.coordSystem) ? DJIVirtualStickFlightCoordinateSystemBody:DJIVirtualStickFlightCoordinateSystemGround;
-    
-    
-    
-    if (_flightController.verticalControlMode != altitudeMode) {
-        _flightController.verticalControlMode = altitudeMode;
-    }
-    if (_flightController.yawControlMode != yawMode) {
-        _flightController.yawControlMode = yawMode;
-    }
-    if (_flightController.rollPitchControlMode != pitchRollMode) {
-        _flightController.rollPitchControlMode = pitchRollMode;
-    }
-    if (_flightController.rollPitchCoordinateSystem != FlightCoordinateSystem) {
-         _flightController.rollPitchCoordinateSystem = FlightCoordinateSystem;
-    }
-    
-    DJIVirtualStickFlightControlData flightCtrlData = {0};
-    
-    flightCtrlData.pitch = pitchAndRoll.pitch;
-    flightCtrlData.roll = pitchAndRoll.roll;
-    flightCtrlData.yaw = yaw.yaw;
-    if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
-        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, 3, 100) ;
-    }
-    else{
-        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, -2, 2) ;
-    }
-    
-    
-
-//    DVLog(@"sending : pitch %f , roll %f , yaw %f , altitude ,%f ",pitchAndRoll.pitch,pitchAndRoll.roll, yaw.yaw,altitude.altitude );
-    
-    if (_flightController && _flightController.isVirtualStickControlModeAvailable) {
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-               // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-                //DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-        if (_delegate && [_delegate respondsToSelector:@selector(autopilotDidSendFlightCommands:)]) {
-
-        }
-        [_flightController sendVirtualStickFlightControlData:flightCtrlData withCompletion:nil];
-    }
-    else{
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-               // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-              //  DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-}
-
--(struct PitchRoll) pitchAndRollToMaintainPosition:(CLLocationCoordinate2D) hoverPosition {
-    
-    // if maintaining drone's position with its GPS position compared to "takeOff" position is not efficient, we can also compare th distance to the Remote controller if this one is not moving ...
-    
-    // DJIRCGPSData
-    struct PitchRoll commandePR = {0,0,0,0}; // no pitch, no roll .. dangerous if drone is swaying --> should take a action
-    
-    float distance = [[Calc Instance] distanceFromCoords2D:_FCcurrentState.aircraftLocation toCoords2D:hoverPosition];
-    DVLog(@"distance to maintain position : %f",distance);
-    if ( distance < 10) {
-        
-        float bearingFromTargetToAircraft = [[Calc Instance] headingTo:_FCcurrentState.aircraftLocation fromPosition:hoverPosition];
-        float distanceN = distance*cosf(RADIAN(bearingFromTargetToAircraft));
-        float distanceE = distance*sinf(RADIAN(bearingFromTargetToAircraft));
-        
-        commandePR.pitch = -distanceE;
-        commandePR.roll = -distanceN;
-        
-        commandePR.angleOrVelocity = NO;// commande en vitesse
-        commandePR.coordSystem = NO; // ground
-        
-        
-        DVLog(@"Maintain: , distance , %f , sending commands , pitchSp , %f , rollSp , %f",distance ,commandePR.pitch,commandePR.roll);
-
-    }
-    else{
-        DVLog(@"shoudln't be so far !!!");
-        DVLog(@"land ?");
-        
-    }
-
-    return commandePR;
 }
 
 
@@ -1079,23 +690,23 @@
     float b = (330*minYawSp-maxYawSp*angle330Limite)/(330-angle330Limite);
     
     
-    if (fabsf(gimbalCurrent330Yaw)>angle330Limite) {
-        mYaw = a*gimbalCurrent330Yaw +sign(gimbalCurrent330Yaw)*b;
+    if (fabsf(_realDrone.gimbalCurrent330yaw)>angle330Limite) {
+        mYaw = a*_realDrone.gimbalCurrent330yaw +sign(_realDrone.gimbalCurrent330yaw)*b;
         
     }
     else
     {//tester d'abord sans cette condition else
         if (targetDYaw) { // si target yaw n'est pas spécifié on envoie 0
-            if ([[Calc Instance] angle:gimbalCurrentYawEarth isBetween:_FCcurrentState.attitude.yaw andAngle:targetDYaw]) {
-                mYaw = sign([[Calc Instance] isAngle:gimbalCurrentYawEarth toTheRightOfAngle:_FCcurrentState.attitude.yaw]-0.5)*minYawSp/2 + gimbalCurrent330Yaw*minYawSp/(2*angle330Limite);
+            if ([[Calc Instance] angle:_realDrone.gimbalYawEarth isBetween:_realDrone.droneYaw andAngle:targetDYaw]) {
+                mYaw = sign([[Calc Instance] isAngle:_realDrone.gimbalYawEarth toTheRightOfAngle:_realDrone.droneYaw]-0.5)*minYawSp/2 + _realDrone.gimbalCurrent330yaw*minYawSp/(2*angle330Limite);
             }
-            else if([[Calc Instance] angle:targetDYaw isBetween:gimbalCurrentYawEarth andAngle:_FCcurrentState.attitude.yaw])
+            else if([[Calc Instance] angle:targetDYaw isBetween:_realDrone.gimbalYawEarth andAngle:_realDrone.droneYaw])
             {
-                mYaw = [[Calc Instance] closestDiffAngle:targetDYaw toAngle:_FCcurrentState.attitude.yaw];
+                mYaw = [[Calc Instance] closestDiffAngle:targetDYaw toAngle:_realDrone.droneYaw];
             }
             else
             {
-                mYaw = -sign([[Calc Instance] isAngle:gimbalCurrentYawEarth toTheRightOfAngle:_FCcurrentState.attitude.yaw]-0.5)*minYawSp/2 - gimbalCurrent330Yaw*minYawSp/(2*angle330Limite);
+                mYaw = -sign([[Calc Instance] isAngle:_realDrone.gimbalYawEarth toTheRightOfAngle:_realDrone.droneYaw]-0.5)*minYawSp/2 - _realDrone.gimbalCurrent330yaw*minYawSp/(2*angle330Limite);
             }
         }
     }
@@ -1289,4 +900,165 @@
     }
 }
 
+
+#pragma mark - unused
+// unused before using adapt variable with drone ones ...
+-(void) adjustGimbalToLocation:(CLLocation*) location{
+    // inputs
+    float gimbalCompletionTime = [_gimbal completionTimeForControlAngleAction]; // 0.7 s
+    //currentDroneCoordinate = _FCcurrentState.aircraftLocation;
+    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
+    
+    //gimbalCurrentYawEarth
+    gimbalTargetBearingEarth = [[Calc Instance] headingTo:location.coordinate fromPosition:_FCcurrentState.aircraftLocation]; // absolute gimbal angle not with BC
+    distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:location.coordinate];
+    gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
+    //    float firstAngle = gimbalTargetBearingEarth - gimbalCurrentYawEarth; // need to be 330
+    
+    //*******************************************
+    // find the nearest angle330 not to have a lot of rotation ... ugly
+    float angle330_0 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:0],-180,180);
+    float angle330_1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:1],180,330);
+    float angle330_m1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:-1],-330,-180);
+    
+    float diff0 = fabsf(angle330_0 - gimbalCurrent330Yaw);
+    float diff1 = fabsf(angle330_1 - gimbalCurrent330Yaw);
+    float diffm1 = fabsf(angle330_m1 - gimbalCurrent330Yaw);
+    
+    float minDiff = MIN(MIN(diff0, diff1), diffm1) ;
+    
+    if (minDiff == diffm1) {
+        gimbalTarget330Yaw = angle330_m1;
+    }
+    else if (minDiff == diff1)
+    {
+        gimbalTarget330Yaw = angle330_1;
+    }
+    else
+    {
+        gimbalTarget330Yaw = angle330_0;
+    }
+    //*******************************************
+    float firstAngle = gimbalTarget330Yaw - gimbalCurrent330Yaw;
+    
+    float speed = location.speed;// if speed < 0 return only the normal correction
+    float input_course = location.course;
+    if (speed <= 0 || input_course < 0) {
+        [self adjustGimbalAttitudeTo:location.coordinate];
+        return;
+    }
+    float course = (input_course <= 180) ? input_course:input_course-360;
+    
+    float Vr = -speed*cos(RADIAN(course))*sin(RADIAN(gimbalTargetBearingEarth)) + speed*sin(RADIAN(course))*cos(RADIAN(gimbalTargetBearingEarth)); // projection of the speed on the orthRadial component
+    float angularVel = Vr/distanceToGimbalTarget;
+    
+    float angularVel_Deg = angularVel*180.0/M_PI; //  car speed info
+    float angularVel_first = firstAngle/gimbalCompletionTime; // position info
+    //DVLog(@"omega %0.3f,first ang %0.3f",angularVel_Deg, angularVel_first);
+    //    DVLog(@"comp %0.3f",gimbalCompletionTime);
+    float previousAngularSpeed = targetAngularSpeed;
+    targetAngularSpeed = angularVel_Deg + angularVel_first;
+    //    targetAngularSpeed = bindBetween(angularVel_Deg + angularVel_first, previousAngularSpeed- 10,previousAngularSpeed+10) ;
+    DVLog(@"diff %0.3f",targetAngularSpeed-previousAngularSpeed);
+    [self gimbalMoveWithSpeed:0 andRoll:0 andYaw:targetAngularSpeed];
+    
+}
+
+-(void) adjustGimbalAttitudeTo_new16:(CLLocationCoordinate2D)targetBearingCoordForGimbal{
+    float altitude = _FCcurrentState.altitude;
+    currentDroneCoordinate = _FCcurrentState.aircraftLocation;
+    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
+    
+    if(!CLLocationCoordinate2DIsValid(targetBearingCoordForGimbal) || targetBearingCoordForGimbal.latitude ==0 || targetBearingCoordForGimbal.longitude ==0) {
+        DVLog(@"targetBearingCoordForGimbal invalid");
+        return;
+    }
+    
+    gimbalTargetBearingEarth = [[Calc Instance] headingTo:targetBearingCoordForGimbal fromPosition:_FCcurrentState.aircraftLocation];
+    gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
+    
+    if (!arrayGimbalBearing) {
+        arrayGimbalBearing = [[NSMutableArray alloc] init];
+    }
+    avgGimbalBearing = [[Calc Instance] filterVar:gimbalTargetBearingInDroneBC inArray:arrayGimbalBearing angles:YES withNum:3];
+    
+    distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:targetBearingCoordForGimbal];
+    gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget))*180/M_PI;
+    
+    [self gimbalGoToAbsolutePitch:gimbalPitchToTargetOnTheGround andRoll:0 andYaw:avgGimbalBearing];
+}
+-(void) adjustGimbalAttitudeTo:(CLLocationCoordinate2D) targetBearingCoordForGimbal {
+    //global var : distanceToGimbalTarget, gimbalTargetBearingEarth
+    
+    float altitude = _FCcurrentState.altitude;
+    currentDroneCoordinate = _FCcurrentState.aircraftLocation;
+    droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
+    
+    // find  gimbalTargetBearingInDroneBC
+    
+    switch (_gimbalYawMode) {
+        case 0://towards user
+            //            gimbalTargetBearingEarth = [[Calc Instance] headingTo:_userLocation.coordinate fromPosition:_FCcurrentState.aircraftLocation];
+            //            gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
+            //
+            //
+            //            distanceToGimbalTarget = [self distanceFromCoords2D:_FCcurrentState.aircraftLocation toCoords2D:_userLocation.coordinate];
+            //            gimbalPitchToTargetOnTheGround = -atanf(altitude/distanceToGimbalTarget)*180/M_PI;
+            
+            break;
+        case 1: // gimbal to targetCamera and controls the drone ...
+            
+            // HERE
+            
+            if(!CLLocationCoordinate2DIsValid(targetBearingCoordForGimbal) || targetBearingCoordForGimbal.latitude ==0 || targetBearingCoordForGimbal.longitude ==0) {
+                DVLog(@"targetBearingCoordForGimbal invalid");
+                return;
+            }
+            
+            gimbalTargetBearingEarth = [[Calc Instance] headingTo:targetBearingCoordForGimbal fromPosition:_FCcurrentState.aircraftLocation];
+            gimbalTargetBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalTargetBearingEarth toAngle:droneCurrentYawEarth];
+            
+            distanceToGimbalTarget = [[Calc Instance] distanceFromCoords2D:currentDroneCoordinate toCoords2D:targetBearingCoordForGimbal];
+            //            gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget+1.5))*180/M_PI;
+            gimbalPitchToTargetOnTheGround = -atanf(altitude/(distanceToGimbalTarget))*180/M_PI;
+            
+            break;
+        case 2: // towards drone yaw
+            //            gimbalTargetBearingInDroneBC = 0;
+            //            gimbalPitchToTargetOnTheGround = -10;
+            break;
+            
+        default:
+            break;
+            
+    }
+    
+    // find the nearest angle330 not to have a lot of rotation ... ugly
+    float angle330_0 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:0],-180,180);
+    float angle330_1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:1],180,330);
+    float angle330_m1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetBearingInDroneBC withZone:-1],-330,-180);
+    
+    float diff0 = fabsf(angle330_0 - gimbalCurrent330Yaw);
+    float diff1 = fabsf(angle330_1 - gimbalCurrent330Yaw);
+    float diffm1 = fabsf(angle330_m1 - gimbalCurrent330Yaw);
+    
+    float minDiff = MIN(MIN(diff0, diff1), diffm1) ;
+    
+    if (minDiff == diffm1) {
+        gimbalTarget330Yaw = angle330_m1;
+    }
+    else if (minDiff == diff1)
+    {
+        gimbalTarget330Yaw = angle330_1;
+    }
+    else
+    {
+        gimbalTarget330Yaw = angle330_0;
+    }
+    
+    
+    
+    [self gimbalGoToAbsolutePitch:gimbalPitchToTargetOnTheGround andRoll:0 andYaw:gimbalTarget330Yaw];
+    
+}
 @end

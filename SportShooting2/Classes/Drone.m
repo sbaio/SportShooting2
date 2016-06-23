@@ -130,7 +130,6 @@
         float distDrone = [[Calc Instance] distanceFromCoords2D:loc0.coordinate toCoords2D:self.droneLoc.coordinate];
         
         self.droneIndexOnCircuit = index;
-        self.droneDistToItsIndex = distDrone;
     }
     else if(_arrayOfKeyLocations.count == 2){
         CLLocation* lockey0 = _arrayOfKeyLocations[0];
@@ -142,13 +141,11 @@
         
         if (dist0 == 0) {
             self.droneIndexOnCircuit = (int)[circuit.locations indexOfObject:lockey0];
-            self.droneDistToItsIndex = dist0;
         }
         else{
             float ratio = dist1/dist0;
             if (ratio > 2 || dist01 < dist1 || dist1 <10) {
                 self.droneIndexOnCircuit = (int)[circuit.locations indexOfObject:lockey0];
-                self.droneDistToItsIndex = dist0;
             }
             else{
 
@@ -217,8 +214,6 @@
                 index = [sortedWithDistOnCircuit[0] intValue];
                
                 self.droneIndexOnCircuit = index;
-                self.droneDistToItsIndex = [distToDroneArray[index] floatValue];
-                
             }
         }
     }
@@ -240,7 +235,57 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self setDroneIndex:circuit forCarLocation:carLoc carIndex:carIndex];
         });
+    }else{
+        int maxIndex = 0;
+        
+        NSMutableArray* arrayOfIndexesDrone = [circuit.interIndexesDistance objectAtIndex:self.droneIndexOnCircuit];
+        
+        for (int i = 1; i< circuit.locations.count; i++) {
+            NSUInteger indexip = (self.droneIndexOnCircuit+i)%circuit.locations.count;
+            NSUInteger indexim = (self.droneIndexOnCircuit-i+circuit.locations.count)%circuit.locations.count;
+
+            float distToLocip = [[arrayOfIndexesDrone objectAtIndex:indexip] floatValue];
+            float distToLocim = [[arrayOfIndexesDrone objectAtIndex:indexim] floatValue];
+            
+            if (distToLocip > 20 && distToLocim <-20) {
+                maxIndex = i;
+                
+                break;
+            }
+        }
+        NSMutableArray* closeIndexLocs = [[NSMutableArray alloc] init];
+        
+        for ( int i = -maxIndex; i<maxIndex ; i++) {
+                CLLocation* loci = [circuit.locations objectAtIndex:(self.droneIndexOnCircuit+circuit.locations.count+i)%circuit.locations.count];
+                [closeIndexLocs addObject:loci];
+        }
+        
+        NSArray* sortedWithDistToDrone = [closeIndexLocs sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            CLLocation* loc1 = (CLLocation*) obj1;
+            CLLocation* loc2 = (CLLocation*) obj2;
+            
+            float dist1 = [[Calc Instance] distanceFromCoords2D: loc1.coordinate toCoords2D:self.droneLoc.coordinate];
+            float dist2 = [[Calc Instance] distanceFromCoords2D: loc2.coordinate toCoords2D:self.droneLoc.coordinate];
+            if (dist1 < dist2) {
+                return NSOrderedAscending;
+            }
+            else if (dist2 < dist1){
+                return NSOrderedDescending;
+            }
+            else{
+                return NSOrderedSame;
+            }
+        }];
+        
+        CLLocation* closestLoc = sortedWithDistToDrone[0];
+        int newIndex = (int)[circuit.locations indexOfObject:closestLoc];
+        self.droneIndexOnCircuit = newIndex;
+        
     }
+    
+    
+    self.droneIndexLocation = circuit.locations[self.droneIndexOnCircuit];
+    self.droneDistToItsIndex = [[Calc Instance] distanceFromCoords2D:self.droneIndexLocation.coordinate toCoords2D:self.droneLoc.coordinate];
     
      self.distanceToCar = [[Calc Instance] distanceFromCoords2D:self.droneLoc.coordinate toCoords2D:carLoc.coordinate];
     self.bearingToCar = [[Calc Instance] headingTo:carLoc.coordinate fromPosition:self.droneLoc.coordinate];
@@ -253,7 +298,7 @@
     self.sensCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
     self.versCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
     
-    self.droneIndexLocation = circuit.locations[self.droneIndexOnCircuit];
+    
     Vec* versCircuiTest90 = [[Vec alloc] initWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:angleSens+90]];
     Vec* droneVersCircuit = [[Vec alloc] initWithNorm:self.droneDistToItsIndex andAngle:[[Calc Instance] headingTo:_droneIndexLocation.coordinate fromPosition:self.droneLoc.coordinate]];
     

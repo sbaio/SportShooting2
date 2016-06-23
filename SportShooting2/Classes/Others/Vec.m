@@ -22,9 +22,15 @@
 -(id) initWithNorm:(float) norm andAngle:(float) angle
 {
     Vec *vec = [[Vec alloc] init];
-
-    vec.norm = norm;
-    vec.angle = angle; //from north in deg
+    if (norm >=0) {
+        vec.norm = norm;
+        vec.angle = angle; //from north in deg
+    }
+    else if (norm < 0){
+        vec.norm = fabsf(norm);
+        vec.angle = [self angle180Of330Angle:angle+180];
+    }
+    
     vec.N = norm*cos(angle*M_PI/180.0);
     vec.E = norm*sin(angle*M_PI/180.0);
     
@@ -166,7 +172,7 @@
         angle180 = 360+angle330;
     }
     else
-        DVLog(@"angle330 not in range -360.. 360, %0.3f",angle330);
+        NSLog(@"angle330 not in range -360.. 360, %0.3f",angle330);
     
     return angle180;
 }

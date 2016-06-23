@@ -44,8 +44,9 @@
 @class AppDelegate;
 @class pathPlanner;
 @class CircuitsTVC;
+@class Autopilot;
 
-@interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate>
+@interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate,DJIGimbalDelegate>
 {
     __weak SWRevealViewController* mainRevealVC;
     __weak SWRevealViewController* menuRevealVC;
@@ -100,9 +101,15 @@
     int countFollow;
     NSDate* refDate;
     
+    
 //    float distDroneCar;
     int carIndexOnCircuit;
 
+    // car- phone position prediction // dead reckoning
+    NSMutableArray* realPhoneCoordinates; // 1Hz
+    NSMutableArray* predictedGPSLocations;// 10 Hz or same as timer
+    NSTimer* realCarPredictionTimer;
+    int countPrediction;
     //
     
     NSDate* lastFCUpdateDate;
@@ -131,6 +138,14 @@
 @property (weak, nonatomic) IBOutlet UIButton *StopButton;
 
 @property (weak, nonatomic) IBOutlet UISlider *simulatedCarSpeedSlider;
+@property (weak, nonatomic) IBOutlet UISlider *KpSlider;
+@property (weak, nonatomic) IBOutlet UISlider *KdSlider;
+@property (weak, nonatomic) IBOutlet UISlider *KiSlider;
+@property (weak, nonatomic) IBOutlet UILabel *KpLabel;
+@property (weak, nonatomic) IBOutlet UILabel *KdLabel;
+@property (weak, nonatomic) IBOutlet UILabel *KiLabel;
+
+
 
 @property (weak, nonatomic) IBOutlet UIStackView *resumeGoHomeStack;
 

@@ -155,6 +155,9 @@
         DJIBattery* battery = [ComponentHelper fetchBattery];
         battery.delegate = self;
         
+        DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+        gimbal.delegate = [[Menu instance] getMapVC];
+        [gimbal resetGimbalWithCompletion:nil];
         // post notification
     
         [[NSNotificationCenter defaultCenter] postNotificationName:@"droneConnected" object:self];
@@ -401,6 +404,7 @@
         [mapVC.recordingTimeLabel setText:@"Rec"];
     }
 }
+
 #pragma mark - add observer methods
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     

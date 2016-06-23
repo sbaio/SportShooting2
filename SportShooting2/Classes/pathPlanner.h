@@ -11,6 +11,7 @@
 #import "Circuit.h"
 #import "Drone.h"
 #import "MapView.h"
+#import "Aircraft_Camera_Car_Annotation.h"
 
 @class MapView;
 @class Circuit;
@@ -54,6 +55,23 @@ typedef struct{
     NSDate* lastCarIsComingNotifDate;
     NSDate* lastCarHasLeftNotifDate;
     NSDate* lastCatchingCarNotifDate;
+    
+    Vec* orthoSpeed_Vec;
+    Vec* radialSpeed_Vec;
+    
+    Aircraft_Camera_Car_Annotation* radialVec_Anno;
+    Aircraft_Camera_Car_Annotation* orthoVec_Anno;
+    
+    // PID dist control
+    float previousError;
+    float derivativeError;
+    float integralError;
+    
+    
+    // PID droneDistIndex
+    float previousDistErrorToCirc;
+    float integralDistError;
+    
 }
 
 @property int carIndexOnCircuit;
@@ -61,6 +79,10 @@ typedef struct{
 @property Drone* predictedDrone;
 
 @property pathPlannerStatus status;
+
+@property float Kp;
+@property float Ki;
+@property float Kd;
 
 -(void) follow:(CLLocation*) carLoc onCircuit:(Circuit*) circ drone:(Drone*) drone;
 -(void) follow2:(CLLocation*) carLoc onCircuit:(Circuit*) circ drone:(Drone*) drone;

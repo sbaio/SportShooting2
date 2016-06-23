@@ -131,8 +131,6 @@
 
 - (IBAction)didClickOnTakeOffButton:(id)sender {
     
-    DVLog(@"ok");
-    return;
     DJIFlightController* fc = [ComponentHelper fetchFlightController];
     if (fc && [[Menu instance] getAppDelegate].isReceivingFlightControllerStatus) {
         DVLog(@"taking off");
@@ -140,6 +138,9 @@
             if (error) {
                 DVLog(@"takeOff error : %@",error.localizedDescription);
                 
+            }
+            else{
+                [self dismissTakeOffAlertY];
             }
         }];
     }

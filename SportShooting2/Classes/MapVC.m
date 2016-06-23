@@ -14,6 +14,8 @@
 #define WeakReturn(__obj) if(__obj ==nil)return;
 #define sign(a) ( ( (a) < 0 )  ?  -1   : ( (a) > 0 ) )
 #define bindBetween(a,b,c) ((a > c) ? c: ((a<b)? b:a))
+#define DEGREE(x) ((x)*180.0/M_PI)
+#define RADIAN(x) ((x)*M_PI/180.0)
 
 #import "MapVC.h"
 #import "GeneralMenuVC.h"
@@ -45,6 +47,8 @@
     
     [self showTopMenu]; // and bottom
     appD = [[Menu instance] getAppDelegate];
+    
+    _autopilot = [[Autopilot alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
@@ -98,8 +102,106 @@
     
     self.locationManager.delegate = self;
     [self.locationManager startUpdatingLocation];
+    
+    [self startPredictingCarLoc];
 }
 
+-(void) startPredictingCarLoc{
+    realPhoneCoordinates = [[NSMutableArray alloc] init];
+    predictedGPSLocations = [[NSMutableArray alloc] init];
+    
+    float freqPrediction = 10;
+    realCarPredictionTimer = [NSTimer scheduledTimerWithTimeInterval:1/freqPrediction target:self selector:@selector(predictCarLoc) userInfo:nil repeats:YES];
+}
+
+-(void) predictCarLoc{
+     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    
+    if (!_phoneLocation) {
+        return;
+    }
+    else if(!_isRealCar){
+        return;
+    }
+    else{
+        // here we are receiving location updates
+        CLLocation* predictedCarLoc = [[CLLocation alloc] init];
+        
+        if (!predictedGPSLocations.count) {
+            if (_phoneLocation.speed >= 0) {
+                [realPhoneCoordinates addObject:_phoneLocation];
+                [predictedGPSLocations addObject:_phoneLocation];
+                
+                countPrediction = 0;
+                NSLog(@"first location speed >= 0, count %lu",predictedGPSLocations.count);
+            }
+            // go to display otherwise return
+            else{
+                NSLog(@"waiting for first location with speed >= 0");
+                [self carAtLocation:_phoneLocation];
+                return;
+            }
+        }
+        else{
+            CLLocation * lastPhoneLocation = [realPhoneCoordinates lastObject];
+            if ([_phoneLocation.timestamp isEqualToDate:lastPhoneLocation.timestamp]) {
+                // MAKE A PREDICTION
+                countPrediction ++;
+                
+                if (lastPhoneLocation.speed > 0) {
+                    //                NSLog(@"speed %0.3f, ",lastPhoneLocation.speed);
+                    CLLocationCoordinate2D predictedLocation2D;
+                    
+                    if (lastPhoneLocation.course >= 0 && lastPhoneLocation.course <= 180) {
+                        predictedLocation2D = [[Calc Instance] predictedGPSPositionFromCurrentPosition:lastPhoneLocation.coordinate andCourse:lastPhoneLocation.course andSpeed:lastPhoneLocation.speed during:0.1*(countPrediction+1)];
+                    }
+                    else if(lastPhoneLocation.course > 180){
+                        predictedLocation2D = [[Calc Instance] predictedGPSPositionFromCurrentPosition:lastPhoneLocation.coordinate andCourse:(-360 + lastPhoneLocation.course) andSpeed:lastPhoneLocation.speed during:0.1*(countPrediction+1)];
+                    }
+                    
+                    NSDate* now = [[NSDate alloc] init];
+                    predictedCarLoc = [[CLLocation alloc] initWithCoordinate:predictedLocation2D altitude:lastPhoneLocation.altitude horizontalAccuracy:lastPhoneLocation.horizontalAccuracy verticalAccuracy:lastPhoneLocation.verticalAccuracy course:lastPhoneLocation.course speed:lastPhoneLocation.speed timestamp:now];
+                    
+                    [predictedGPSLocations addObject:predictedCarLoc];
+                }
+                else if (lastPhoneLocation.speed == 0){
+                    [predictedGPSLocations addObject:lastPhoneLocation];
+                    //                NSLog(@"sameLocation speed == 0");
+                }
+                else{
+                    NSLog(@"lastPhone location has a negative Speed");
+                }
+            }
+            else{
+                //  NEW LOCATION UPDATE ADD IT
+                
+                [realPhoneCoordinates addObject:_phoneLocation];
+                [predictedGPSLocations addObject:_phoneLocation];
+                countPrediction = 0;
+            }
+            
+        }
+        
+        if (predictedGPSLocations.count) {
+            CLLocation* lastPrediction = [predictedGPSLocations lastObject];
+            
+            [mapView movePinNamed:@"prediction" toCoord:lastPrediction andColor:@"RGB 82 179 28"];
+            
+            [self carAtLocation:lastPrediction];
+            if (realPhoneCoordinates.count == 6) {
+                [realPhoneCoordinates removeObjectAtIndex:0];
+            }
+            if (predictedGPSLocations.count == 21) {
+                [predictedGPSLocations removeObjectAtIndex:0];
+            }
+            
+            for (CLLocation* loci in predictedGPSLocations) {
+                [mapView movePinNamed:[NSString stringWithFormat:@"predicted %d",(int)[predictedGPSLocations indexOfObject:loci]] toCoord:loci andColor:@"RGB 35 250 239"];
+            }
+            
+        }
+    }
+}
 -(void) initMapView{
     
     mapView.mapVC = self;
@@ -121,9 +223,9 @@
         if ([[Calc Instance] distanceFromCoords2D:mapView.region.center toCoords2D:_phoneLocation.coordinate] > 10000) {
             [mapView setRegion:MKCoordinateRegionMake(_phoneLocation.coordinate, MKCoordinateSpanMake(0.03, 0.03)) animated:YES];
         }
-        if (_isRealCar) {
-            [self carAtLocation:_phoneLocation];
-        }
+//        if (_isRealCar) {
+//            [self carAtLocation:_phoneLocation];
+//        }
         
         
     }
@@ -270,6 +372,7 @@
     _autopilot.FCcurrentState = state;
     
     [[[Menu instance] getTopMenu] updateGPSLabel:state.satelliteCount];
+    [_bottomStatusBar updateWith:state andPhoneLocation:_phoneLocation];
     if (!_realDrone) {
         _realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
         _realDrone.realDrone = YES;
@@ -277,6 +380,7 @@
     else{
         [_realDrone updateDroneStateWithFlightControllerState:state];
     }
+    _autopilot.realDrone = _realDrone;
     
     lastFCUpdateDate = [[NSDate alloc] init];
     if (!appD.isReceivingFlightControllerStatus) {
@@ -299,9 +403,28 @@
             }
         }
     });
+    
+    if ( ![pathPlanningTimer isValid]) {
+        [mapView updateDroneAnnotation:_realDrone];
+        [mapView updateGimbalAnnoOfDrone:_realDrone];
+        [_topMenu updateDistDroneCarLabelWith:_phoneLocation andDroneLoc:_realDrone.droneLoc];
+    }
 
 }
+#pragma mark - gimbal state callback
 
+-(void) gimbalController:(DJIGimbal *)controller didUpdateGimbalState:(DJIGimbalState *)gimbalState{
+    // 10 Hz Freq
+    // update zone of gimbal
+    [_autopilot updateZoneOfGimbalForDrone:_realDrone withGimbalState:gimbalState];
+    
+    if (controller) {
+        _autopilot.gimbal = controller;
+    }
+    
+    controller.completionTimeForControlAngleAction = 0.7;
+    //UI Update with the flight controller callback
+}
 
 -(void) enableMainMenuPan{
     [self.view addGestureRecognizer:mainRevealVC.panGestureRecognizer];
@@ -706,6 +829,22 @@
         [[circuitManager Instance] setSimulatedCarSpeed:[_simulatedCarSpeedSlider value]];
     }
 }
+- (IBAction)onSliderDidChange:(id)sender {
+    if (sender == _KiSlider) {
+        [_KiLabel setText:[NSString stringWithFormat:@"i:%0.2f",[_KiSlider value]]];
+        _planner.Ki = [_KiSlider value];
+    }
+    if (sender == _KpSlider) {
+        [_KpLabel setText:[NSString stringWithFormat:@"p:%0.2f",[_KpSlider value]]];
+        _planner.Kp = [_KpSlider value];
+    }
+    if (sender == _KdSlider) {
+        [_KdLabel setText:[NSString stringWithFormat:@"d:%0.2f",[_KdSlider value]]];
+        _planner.Kd = [_KdSlider value];
+    }
+}
+
+
 
 -(void) carAtLocation:(CLLocation*) location{
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
@@ -745,11 +884,9 @@
     }
     // here we have _drone , _carLocation , _circuit
     
-//    [mapView CenterViewOnCar:_carLocation andDrone:_drone.droneLoc];
-    
     [_planner follow:_carLocation onCircuit:_circuit drone:_drone];
     
-    [_planner follow2:_carLocation onCircuit:_circuit drone:_drone];
+//    [_planner follow2:_carLocation onCircuit:_circuit drone:_drone];
     
     [mapView updateDroneAnnotation:_drone];
     [mapView updateDrone:_drone Vec_Anno_WithTargetSpeed:_drone.targSp AndTargetHeading:_drone.targHeading];
@@ -762,11 +899,13 @@
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********
-        _drone.targSp = 25;
-        _drone.targHeading = _drone.droneCar_Vec.angle;
+        [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
         
+        [mapView updateGimbalAnnoOfDrone:_drone];
         
-        
+
+        [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
+    
         // ********* PATH PLANNING ************
     }
     
@@ -782,7 +921,97 @@
 }
 
 
+-(void) adjustGimbalToCarLocation:(CLLocation*) carLoc andDrone:(Drone*) drone {
+    DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+    
+    if (!gimbal) {
+        return;
+    }
+    else{
+        
+        //******************** PITCH *******************
+        float currentGimbalPitch = gimbal.attitudeInDegrees.pitch;
+        
+        float gimbalPitchToTargetOnTheGround = -atanf(_FCcurrentState.altitude/(drone.droneCar_Vec.norm))*180/M_PI;
+        
+        if (isnan(gimbalPitchToTargetOnTheGround)) {
+            gimbalPitchToTargetOnTheGround = 90;
+            DVLog(@"gimbal target pitch is nan");
+        }
+        
+        float pitchError = gimbalPitchToTargetOnTheGround - currentGimbalPitch;
+        float pitchSpeed = 120*sign(pitchError)*(1-expf(-fabsf(pitchError)/50));
+        
+        
+        //********************* YAW ********************
+//        float gimbalEarthYaw = gimbal.attitudeInDegrees.yaw;
+        
+        float gimbalTarget330Yaw = [self calculateGimbalTarget300YawFrom:carLoc drone:drone]; //we also have gimbalTargetYawEarth stored as a global variable
+        
+        float delta330 = gimbalTarget330Yaw - _drone.gimbalCurrent330yaw;//_autopilot.gimbalCurrent330yaw;
+        
+        float speed = 175*sign(delta330)*(1-expf(-fabsf(delta330)/(80)));
+        //    float speed = 150*sign(delta330)*(1-expf(-fabsf(delta330)/(80)));
+        speed = bindBetween(speed, -120, 120);
+        
+        // calcul de la vitesse radiale de la voiture % au drone
+        float droneCarD = drone.droneCar_Vec.norm;
+        if (droneCarD == 0) {
+            droneCarD = 1;
+        }
+        float orthoRadialSpeed = DEGREE([drone.carSpeed_Vec dotProductWithNormalEastToVector:[drone.droneCar_Vec unityVector]]/droneCarD);
+        
+        orthoRadialSpeed = bindBetween(orthoRadialSpeed, -120, 120); // limits for orthoradial speed variation
+        
+        float totalYawSpeed = speed+orthoRadialSpeed;
+        
+        [_autopilot gimbalMoveWithSpeed:pitchSpeed andRoll:0 andYaw:totalYawSpeed];
+    
+//        float time = -[startMissionDate timeIntervalSinceNow];
+        
+        
+        
+//        DVLoggerLog(@"gimbalTracking", [NSString stringWithFormat:@"%0.3f,%0.3f ,%0.3f,%0.3f, %0.3f,%0.3f,,%0.3f,%0.3f,%0.3f",time,drone.gimbalYawEarth,drone.droneCar_Vec.angle,delta330,speed,orthoRadialSpeed,gimbalPitchToTargetOnTheGround,currentGimbalPitch,pitchSpeed]);
+    }
+    
 
+}
+
+-(float) calculateGimbalTarget300YawFrom:(CLLocation*) carLoc drone:(Drone*) drone{
+    
+    //calulate gimbal targetBearing in earth coordinate
+    drone.gimbalTargetYawEarth = [[Calc Instance] headingTo:carLoc.coordinate fromPosition:drone.droneLoc.coordinate]; // theta target
+    
+    float predictedDroneYawEarth = [[Calc Instance] angle180Of330Angle:_FCcurrentState.attitude.yaw+_drone.droneYawSpeed*0.3];
+    
+    float gimbalTargetHeadingInDroneBC = [[Calc Instance] closestDiffAngle:drone.gimbalTargetYawEarth toAngle:predictedDroneYawEarth];
+    
+    float angle330_0 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetHeadingInDroneBC withZone:0],-180,180);
+    float angle330_1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetHeadingInDroneBC withZone:1],180,330);
+    float angle330_m1 = bindBetween([[Calc Instance] angle330OfAngle:gimbalTargetHeadingInDroneBC withZone:-1],-330,-180);
+    
+    float diff0 = fabsf(angle330_0 - _autopilot.gimbalCurrent330yaw);
+    float diff1 = fabsf(angle330_1 - _autopilot.gimbalCurrent330yaw);
+    float diffm1 = fabsf(angle330_m1 - _autopilot.gimbalCurrent330yaw);
+    
+    float minDiff = MIN(MIN(diff0, diff1), diffm1);
+    
+    float gimbalTarget330Yaw = 0;
+    
+    if (minDiff == diffm1) {
+        gimbalTarget330Yaw = angle330_m1;
+    }
+    else if (minDiff == diff1)
+    {
+        gimbalTarget330Yaw = angle330_1;
+    }
+    else
+    {
+        gimbalTarget330Yaw = angle330_0;
+        
+    }
+    return gimbalTarget330Yaw;
+}
 /*
  Test reponse à l'accéleration a partir de stopped position
  */

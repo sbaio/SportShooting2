@@ -11,6 +11,7 @@
 //#import "Tracker.h"
 #import "ComponentHelper.h"
 #import "Vec.h"
+#import "Drone.h"
 
 /* inputs of Autopilot are:
  
@@ -27,6 +28,7 @@
  
  */
 
+@class Drone;
 
 @protocol AutopilotDelegate <NSObject>
 
@@ -44,8 +46,6 @@ typedef struct{
     
     BOOL isFlying:1; // ON when takeOff is successfull --> available in state.isFlying
     BOOL isTakingOff;
-    
-    
     
 } AutopilotStatus;
 
@@ -128,15 +128,16 @@ struct Altitude {
 }
 
 @property (weak) id<AutopilotDelegate> delegate;
+@property (nonatomic,strong) Drone* realDrone;
 @property(assign,readonly) AutopilotStatus autopilotStatus;
 @property(nonatomic) DJIRCHardwareFlightModeSwitch flightModeSwitch;
 @property(readonly) UISegmentedControl * statusSegmented;
-@property(nonatomic,weak) DJIFlightController * flightController;
+@property(nonatomic,strong) DJIFlightController * flightController;
 //@property(weak) Tracker* tracker;
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
 @property(nonatomic) DJIRCGPSData RCgpsData;
 @property(nonatomic) CLLocation * userLocation;// phoneLocation --> set in location manager callback
-@property(nonatomic,weak) DJIGimbal * gimbal;
+@property(nonatomic,strong) DJIGimbal * gimbal;
 @property(strong,nonatomic) NSTimer* gimbalSpeedTimer;
 @property(strong,nonatomic) NSTimer* gimbalAngleTimer;
 
@@ -149,14 +150,12 @@ struct Altitude {
 @property BOOL isDroneGoingToNFZ;
 @property float gimbalCurrent330yaw;
 
-
-
--(void) startTakeOff;
--(void) startTracker;
 -(void) enableVirtualStickControlMode;
 -(void) disableVirtualStickControlMode;
 
--(void) updateZoneOfGimbal;
+//-(void) updateZoneOfGimbal;
+-(void) updateZoneOfGimbalForDrone:(Drone*) drone withGimbalState:(DJIGimbalState*) gimbalState;
+
 -(void) gimbalGoToAbsolutePitch:(float) targetPitch andRoll:(float) targetRoll andYaw:(float) target330Yaw;
 -(void) gimbalMoveWithSpeed:(float) pitchSp andRoll:(float) rollSp andYaw:(float) yawSp;
 -(void) gimbalMoveWithRelativeAngle:(float) pitchAngle andRoll:(float) rollAngle andYaw:(float) yawAngle withCompletionTime:(float) compTime;
@@ -180,4 +179,6 @@ struct Altitude {
 -(void) gimbalGoToAbsolutePitch2:(float) targetPitch andYaw:(float) targetYaw;
 -(void) adjustGimbalAttitudeTo_new16:(CLLocationCoordinate2D)targetBearingCoordForGimbal;
 
+// new
+-(void) goWithSpeed:(float)speed atBearing:(float)bearing atAltitude:(float) altitude andYaw:(float) yaw;
 @end

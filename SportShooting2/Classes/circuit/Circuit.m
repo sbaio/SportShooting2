@@ -118,9 +118,9 @@
                 for (CLLocation* loci in self.turnLocs) {
                     NSUInteger indexInLocs = [self.turnLocs indexOfObject:loci];
                     CLLocation* centeri = [self.turnCenters objectAtIndex:indexInLocs];
-                    [_mapView addPin:centeri andTitle:@"turnLoc" andColor:@"RGB 255 0 0"];
+//                    [_mapView addPin:centeri andTitle:@"turnLoc" andColor:@"RGB 255 0 0"];
                     NSUInteger index = (int)[self.locations indexOfObject:loci];
-                    NSLog(@"%d -> courb : %0.3f ",(int)index,[self.courbures[index]floatValue]);
+//                    NSLog(@"%d -> courb : %0.3f ",(int)index,[self.courbures[index]floatValue]);
                 }
             });
             

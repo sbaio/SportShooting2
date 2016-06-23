@@ -41,12 +41,24 @@
 @property CLLocation* droneIndexLocation;
 
 @property float droneDistToItsIndex;
+
 @property float droneYaw;
 @property float droneYawSpeed;
+
+// gimbal
+@property float gimbalYawEarth;
+@property float gimbalTargetYawEarth;
+@property float gimbalCurrent330yaw;
+
+@property float previousGDDiffAngle; 
+@property float gimbalCurrentBearingInDroneBC;
+@property int gimbalZone;
+
 
 @property CLLocation* targetLocation;
 
 @property Aircraft_Camera_Car_Annotation* droneAnno;
+@property Aircraft_Camera_Car_Annotation* gimbalAnno;
 @property Aircraft_Camera_Car_Annotation* droneSpeed_vecAnno;
 @property Aircraft_Camera_Car_Annotation* droneTargSpeed_vecAnno;
 
