@@ -11,18 +11,24 @@
 #import "MapVC.h"
 
 
-@interface alertsView : UIView
+@interface alertsView : UIView <DJIMissionManagerDelegate>
 {
     __weak MapVC* mapVC;
     UITapGestureRecognizer* dismissTapGRAlertView;
     
     __weak IBOutlet UIStackView *switchStack;
     __weak IBOutlet UIButton *confirmTakeoffButton;
+    
+    BOOL takeOffSucceded;
+    NSArray* stepsNames;
+    
 }
 
 @property (strong, nonatomic) IBOutlet UIView *takeOffAlertView;
 @property (weak, nonatomic) IBOutlet UIImageView *switchGIF;
 
+@property(nonatomic, strong) NSMutableArray* takeOffMissionSteps;
+@property DJICustomMission* takeOffMission;
 
 -(void) showTakeOffAlert;
 

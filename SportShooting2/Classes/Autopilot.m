@@ -59,13 +59,13 @@
             return;
         }
     }
-    // CHange
-    _flightController = [ComponentHelper fetchFlightController];
-    if (!_flightController) {
-        
-        return;
-    }
-    // end change
+//    // CHange
+//    _flightController = [ComponentHelper fetchFlightController];
+//    if (!_flightController) {
+//        
+//        return;
+//    }
+//    // end change
     
     if (!_flightController.isVirtualStickControlModeAvailable) {
         //        DVLog(@"virtual stick not available .. trying to enable it");

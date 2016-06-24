@@ -37,7 +37,7 @@ typedef struct{
     
 } pathPlannerStatus;
 
-@interface pathPlanner : NSObject
+@interface pathPlanner : NSObject <DJIMissionManagerDelegate>
 {
     __weak MapView* mapView;
     __weak MapVC* mapVC;
@@ -69,11 +69,13 @@ typedef struct{
     
     
     // PID droneDistIndex
-    float previousDistErrorToCirc;
     float integralDistError;
+    
+    float integralDistErrorSensCircuit;
     
 }
 
+@property(nonatomic,strong) DJIFollowMeMission* followMeMission;
 @property int carIndexOnCircuit;
 
 @property Drone* predictedDrone;
@@ -83,6 +85,8 @@ typedef struct{
 @property float Kp;
 @property float Ki;
 @property float Kd;
+
+@property CLLocation* targetLocationFollow;
 
 -(void) follow:(CLLocation*) carLoc onCircuit:(Circuit*) circ drone:(Drone*) drone;
 -(void) follow2:(CLLocation*) carLoc onCircuit:(Circuit*) circ drone:(Drone*) drone;

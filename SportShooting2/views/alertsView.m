@@ -8,6 +8,7 @@
 
 #import "alertsView.h"
 #import "POP.h"
+#import "alert.h"
 
 #import "UIImage+animatedGIF.h"
 
@@ -29,6 +30,7 @@
 
 // takeoff
 -(void) showTakeOffAlert{
+    [self prepareTakeOffMission];
     
     if (!_takeOffAlertView) {
         _takeOffAlertView = [[[NSBundle mainBundle] loadNibNamed:@"AlertViews" owner:self options:nil] firstObject];
@@ -90,6 +92,37 @@
     [self updateSwitchStack];
 }
 
+-(void) prepareTakeOffMission{
+    
+    _takeOffMissionSteps = [[NSMutableArray alloc] init];
+    stepsNames = [NSArray arrayWithObjects:@"takeOff",@"goUp", nil];
+    
+    DJIMissionStep* takeoffStep = [[DJITakeoffStep alloc] init];
+    [_takeOffMissionSteps addObject:takeoffStep];
+    
+    
+    DJIMissionStep* goUpStep = [[DJIGoToStep alloc] initWithCoordinate:[[Menu instance]getMapVC].FCcurrentState.aircraftLocation altitude:12.0];
+    [_takeOffMissionSteps addObject:goUpStep];
+    
+    _takeOffMission = [[DJICustomMission alloc] initWithSteps:_takeOffMissionSteps];
+    
+    [[DJIMissionManager sharedInstance] prepareMission:_takeOffMission withProgress:^(float progress) {
+        
+        
+    } withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            ShowResult(@"ERROR: prepareMission:withProgress:withCompletion:. %@", error.description);
+            
+        }
+        else {
+            
+        }
+        
+    }];
+    
+    [[DJIMissionManager sharedInstance] setDelegate:self];
+}
+
 -(void) dismissTakeOffAlertY{
     POPBasicAnimation* dismissY =[POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionY];
     dismissY.toValue = @(-0);
@@ -129,23 +162,29 @@
     [_takeOffAlertView pop_addAnimation:shakeAnimation forKey:@"shakeAnimation"];
 }
 
+
+
+
 - (IBAction)didClickOnTakeOffButton:(id)sender {
     
     DJIFlightController* fc = [ComponentHelper fetchFlightController];
     if (fc && [[Menu instance] getAppDelegate].isReceivingFlightControllerStatus) {
         DVLog(@"taking off");
-        [fc takeoffWithCompletion:^(NSError * _Nullable error) {
+        if (![DJIMissionManager sharedInstance].isMissionReadyToExecute) {
+            DVLog(@"takeOffMission not prepared");
+        }
+        
+        [[DJIMissionManager sharedInstance] startMissionExecutionWithCompletion:^(NSError * _Nullable error) {
             if (error) {
-                DVLog(@"takeOff error : %@",error.localizedDescription);
-                
+                ShowResult(@"ERROR: startMissionExecutionWithCompletion:. %@", error.description);
             }
-            else{
+            else {
                 [self dismissTakeOffAlertY];
             }
         }];
     }
     else{
-        DVLog(@"Flight controller not found");
+        ShowResult(@"Flight controller not found");
         [self shakeTakeoffAlertViewWithComp:^(BOOL finished) {
             [self dismissTakeoffAlertFade];
             [mapVC switchToVideo];
@@ -156,8 +195,6 @@
     [self dismissTakeoffAlertFade];
 }
 
-
-// land
 
 -(void) updateSwitchStack{
     if ([[Menu instance] getAppDelegate].isRCSwitch_F) {
@@ -202,6 +239,16 @@
 
 -(void) RCSwitchStateChanged:(NSNotification*) notif{
     [self updateSwitchStack];
+}
+
+-(void)missionManager:(DJIMissionManager *)manager missionProgressStatus:(DJIMissionProgressStatus *)missionProgress {
+    if ([missionProgress isKindOfClass:[DJICustomMissionStatus class]]) {
+        DJICustomMissionStatus* cmStatus = (DJICustomMissionStatus*)missionProgress;
+        
+        NSString* currentStepName = [stepsNames objectAtIndex:[_takeOffMissionSteps indexOfObject:cmStatus.currentExecutingStep]];
+       
+        
+    }
 }
 
 @end

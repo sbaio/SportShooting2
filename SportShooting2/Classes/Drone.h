@@ -62,8 +62,10 @@
 @property Aircraft_Camera_Car_Annotation* droneSpeed_vecAnno;
 @property Aircraft_Camera_Car_Annotation* droneTargSpeed_vecAnno;
 
+
 @property Aircraft_Camera_Car_Annotation* sensCircuit_Anno;
 @property Aircraft_Camera_Car_Annotation* versCircuit_Anno;
+@property Aircraft_Camera_Car_Annotation* sensNextCenter_Anno;
 
 @property float distanceToCar;
 @property float bearingToCar;
@@ -77,6 +79,7 @@
 
 @property Vec* sensCircuit;
 @property Vec* versCircuit;
+@property Vec* sensNextCenter;
 
 @property float targSp;
 @property float targHeading;

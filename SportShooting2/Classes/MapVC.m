@@ -19,6 +19,7 @@
 
 #import "MapVC.h"
 #import "GeneralMenuVC.h"
+#import "alert.h"
 
 #import "UIImage+animatedGIF.h"
 #import "UIColor+CustomColors.h"
@@ -52,7 +53,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
-
 }
 
 
@@ -797,14 +797,14 @@
     }
     
     // ********** PATH PLANNING TIMER *********
+    _planner = [[pathPlanner alloc] init];
     if(pathPlanningTimer){
         [pathPlanningTimer invalidate];
         pathPlanningTimer = nil;
     }
     
-    _planner = [[pathPlanner alloc]init];
-    
     pathPlanningTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onPathPlanningTimerTicked) userInfo:nil repeats:YES];
+    
     callback(YES);
     
     pathPlanningTimer.tolerance = 0.01;
@@ -896,6 +896,7 @@
         
         _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:_simulatedDrone.targSp andTargetAngle:_simulatedDrone.targHeading andTargAltitude:10 during:0.1];
 
+        [_bottomStatusBar updateHorizontalSpeedWithHorizontalSpeed:_simulatedDrone.droneSpeed_Vec.norm];
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********

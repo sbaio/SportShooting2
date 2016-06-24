@@ -163,11 +163,11 @@
     if (angle330 <= 180 && angle330>= -180) {
         angle180 = angle330;
     }
-    else if (angle330 > 180 && angle330 < 360)
+    else if (angle330 > 180 && angle330 <= 360)
     {
         angle180 = -360+angle330;
     }
-    else if( angle330<-180 && angle330>-360)
+    else if( angle330<-180 && angle330>=-360)
     {
         angle180 = 360+angle330;
     }
