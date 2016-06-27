@@ -106,7 +106,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZIU-hD-EEo">
                             <rect key="frame" x="0.0" y="324" width="600" height="174"/>
                             <subviews>
-                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Ensure that conditions are safe for takeoff. Aircraft will go to an altitude of 1.2m and hover in place." selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-lF-kfN">
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Ensure that conditions are safe for takeoff. Aircraft will go to an altitude of 11m and hover in place." selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-lF-kfN">
                                     <rect key="frame" x="60" y="9" width="480" height="156"/>
                                     <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="15"/>
                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>

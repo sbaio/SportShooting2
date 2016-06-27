@@ -632,7 +632,7 @@
                                             <action selector="simulatedCarSpeedSliderDidChangeValue:" destination="uuK-nl-Nt5" eventType="valueChanged" id="c5Z-cs-1Cn"/>
                                         </connections>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="15" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-15" maxValue="15" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
                                         <rect key="frame" x="49" y="135" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="po1-8j-6dh"/>
@@ -644,7 +644,7 @@
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-90" maxValue="90" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-15" maxValue="15" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
                                         <rect key="frame" x="49" y="195" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="YPb-0s-pVH"/>
@@ -656,7 +656,7 @@
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.20000000000000001" minValue="0.0" maxValue="0.20000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.20000000000000001" minValue="-4" maxValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
                                         <rect key="frame" x="49" y="255" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="anR-PG-jEp"/>

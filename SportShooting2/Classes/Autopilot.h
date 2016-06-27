@@ -104,12 +104,17 @@ struct Altitude {
     
     __weak MapVC* mapVC;
     __weak MapView* mapView;
+    
+    
 }
 
 @property float mXVelocity;
 @property float mYVelocity;
 @property float mYaw;
 @property float mThrottle;
+
+@property CLLocation* followLoc;
+@property BOOL isVirtualStickModeEnabled;
 
 @property DJICustomMission* takeOffMission;
 @property CLLocation* takeOffLocation;
@@ -167,7 +172,7 @@ struct Altitude {
 
 
 
--(void) sendFlightCtrlCommands;
+-(void) sendFlightCtrlCommands:(DJIVirtualStickFlightControlData) ctrlData;
 
 -(void) takeOffWithCompletion:(void(^)(NSError * _Nullable error))callback;
 -(void) startFollowMissionWithCompletion:(void (^)(NSError* error))callback;

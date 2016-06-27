@@ -81,12 +81,7 @@
 -(void) showTopMenu{
     
     [_topMenu showOn:self.view];
-//    [_topMenu showTakeOffButton];
-//    [_topMenu showLandButton];
-    
     [_bottomStatusBar showOn:self.view];
-
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -489,6 +484,14 @@
             return;
         }
     }
+    else if (_autopilot){
+        if (pan.state == UIGestureRecognizerStateChanged) {
+            CGPoint point = [pan locationInView:mapView];
+            CLLocationCoordinate2D newCoord =[mapView convertPoint:point toCoordinateFromView:mapView];
+            _autopilot.followLoc = [[Calc Instance] locationWithCoordinates:newCoord];
+            
+        }
+    }
     else{
         if ([pathPlanningTimer isValid]) {
             return;
@@ -566,12 +569,13 @@
 //    }
 
 //    [_alertsView showTakeOffAlert];
-    [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
-        
-    }];
+//    [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
     
-//    [self startSendCtrlDataTimer];
-
+//    }];
+    
+    
+    [self startSendCtrlDataTimer];
+    
 //    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
 }
 -(void) startSendCtrlDataTimer{
@@ -579,7 +583,13 @@
     [timer fire];
 }
 -(void) sendCtrlData:(id) sender{
-    [_autopilot sendFlightCtrlCommands];
+    DJIVirtualStickFlightControlData ctrlData = {0};
+    
+    ctrlData.pitch = [_KpSlider value];
+    ctrlData.roll = [_KdSlider value];
+    ctrlData.verticalThrottle = [_KiSlider value];
+    
+    [_autopilot sendFlightCtrlCommands:ctrlData];
 }
 
 

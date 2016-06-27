@@ -31,10 +31,28 @@
     mapVC = [[Menu instance] getMapVC];
     mapView = [[Menu instance] getMapView];
     
+    [self addObserver:self forKeyPath:@"isVirtualStickModeEnabled" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     
     return self;
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    
+    if (([keyPath isEqual:@"isVirtualStickModeEnabled"]) && object == self) {
+        BOOL oldBool = [[change objectForKey:@"old"] boolValue];
+        BOOL newBool = [[change objectForKey:@"new"] boolValue];
+        
+        if (oldBool != newBool) {
+            if(newBool){
+                DVLog(@"virtual stick mode enabled");
+            }
+            else{
+                DVLog(@"virtual stick mode disabled");
+            }
+        }
+    }
+    
+}
 
 -(void) initFlightVariables{
     radiusBrakingZone = 60;
@@ -175,8 +193,7 @@
         ShowResult(@"Component not exist.");
     }
 }
--(void) sendFlightCtrlCommands{
-    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+-(NSString*) stringFromFlightcontrollerState:(DJIFlightController*) fc{
     
     if (fc) {
         
@@ -184,34 +201,40 @@
         NSString* verticalMode = (fc.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity) ? @"altvelocity":@"altitude";
         NSString* rollPitchMode = (fc.rollPitchControlMode == DJIVirtualStickRollPitchControlModeAngle) ? @"rpAngle":@"rpSpeed";
         NSString* coordSys = (fc.rollPitchCoordinateSystem == DJIVirtualStickFlightCoordinateSystemGround) ? @"ground":@"body";
-        
-        DVLog(@"fc yawMode , %@ , verticalMode , %@, rpMode , %@ , coordSys , %@ ,%d",yawMode,verticalMode,rollPitchMode,coordSys, fc.isVirtualStickControlModeAvailable);
+     
+        return [NSString stringWithFormat:@"fc yawMode , %@ , verticalMode , %@, rpMode , %@ , coordSys , %@ ,%d",yawMode,verticalMode,rollPitchMode,coordSys, fc.isVirtualStickControlModeAvailable];
     }
     else{
-        DVLog(@"no FC in sendFlightCommands");
+        return @"no flightController";
+    }
+}
+
+-(void) sendFlightCtrlCommands:(DJIVirtualStickFlightControlData) ctrlData{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    
+//    DVLog([self stringFromFlightcontrollerState:fc]);
+    
+    if (fc) {
+        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+        fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
+        self.isVirtualStickModeEnabled = fc.isVirtualStickControlModeAvailable;
+    }
+    else{
+//        DVLog(@"no FC in sendFlightCommands");
     }
     
     
     if (fc && fc.isVirtualStickControlModeAvailable) {
-        DVLog(@"available");
-        DJIVirtualStickFlightControlData ctrlData = {0};
-        
-        ctrlData.pitch = [mapVC.KpSlider value];
-        ctrlData.roll = 0;
-        ctrlData.yaw = [mapVC.KdSlider value];
-        
-        if (fc.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
-            ctrlData.verticalThrottle = 10;
-        }
-        else{
-            ctrlData.verticalThrottle = 0;
-        }
-        
         
         [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
     }
     else{
-        DVLog(@"fc stick mode not availale or fc not available");
+        
+        if (!fc.isVirtualStickControlModeAvailable) {
+//            DVLog(@"virtual stick mode not available");
+        }
     }
 }
 
@@ -352,13 +375,18 @@
 }
 
 -(void) onUpdateTimer:(id)sender{
+    if (!self.followLoc) {
+        _followLoc = mapVC.phoneLocation;
+    }
+    _followMeMission.followMeCoordinate = self.followLoc.coordinate;
     
-    [DJIFollowMeMission updateFollowMeCoordinate:mapVC.phoneLocation.coordinate altitude:11 withCompletion:^(NSError * _Nullable error) {
+    [DJIFollowMeMission updateFollowMeCoordinate:self.followLoc.coordinate altitude:11 withCompletion:^(NSError * _Nullable error) {
         if (error) {
             DVLog(@"error updating follow me coord %@",error.localizedDescription);
         }
     }];
-    _followMeMission.followMeCoordinate = mapVC.phoneLocation.coordinate;
+    
+    
     [mapView movePinNamed:@"followMeCoord" toCoord:[[Calc Instance] locationWithCoordinates:_followMeMission.followMeCoordinate] andColor:@"RGB 255 255 255"];
     
     _followMeMission.heading = DJIFollowMeHeadingTowardFollowPosition;
@@ -385,6 +413,7 @@
         
 
     }
+    
     return;
     /*
     else if(manager.currentExecutingMission == _followMeMission){
@@ -440,10 +469,6 @@
 
 //    ShowResult(@"smth finished");
 }
-
-
-
-
 
 
 
