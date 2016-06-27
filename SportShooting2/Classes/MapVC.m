@@ -6,8 +6,9 @@
 //  Copyright © 2016 Othman Sbai. All rights reserved.
 //
 
-// add vec operation : 1.6*10^-5
-// dist coord operation : 2.2*10^-4
+// move to new SDK
+// try the active track mission
+// try the follow me mission with a bike
 
 
 #define WeakRef(__obj) __weak typeof(self) __obj = self
@@ -380,6 +381,7 @@
     else{
         [_realDrone updateDroneStateWithFlightControllerState:state];
     }
+    
     _autopilot.realDrone = _realDrone;
     
     lastFCUpdateDate = [[NSDate alloc] init];
@@ -564,9 +566,21 @@
 //    }
 
 //    [_alertsView showTakeOffAlert];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
-}
+    [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
+        
+    }];
+    
+//    [self startSendCtrlDataTimer];
 
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
+}
+-(void) startSendCtrlDataTimer{
+    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendCtrlData:) userInfo:nil repeats:YES];
+    [timer fire];
+}
+-(void) sendCtrlData:(id) sender{
+    [_autopilot sendFlightCtrlCommands];
+}
 
 
 

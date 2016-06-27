@@ -611,14 +611,14 @@ static VideoPreviewer* previewer = nil;
     for (NSString* notifName  in arrayOfNotifsNames) {
         if ([notifName isEqualToString:notification.name]) {
             respond = YES;
-            DVLog(@"responding to %@",notification.name);
+//            DVLog(@"responding to %@",notification.name);
         }
     }
     if (respond) {
         
         BOOL set = !appD.isReceivingFlightControllerStatus|| appD.isLocationsServicesEnabled || appD.isReceivingVideoData || appD.isReceivingRCUpdates;
         
-    DVLog(@"handle setting , %d , FC , %d , loc , %d , vid , %d ,rc , %d",set,appD.isReceivingFlightControllerStatus,appD.isLocationsServicesEnabled,appD.isReceivingVideoData,appD.isReceivingRCUpdates);
+//    DVLog(@"handle setting , %d , FC , %d , loc , %d , vid , %d ,rc , %d",set,appD.isReceivingFlightControllerStatus,appD.isLocationsServicesEnabled,appD.isReceivingVideoData,appD.isReceivingRCUpdates);
         
         [self setGLviewMaskImage:set isReceivingFlightControllerStatus:appD.isReceivingFlightControllerStatus isLocEnabled:appD.isLocationsServicesEnabled isReceivingCameraFeed:appD.isReceivingVideoData isRCConnected:appD.isReceivingRCUpdates];
     }

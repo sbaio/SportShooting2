@@ -415,31 +415,31 @@
         if (oldBool != newBool) {
             if ([keyPath isEqual:@"isReceivingVideoData"]) {
                 if (newBool) {
-                    DVLog(@"isReceiving video Data");
+//                    DVLog(@"isReceiving video Data");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"cameraFeedStarted" object:self];
                 }
                 else{
-                    DVLog(@"camera feed stopped");
+//                    DVLog(@"camera feed stopped");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"cameraFeedStopped" object:self];
                 }
             }
             else if ([keyPath isEqual:@"isReceivingRCUpdates"]){
                 if (newBool) {
-                    DVLog(@"isReceiving RC Data");
+//                    DVLog(@"isReceiving RC Data");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"RCFeedStarted" object:self];
                 }
                 else{
-                    DVLog(@"RC feed stopped");
+//                    DVLog(@"RC feed stopped");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"RCFeedStopped" object:self];
                 }
             }
             else if ([keyPath isEqual:@"isReceivingFlightControllerStatus"]){
                 if (newBool) {
-                    DVLog(@"isReceiving FC Status");
+//                    DVLog(@"isReceiving FC Status");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStarted" object:self];
                 }
                 else{
-                    DVLog(@"FC feed stopped");
+//                    DVLog(@"FC feed stopped");
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStopped" object:self];
                 }
             }

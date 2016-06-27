@@ -13,29 +13,24 @@
 #define RADIAN(x) ((x)*M_PI/180.0)
 
 #define bindBetween(a,b,c) ((a > c) ? c: ((a<b)? b:a))
+#define DV_FLOATING_WINDOW_ENABLE 1
 
 #import "Autopilot.h"
 #import "Calc.h"
+#import "alert.h"
 
 @implementation Autopilot
 
 -(id) init{
     self = [super init];
 
-    memset(&_autopilotStatus, 0, sizeof(AutopilotStatus));
-    
-    _autopilotStatus.isSendingFlightControlData = NO;
-
-    _autopilotStatus.isTakingOff = NO;
-    
-    NSArray * itemArrayStatus = [NSArray arrayWithObjects: @"Landed", @"TakingOff", @"Hovering", @"Tracking",@"GoingHome",@"Landing", nil];
-    _statusSegmented = [[UISegmentedControl alloc] initWithItems:itemArrayStatus];
-    
-    _statusSegmented.selectedSegmentIndex = 0; // init landed status at init --> assumption... need to check if flying, otherwise init at hovering !!
+    [[DJIMissionManager sharedInstance] setDelegate:self];
     
     [self initFlightVariables];
+
+    mapVC = [[Menu instance] getMapVC];
+    mapView = [[Menu instance] getMapView];
     
-    _isDroneGoingToNFZ = NO;
     
     return self;
 }
@@ -59,13 +54,6 @@
             return;
         }
     }
-//    // CHange
-//    _flightController = [ComponentHelper fetchFlightController];
-//    if (!_flightController) {
-//        
-//        return;
-//    }
-//    // end change
     
     if (!_flightController.isVirtualStickControlModeAvailable) {
         //        DVLog(@"virtual stick not available .. trying to enable it");
@@ -130,9 +118,7 @@
                 //DVLog(@"Enter Virtual Stick Mode:Succeeded");
             }
         }];
-        if (_delegate && [_delegate respondsToSelector:@selector(autopilotDidSendFlightCommands:)]) {
-            
-        }
+        
         [_flightController sendVirtualStickFlightControlData:flightCtrlData withCompletion:nil];
     }
     else{
@@ -145,6 +131,87 @@
                 //  DVLog(@"Enter Virtual Stick Mode:Succeeded");
             }
         }];
+    }
+}
+
+-(void) enterVirtualStickControlMode{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc) {
+        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+        
+        [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                ShowResult(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    else
+    {
+        ShowResult(@"Component not exist.");
+    }
+}
+-(void) exitVirtualStickControlMode{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc) {
+
+        [fc disableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                ShowResult(@"Enter Virtual Stick Mode:%@", error.debugDescription);
+            }
+            else
+            {
+                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    else
+    {
+        ShowResult(@"Component not exist.");
+    }
+}
+-(void) sendFlightCtrlCommands{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    
+    if (fc) {
+        
+        NSString* yawMode = (fc.yawControlMode == DJIVirtualStickYawControlModeAngularVelocity) ? @"yvelocity":@"yAngle";
+        NSString* verticalMode = (fc.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity) ? @"altvelocity":@"altitude";
+        NSString* rollPitchMode = (fc.rollPitchControlMode == DJIVirtualStickRollPitchControlModeAngle) ? @"rpAngle":@"rpSpeed";
+        NSString* coordSys = (fc.rollPitchCoordinateSystem == DJIVirtualStickFlightCoordinateSystemGround) ? @"ground":@"body";
+        
+        DVLog(@"fc yawMode , %@ , verticalMode , %@, rpMode , %@ , coordSys , %@ ,%d",yawMode,verticalMode,rollPitchMode,coordSys, fc.isVirtualStickControlModeAvailable);
+    }
+    else{
+        DVLog(@"no FC in sendFlightCommands");
+    }
+    
+    
+    if (fc && fc.isVirtualStickControlModeAvailable) {
+        DVLog(@"available");
+        DJIVirtualStickFlightControlData ctrlData = {0};
+        
+        ctrlData.pitch = [mapVC.KpSlider value];
+        ctrlData.roll = 0;
+        ctrlData.yaw = [mapVC.KdSlider value];
+        
+        if (fc.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
+            ctrlData.verticalThrottle = 10;
+        }
+        else{
+            ctrlData.verticalThrottle = 0;
+        }
+        
+        
+        [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
+    }
+    else{
+        DVLog(@"fc stick mode not availale or fc not available");
     }
 }
 
@@ -192,29 +259,198 @@
     drone.gimbalCurrent330yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
 }
 
-//-(void) updateZoneOfGimbal{ //updates gimbal variables
-//
-//    previousGDDiffAngle = gimbalCurrentBearingInDroneBC; // first update may be wrong
-//    
-//    gimbalCurrentYawEarth = _gimbal.attitudeInDegrees.yaw;
-//    droneCurrentYawEarth = _FCcurrentState.attitude.yaw; // not a gimbal variable
-//    gimbalCurrentBearingInDroneBC = [[Calc Instance] closestDiffAngle:gimbalCurrentYawEarth toAngle:droneCurrentYawEarth];
-//    
-//    if (fabs(gimbalCurrentBearingInDroneBC)<29) {
-//        gimbalZone = 0;
-//    }
-//    if (fabs(gimbalCurrentBearingInDroneBC)>110){
-//        
-//        if (sin(previousGDDiffAngle*M_PI/180)*sin(gimbalCurrentBearingInDroneBC*M_PI/180)<0) {
-//            gimbalZone = gimbalZone + sign(sin(previousGDDiffAngle*M_PI/180));
+
+
+#pragma mark - Mission manager methods
+
+-(void) prepareTakeoffMissionWithCompletion:(void (^)(NSError* error))callback {
+    
+    [[DJIMissionManager sharedInstance] setDelegate:self];
+    
+    takeOffMissionSteps = [[NSMutableArray alloc] init];
+    takeOffstepNames = [NSArray arrayWithObjects:@"Taking off",@"going Up to 11m", nil];
+    
+    DJIMissionStep* takeoffStep = [[DJITakeoffStep alloc] init];
+    [takeOffMissionSteps addObject:takeoffStep];
+
+    DJIMissionStep* goUpStep = [[DJIGoToStep alloc] initWithCoordinate:[[Menu instance]getMapVC].FCcurrentState.aircraftLocation altitude:11];
+    [takeOffMissionSteps addObject:goUpStep];
+    
+    _takeOffMission = [[DJICustomMission alloc] initWithSteps:takeOffMissionSteps];
+    
+    [[DJIMissionManager sharedInstance] prepareMission:_takeOffMission withProgress:^(float progress) {
+        
+        
+    } withCompletion:^(NSError * _Nullable error) {
+        callback(error);
+    }];
+}
+
+-(void) takeOffWithCompletion:(void(^)(NSError * _Nullable error))callback{
+    
+    [self prepareTakeoffMissionWithCompletion:^(NSError *error) {
+        if (error) {
+            ShowResult(@"ERROR: prepareMission:withProgress:withCompletion:. %@", error.description);
+            callback(error);
+        }
+        else {
+            
+            [[DJIMissionManager sharedInstance] startMissionExecutionWithCompletion:^(NSError * _Nullable error) {
+                callback(error);
+                if (error) {
+                    if ([error.localizedDescription containsString:@"please switch to 'F' mode"]) {
+                        ShowResult(@"Please switch Remote controller to F mode and retry");
+                    }
+                    else{
+                        ShowResult(@"ERROR: startMissionExecutionWithCompletion:. %@", error.description);
+                    }
+                    
+                    
+                }
+                else {
+                    // takeoffmission started .. we should check if it will succeed
+                }
+            }];
+            
+        }
+    }];
+}
+
+-(void) startFollowMissionWithCompletion:(void (^)(NSError* error))callback{
+    if (!_followMeMission) {
+        _followMeMission = [[DJIFollowMeMission alloc] init];
+        _followMeMission.followMeCoordinate = [[Menu instance] getMapVC].realDrone.droneLoc.coordinate;
+        _followMeMission.followMeAltitude = 10.5;
+        _followMeMission.heading = DJIFollowMeHeadingTowardFollowPosition;
+    }
+    [[DJIMissionManager sharedInstance] prepareMission:_followMeMission withProgress:^(float progress) {
+        
+    } withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            ShowResult(@"error preparing follow mission : %@",error.localizedDescription);
+        }
+        else{ // start follow mission
+            [[DJIMissionManager sharedInstance] startMissionExecutionWithCompletion:^(NSError * _Nullable error) {
+                
+                if (error) {
+                    ShowResult(@"error starting follow mission : %@",error.localizedDescription);
+                }
+                else {
+                    DVLog(@"SUCCESS: start follow Mission ");
+                    
+                    [self startUpdateFollowMeTimer];
+                }
+            }];
+        }
+    }];
+}
+
+-(void) startUpdateFollowMeTimer{
+    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onUpdateTimer:) userInfo:nil repeats:YES];
+    
+    [timer fire];
+}
+
+-(void) onUpdateTimer:(id)sender{
+    
+    [DJIFollowMeMission updateFollowMeCoordinate:mapVC.phoneLocation.coordinate altitude:11 withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            DVLog(@"error updating follow me coord %@",error.localizedDescription);
+        }
+    }];
+    _followMeMission.followMeCoordinate = mapVC.phoneLocation.coordinate;
+    [mapView movePinNamed:@"followMeCoord" toCoord:[[Calc Instance] locationWithCoordinates:_followMeMission.followMeCoordinate] andColor:@"RGB 255 255 255"];
+    
+    _followMeMission.heading = DJIFollowMeHeadingTowardFollowPosition;
+}
+
+
+-(void)missionManager:(DJIMissionManager *)manager missionProgressStatus:(DJIMissionProgressStatus *)missionProgress {
+
+    currentMission = manager.currentExecutingMission;
+    
+    if (manager.currentExecutingMission ==  _takeOffMission) {
+        
+            DJICustomMissionStatus* cmStatus = (DJICustomMissionStatus*)missionProgress;
+        
+        if ([takeOffMissionSteps containsObject:cmStatus.currentExecutingStep]) {
+            
+            NSUInteger index = [takeOffMissionSteps indexOfObject:cmStatus.currentExecutingStep];
+            [[[Menu instance] getTopMenu] setStatusLabelText:[takeOffstepNames objectAtIndex:index]];
+            
+        }
+        else{
+            // mission step not recognized
+        }
+        
+
+    }
+    return;
+    /*
+    else if(manager.currentExecutingMission == _followMeMission){
+        // never comes here !!?
+        
+//        _followMeMission.followMeCoordinate = CLLocationCoordinate2DMake(37.410374, -122.023635);
+        
+        DJIFollowMeMissionStatus* fmStatus = (DJIFollowMeMissionStatus*)missionProgress;
+        if (fmStatus.executionState == DJIFollowMeMissionExecutionStateInitializing) {
+            DVLog(@"initializing");
+        }
+        else if (fmStatus.executionState == DJIFollowMeMissionExecutionStateMoving){
+            DVLog(@"moving");
+        }
+        else {
+            DVLog(@"waiting");
+        }
+    }
+    
+    else{
+        DVLog(@"currentExec mission not recognized , %@",manager.currentExecutingMission);
+    }
+    */
+}
+
+- (void)missionManager:(DJIMissionManager *_Nonnull)manager didFinishMissionExecution:(NSError *_Nullable)error{
+    
+    if (currentMission == _takeOffMission) {
+        ShowResult(@"takeoff finished");
+    }
+    else{
+        ShowResult(@"smth else finished");
+    }
+
+//        if (error) {
+//            ShowResult(@"take off mission finished with error : %@",error);
+//        }
+//        else{
+//            // takeoff succeeded
+//            [[[Menu instance] getTopMenu] setStatusLabelText:@"Hovering"];
+//            
+////            _takeOffLocation = [[Menu instance] getMapVC].realDrone.droneLoc;
+//            
+//            // prepare follow mission
 //        }
 //    }
-//    
-//    gimbalCurrent330Yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
-//    
-//    self.gimbalCurrent330yaw = gimbalCurrent330Yaw;
-//    //NSLog(@"current gimbal 330 yaw %f",gimbalCurrent330Yaw);
-//}
+//    else if(manager.currentExecutingMission == _followMeMission){
+//        DVLog(@"follow me mission did finish execution");
+//    }
+//    else{
+//        DVLog(@"unrecognized mission has finished");
+//    }
+
+//    ShowResult(@"smth finished");
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -306,15 +542,8 @@
 //    DVLoggerLog(@"goWithSpeed", [NSString stringWithFormat:@"targetSp,%0.3f, targetAngle , %0.3f, realSpeed, %0.3f, realCourse,%0.3f  ,nextSp, %0.3f, nextAngle ,%0.3f",targetDroneSpeed.norm,targetDroneSpeed.angle,currentDroneSpeed.norm,currentDroneSpeed.angle,nextSpeed,nextAngle]);
 }
 
--(void) goTo:(CLLocation*) location withAcc:(float) acc { // speed version
-    
-    float bearing = [[Calc Instance] headingTo:location.coordinate fromPosition:_FCcurrentState.aircraftLocation];
-    float distance = [[Calc Instance] distanceFromCoords2D:location.coordinate toCoords2D:_FCcurrentState.aircraftLocation];
-    
-    float speed = (distance < 32)? distance/2:16; // bad way .. only proportional
-    
-    [self goWithSpeed:speed atBearing:bearing andAcc:acc];
-}
+
+
 -(void) followLocation:(CLLocation *) location withDroneYawMode:(int) droneYawMode andTargetAltitude:(float) targetAltitude{
     currentDroneCoordinate = _FCcurrentState.aircraftLocation;
     droneCurrentYawEarth = _FCcurrentState.attitude.yaw;
@@ -326,7 +555,7 @@
     // ***** Log *******
     // necessary for command decel acceleration
     distanceTotarget = [[Calc Instance] distanceFromCoords2D:_FCcurrentState.aircraftLocation toCoords2D:location.coordinate];
-//    bearingToDroneFromUserPosition = [[Calc Instance] headingTo:_FCcurrentState.aircraftLocation fromPosition:_userLocation.coordinate];
+
 }
 
 -(void) moveByVectorInEarthCoordinate:(Vec *) MovEarth_vec withDroneYawMode:(int) droneYawMode andTargetAltitude:(float) targetAltitude{
@@ -571,21 +800,6 @@
     }
 }
 
--(void) makeCircleAround:(CLLocationCoordinate2D) center atDistance:(float) radius andSpeed:(float) speed atAltitude:(float)altitude{
-    
-    float distToCenter = [[Calc Instance] distanceFromCoords2D:_FCcurrentState.aircraftLocation toCoords2D:center];
-    
-    float radialSpeed = 2*(distToCenter-radius);// postive vers le centre
-    float orthoRadialSpeed = 5;
-    
-    float bearingToCenter = [[Calc Instance] headingTo:center fromPosition:_FCcurrentState.aircraftLocation];
-    Vec* radialSpeed_vec = [[Vec alloc] initWithNorm:radialSpeed andAngle:bearingToCenter];
-    Vec* orthoRadialSpeed_vec = [[Vec alloc] initWithNorm:orthoRadialSpeed andAngle:[[Calc Instance] angle180Of330Angle:bearingToCenter-90]];
-    
-    Vec* totalSpeed = [orthoRadialSpeed_vec addVector:radialSpeed_vec];
-    
-    [self goWithSpeed:bindBetween(totalSpeed.norm, 0, 16)  atBearing:totalSpeed.angle andAcc:0.9];
-}
 #pragma mark -  flight help methods
 
 -(void) enableVirtualStickControlMode{

@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <DJISDK/DJISDK.h>
-//#import "Tracker.h"
+
 #import "ComponentHelper.h"
 #import "Vec.h"
 #import "Drone.h"
+#import "MapVC.h"
+#import "mapView.h"
 
 /* inputs of Autopilot are:
  
@@ -29,25 +31,8 @@
  */
 
 @class Drone;
-
-@protocol AutopilotDelegate <NSObject>
-
-@optional
--(void) notifyMissionVC:(int) intToDo;
--(void) autopilotDidSendFlightCommands:(DJIVirtualStickFlightControlData) flightCtrlData;
-@end
-typedef struct{
-    BOOL isSendingFlightControlData:1;
-    BOOL isRunning:1;
-    BOOL isPause:1;
-    
-    BOOL isF_Mode:1; // try to get this sync with the callback from the RC
-    BOOL isPGPS_Mode:1; //-----> changed by self.flightModeSwitch
-    
-    BOOL isFlying:1; // ON when takeOff is successfull --> available in state.isFlying
-    BOOL isTakingOff;
-    
-} AutopilotStatus;
+@class MapVC;
+@class MapView;
 
 struct PitchRoll {
     float pitch;
@@ -66,19 +51,8 @@ struct Altitude {
     BOOL position; // YES (Default) position, NO--> speed
 };
 
-@interface Autopilot : NSObject //<GimbalTracking>
+@interface Autopilot : NSObject <DJIMissionManagerDelegate>
 {
-    //NSThread * _missionFlightThread;
-    //dispatch_queue_t _dispatchFlightControlQueue;
-    
-
-    BOOL startMission; // start calculating path, and recording
-
-    CLLocationCoordinate2D takeOffPosition;
-    NSTimer * takeOffCheckTimer;
-
-    
-    NSTimer * timerSendCtrlData;
     
     // drone
     float droneCurrentYawEarth;
@@ -122,24 +96,36 @@ struct Altitude {
     
     float targetAngularSpeed;
 
-    //test & debug
-    int count1;
-    int count2;
+    
+    NSMutableArray* takeOffMissionSteps;
+    NSArray* takeOffstepNames;
+    
+    DJIMission* currentMission;
+    
+    __weak MapVC* mapVC;
+    __weak MapView* mapView;
 }
 
-@property (weak) id<AutopilotDelegate> delegate;
-@property (nonatomic,strong) Drone* realDrone;
-@property(assign,readonly) AutopilotStatus autopilotStatus;
+@property float mXVelocity;
+@property float mYVelocity;
+@property float mYaw;
+@property float mThrottle;
+
+@property DJICustomMission* takeOffMission;
+@property CLLocation* takeOffLocation;
+@property Drone* realDrone;
+
+@property(nonatomic,strong) DJIFollowMeMission* followMeMission;
+
 @property(nonatomic) DJIRCHardwareFlightModeSwitch flightModeSwitch;
-@property(readonly) UISegmentedControl * statusSegmented;
 @property(nonatomic,strong) DJIFlightController * flightController;
-//@property(weak) Tracker* tracker;
+
 @property(nonatomic,strong) DJIFlightControllerCurrentState* FCcurrentState;
-@property(nonatomic) DJIRCGPSData RCgpsData;
+
 @property(nonatomic) CLLocation * userLocation;// phoneLocation --> set in location manager callback
 @property(nonatomic,strong) DJIGimbal * gimbal;
-@property(strong,nonatomic) NSTimer* gimbalSpeedTimer;
-@property(strong,nonatomic) NSTimer* gimbalAngleTimer;
+
+
 
 @property (nonatomic, strong) CLLocation * targetCameraHeadingLocation;
 @property (nonatomic, strong) CLLocation * targetdroneGPSLocation;
@@ -147,7 +133,7 @@ struct Altitude {
 @property  BOOL avoidObstacles;
 @property  int droneYawMode;
 @property  int gimbalYawMode;
-@property BOOL isDroneGoingToNFZ;
+
 @property float gimbalCurrent330yaw;
 
 -(void) enableVirtualStickControlMode;
@@ -167,10 +153,7 @@ struct Altitude {
 -(void) goWithSpeed:(float) speed atBearing:(float) bearing;
 -(void) goUpWithSpeed_altitude:(float) speed;
 -(void) goWithSpeed:(float)speed atBearing:(float)bearing andAcc:(float) acc;
--(void) goTo:(CLLocation*) location withAcc:(float) acc;
--(void) makeCircleAround:(CLLocationCoordinate2D) center atDistance:(float) radius andSpeed:(float) speed atAltitude:(float) altitude;
 
--(void) onMissionTimerTickedSendFlighControlData;
 -(void) sendFlightCtrlCommands:(struct PitchRoll) pitchAndRoll withAltitude:(struct Altitude) altitude andYaw:(struct Yaw) yaw;
 
 -(float) targetSpeedForDistance:(float) distance;
@@ -181,4 +164,11 @@ struct Altitude {
 
 // new
 -(void) goWithSpeed:(float)speed atBearing:(float)bearing atAltitude:(float) altitude andYaw:(float) yaw;
+
+
+
+-(void) sendFlightCtrlCommands;
+
+-(void) takeOffWithCompletion:(void(^)(NSError * _Nullable error))callback;
+-(void) startFollowMissionWithCompletion:(void (^)(NSError* error))callback;
 @end

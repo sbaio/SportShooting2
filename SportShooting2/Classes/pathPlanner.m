@@ -17,8 +17,6 @@
 -(id) init{
     self = [super init];
     
-    [[DJIMissionManager sharedInstance] setDelegate:self];
-    
     mapView = [[Menu instance] getMapView];
     mapVC = [[Menu instance] getMapVC];
     
@@ -687,46 +685,10 @@
 -(void) onRCSwitchChangedNotif:(NSNotification*) notif{
     if ([notif.name isEqualToString:@"RCSwitchStateChanged"]) {
         if ([[Menu instance] getAppDelegate].isRCSwitch_F) {
-            // prepare follow me mission possible
-            [self prepareFollowMeMission];
+    
         }
     }
 }
 
--(void) prepareFollowMeMission{
-    DVLog(@"prepare for follow me mission");
-    
-    if (!_followMeMission) {
-        _followMeMission = [[DJIFollowMeMission alloc] init];
-    }
-    if (![[[Menu instance] getAppDelegate] isReceivingFlightControllerStatus]) {
-        DVLog(@"not receiving flight controller status");
-    }
-    else{
-        _followMeMission.followMeCoordinate = mapVC.realDrone.droneLoc.coordinate;
-        _followMeMission.followMeAltitude = 12;
-        _followMeMission.heading = DJIFollowMeHeadingTowardFollowPosition;
-        DVLog(@"here");
-    }
-    
-    
-    
-    [[DJIMissionManager sharedInstance] prepareMission:_followMeMission withProgress:^(float progress) {
-        
-    } withCompletion:^(NSError * _Nullable error) {
-        if (error) {
-            DVLog(@"error preparing mission : %@",error.localizedDescription);
-        }
-        else{
-            [[DJIMissionManager sharedInstance] startMissionExecutionWithCompletion:^(NSError * _Nullable error) {
-                if (error) {
-                    DVLog(@"ERROR: startMissionExecutionWithCompletion:. %@", error.description);
-                }
-                else {
-                    DVLog(@"SUCCESS: startMissionExecutionWithCompletion:. ");
-                }
-            }];
-        }
-    }];
-}
+
 @end

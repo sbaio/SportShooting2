@@ -9,11 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "Menu.h"
 #import "MapVC.h"
+#import "Autopilot.h"
 
 
 @interface alertsView : UIView <DJIMissionManagerDelegate>
 {
     __weak MapVC* mapVC;
+    
     UITapGestureRecognizer* dismissTapGRAlertView;
     
     __weak IBOutlet UIStackView *switchStack;

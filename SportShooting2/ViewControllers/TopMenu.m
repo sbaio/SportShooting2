@@ -241,7 +241,7 @@
     for (NSString* notifName  in arrayOfNotifsNames) {
         if ([notifName isEqualToString:notification.name]) {
             respond = YES;
-            DVLog(@"responding to %@",notification.name);
+//            DVLog(@"responding to %@",notification.name);
         }
     }
     

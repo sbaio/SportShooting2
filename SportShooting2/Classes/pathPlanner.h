@@ -75,7 +75,7 @@ typedef struct{
     
 }
 
-@property(nonatomic,strong) DJIFollowMeMission* followMeMission;
+
 @property int carIndexOnCircuit;
 
 @property Drone* predictedDrone;
