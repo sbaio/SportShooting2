@@ -38,9 +38,6 @@
     
     [menuRevealController setFrontVC:navC rearVC:GeneralMenu];
     
-    
-
-    
     [self setMainAndMenuRevealProperties];
     
     [[Menu instance] setSubmenu:0];

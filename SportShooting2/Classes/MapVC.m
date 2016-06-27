@@ -574,23 +574,24 @@
 //    }];
     
     
-    [self startSendCtrlDataTimer];
+//    [self startSendCtrlDataTimer];
     
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
-}
--(void) startSendCtrlDataTimer{
-    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendCtrlData:) userInfo:nil repeats:YES];
-    [timer fire];
-}
--(void) sendCtrlData:(id) sender{
-    DJIVirtualStickFlightControlData ctrlData = {0};
     
-    ctrlData.pitch = [_KpSlider value];
-    ctrlData.roll = [_KdSlider value];
-    ctrlData.verticalThrottle = [_KiSlider value];
-    
-    [_autopilot sendFlightCtrlCommands:ctrlData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
 }
+//-(void) startSendCtrlDataTimer{
+//    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendCtrlData:) userInfo:nil repeats:YES];
+//    [timer fire];
+//}
+//-(void) sendCtrlData:(id) sender{
+//    DJIVirtualStickFlightControlData ctrlData = {0};
+//    
+//    ctrlData.pitch = [_KpSlider value];
+//    ctrlData.roll = [_KdSlider value];
+//    ctrlData.verticalThrottle = [_KiSlider value];
+//    
+//    [_autopilot sendFlightCtrlCommands:ctrlData];
+//}
 
 
 

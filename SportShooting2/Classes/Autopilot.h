@@ -170,8 +170,6 @@ struct Altitude {
 // new
 -(void) goWithSpeed:(float)speed atBearing:(float)bearing atAltitude:(float) altitude andYaw:(float) yaw;
 
-
-
 -(void) sendFlightCtrlCommands:(DJIVirtualStickFlightControlData) ctrlData;
 
 -(void) takeOffWithCompletion:(void(^)(NSError * _Nullable error))callback;

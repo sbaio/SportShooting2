@@ -62,152 +62,6 @@
     _gimbalYawMode = 1;
 }
 
--(void) sendFlightCtrlCommands:(struct PitchRoll) pitchAndRoll withAltitude:(struct Altitude) altitude andYaw:(struct Yaw) yaw{
-    
-    // with this centralized flight ctrl sending we can modify commands for NoFlyZone or for geoFencing ...
-    if (!_flightController) {
-        _flightController = [ComponentHelper fetchFlightController];
-        if (!_flightController) {
-            
-            return;
-        }
-    }
-    
-    if (!_flightController.isVirtualStickControlModeAvailable) {
-        //        DVLog(@"virtual stick not available .. trying to enable it");
-        
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                //                DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-                //                DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-    
-    {
-        DJIVirtualStickVerticalControlMode altitudeMode = (altitude.position) ? DJIVirtualStickVerticalControlModePosition:DJIVirtualStickVerticalControlModeVelocity;
-        
-        DJIVirtualStickYawControlMode yawMode = (yaw.palstance) ? DJIVirtualStickYawControlModeAngularVelocity:DJIVirtualStickYawControlModeAngle;
-        
-        DJIVirtualStickRollPitchControlMode pitchRollMode = (pitchAndRoll.angleOrVelocity) ? DJIVirtualStickRollPitchControlModeAngle:DJIVirtualStickRollPitchControlModeVelocity;
-        
-        DJIVirtualStickFlightCoordinateSystem FlightCoordinateSystem = (pitchAndRoll.coordSystem) ? DJIVirtualStickFlightCoordinateSystemBody:DJIVirtualStickFlightCoordinateSystemGround;
-        
-        
-        if (_flightController.verticalControlMode != altitudeMode) {
-            _flightController.verticalControlMode = altitudeMode;
-        }
-        if (_flightController.yawControlMode != yawMode) {
-            _flightController.yawControlMode = yawMode;
-        }
-        if (_flightController.rollPitchControlMode != pitchRollMode) {
-            _flightController.rollPitchControlMode = pitchRollMode;
-        }
-        if (_flightController.rollPitchCoordinateSystem != FlightCoordinateSystem) {
-            _flightController.rollPitchCoordinateSystem = FlightCoordinateSystem;
-        }
-    }
-    DJIVirtualStickFlightControlData flightCtrlData = {0};
-    
-    flightCtrlData.pitch = pitchAndRoll.pitch;
-    flightCtrlData.roll = pitchAndRoll.roll;
-    flightCtrlData.yaw = yaw.yaw;
-    if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
-        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, 3, 100) ;
-    }
-    else if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity){
-        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, -5, 5);
-    }
-    
-    
-    
-    //    DVLog(@"sending : pitch %f , roll %f , yaw %f , altitude ,%f ",pitchAndRoll.pitch,pitchAndRoll.roll, yaw.yaw,altitude.altitude );
-    
-    if (_flightController && _flightController.isVirtualStickControlModeAvailable) {
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-                //DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-        
-        [_flightController sendVirtualStickFlightControlData:flightCtrlData withCompletion:nil];
-    }
-    else{
-        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-                //  DVLog(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-}
-
--(void) enterVirtualStickControlMode{
-    DJIFlightController* fc = [ComponentHelper fetchFlightController];
-    if (fc) {
-        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
-        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
-        
-        [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                ShowResult(@"Enter Virtual Stick Mode:%@", error.description);
-            }
-            else
-            {
-                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-    else
-    {
-        ShowResult(@"Component not exist.");
-    }
-}
--(void) exitVirtualStickControlMode{
-    DJIFlightController* fc = [ComponentHelper fetchFlightController];
-    if (fc) {
-
-        [fc disableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                ShowResult(@"Enter Virtual Stick Mode:%@", error.debugDescription);
-            }
-            else
-            {
-                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
-            }
-        }];
-    }
-    else
-    {
-        ShowResult(@"Component not exist.");
-    }
-}
--(NSString*) stringFromFlightcontrollerState:(DJIFlightController*) fc{
-    
-    if (fc) {
-        
-        NSString* yawMode = (fc.yawControlMode == DJIVirtualStickYawControlModeAngularVelocity) ? @"yvelocity":@"yAngle";
-        NSString* verticalMode = (fc.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity) ? @"altvelocity":@"altitude";
-        NSString* rollPitchMode = (fc.rollPitchControlMode == DJIVirtualStickRollPitchControlModeAngle) ? @"rpAngle":@"rpSpeed";
-        NSString* coordSys = (fc.rollPitchCoordinateSystem == DJIVirtualStickFlightCoordinateSystemGround) ? @"ground":@"body";
-     
-        return [NSString stringWithFormat:@"fc yawMode , %@ , verticalMode , %@, rpMode , %@ , coordSys , %@ ,%d",yawMode,verticalMode,rollPitchMode,coordSys, fc.isVirtualStickControlModeAvailable];
-    }
-    else{
-        return @"no flightController";
-    }
-}
 
 -(void) sendFlightCtrlCommands:(DJIVirtualStickFlightControlData) ctrlData{
     DJIFlightController* fc = [ComponentHelper fetchFlightController];
@@ -216,7 +70,7 @@
     
     if (fc) {
         fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+        fc.verticalControlMode = DJIVirtualStickVerticalControlModePosition;
         fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
         fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
         self.isVirtualStickModeEnabled = fc.isVirtualStickControlModeAvailable;
@@ -238,20 +92,36 @@
     }
 }
 
+
 -(void) goWithSpeed:(float)speed atBearing:(float)bearing atAltitude:(float) altitude andYaw:(float) yaw{
-    
-    speed = bindBetween(speed, 0, 17);
     
     // bearing should be -180..180
     if (bearing > 180 || bearing < -180) {
         DVLog(@"bearing %0.3f out of interval -180..180",bearing);
-        bearing = bindBetween(bearing, -180, 180);
+        return;
     }
+    
+    if (speed < 0) {
+        speed = fabsf(speed);
+        bearing = [[Calc Instance] angle180Of330Angle:(bearing+180)];;
+    }
+    
+    speed = bindBetween(speed, 0, 15);
+    
     
     // earth coord sys
     float northSpeed = speed*cosf(RADIAN(bearing));
     float eastSpeed = speed*sinf(RADIAN(bearing));
     
+    DJIVirtualStickFlightControlData ctrlData = {0};
+    ctrlData.pitch = eastSpeed;
+    ctrlData.roll = northSpeed;
+    ctrlData.verticalThrottle = altitude;
+    ctrlData.yaw = 0;
+    
+    [self sendFlightCtrlCommands:ctrlData];
+    
+    return;
     // commands
     struct PitchRoll pitchRollCommands = {eastSpeed,northSpeed,NO,NO};
     struct Altitude altitudeCommand = {altitude,YES};
@@ -485,6 +355,96 @@
 
 
 #pragma mark - flight control methods
+-(void) sendFlightCtrlCommands:(struct PitchRoll) pitchAndRoll withAltitude:(struct Altitude) altitude andYaw:(struct Yaw) yaw{
+    
+    // with this centralized flight ctrl sending we can modify commands for NoFlyZone or for geoFencing ...
+    if (!_flightController) {
+        _flightController = [ComponentHelper fetchFlightController];
+        if (!_flightController) {
+            
+            return;
+        }
+    }
+    
+    if (!_flightController.isVirtualStickControlModeAvailable) {
+        //        DVLog(@"virtual stick not available .. trying to enable it");
+        
+        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                //                DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                //                DVLog(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    
+    {
+        DJIVirtualStickVerticalControlMode altitudeMode = (altitude.position) ? DJIVirtualStickVerticalControlModePosition:DJIVirtualStickVerticalControlModeVelocity;
+        
+        DJIVirtualStickYawControlMode yawMode = (yaw.palstance) ? DJIVirtualStickYawControlModeAngularVelocity:DJIVirtualStickYawControlModeAngle;
+        
+        DJIVirtualStickRollPitchControlMode pitchRollMode = (pitchAndRoll.angleOrVelocity) ? DJIVirtualStickRollPitchControlModeAngle:DJIVirtualStickRollPitchControlModeVelocity;
+        
+        DJIVirtualStickFlightCoordinateSystem FlightCoordinateSystem = (pitchAndRoll.coordSystem) ? DJIVirtualStickFlightCoordinateSystemBody:DJIVirtualStickFlightCoordinateSystemGround;
+        
+        
+        if (_flightController.verticalControlMode != altitudeMode) {
+            _flightController.verticalControlMode = altitudeMode;
+        }
+        if (_flightController.yawControlMode != yawMode) {
+            _flightController.yawControlMode = yawMode;
+        }
+        if (_flightController.rollPitchControlMode != pitchRollMode) {
+            _flightController.rollPitchControlMode = pitchRollMode;
+        }
+        if (_flightController.rollPitchCoordinateSystem != FlightCoordinateSystem) {
+            _flightController.rollPitchCoordinateSystem = FlightCoordinateSystem;
+        }
+    }
+    DJIVirtualStickFlightControlData flightCtrlData = {0};
+    
+    flightCtrlData.pitch = pitchAndRoll.pitch;
+    flightCtrlData.roll = pitchAndRoll.roll;
+    flightCtrlData.yaw = yaw.yaw;
+    if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModePosition) {
+        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, 3, 100) ;
+    }
+    else if (_flightController.verticalControlMode == DJIVirtualStickVerticalControlModeVelocity){
+        flightCtrlData.verticalThrottle = bindBetween(altitude.altitude, -5, 5);
+    }
+    
+    
+    
+    //    DVLog(@"sending : pitch %f , roll %f , yaw %f , altitude ,%f ",pitchAndRoll.pitch,pitchAndRoll.roll, yaw.yaw,altitude.altitude );
+    
+    if (_flightController && _flightController.isVirtualStickControlModeAvailable) {
+        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                //DVLog(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+        
+        [_flightController sendVirtualStickFlightControlData:flightCtrlData withCompletion:nil];
+    }
+    else{
+        [_flightController enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                // DVLog(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                //  DVLog(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+}
+
 -(void) goWithSpeed:(float) speed atBearing:(float) bearing{
     // speed should be reasonable 0.. 17
     speed = bindBetween(speed, 0, 17);
@@ -928,7 +888,9 @@
     float a = (maxYawSp-minYawSp)/(330-angle330Limite);
     float b = (330*minYawSp-maxYawSp*angle330Limite)/(330-angle330Limite);
     
-    
+    if (!_realDrone) {
+        return 0;
+    }
     if (fabsf(_realDrone.gimbalCurrent330yaw)>angle330Limite) {
         mYaw = a*_realDrone.gimbalCurrent330yaw +sign(_realDrone.gimbalCurrent330yaw)*b;
         
@@ -1299,5 +1261,50 @@
     
     [self gimbalGoToAbsolutePitch:gimbalPitchToTargetOnTheGround andRoll:0 andYaw:gimbalTarget330Yaw];
     
+}
+
+
+#pragma mark - unused
+
+-(void) enterVirtualStickControlMode{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc) {
+        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+        
+        [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                ShowResult(@"Enter Virtual Stick Mode:%@", error.description);
+            }
+            else
+            {
+                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    else
+    {
+        ShowResult(@"Component not exist.");
+    }
+}
+-(void) exitVirtualStickControlMode{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc) {
+        
+        [fc disableVirtualStickControlModeWithCompletion:^(NSError *error) {
+            if (error) {
+                ShowResult(@"Enter Virtual Stick Mode:%@", error.debugDescription);
+            }
+            else
+            {
+                ShowResult(@"Enter Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    else
+    {
+        ShowResult(@"Component not exist.");
+    }
 }
 @end
