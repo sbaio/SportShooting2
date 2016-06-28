@@ -12,6 +12,7 @@
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/Aircraft_Camera_Car_AnnoView.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/MGSwipeButton.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/pathPlanner.o
+/Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/matrix.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/AppDelegate.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/KF1D.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/SWRevealViewController.o
@@ -24,6 +25,7 @@
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/DJILinkQueues.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/MGSwipeTableCell.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/MapVC.o
+/Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/kalman.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/MovieGLView.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/DVLogger.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/GeneralMenuVC.o
@@ -51,7 +53,6 @@
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/POPLayerExtras.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/AircraftMenuTVC.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/alertsView.o
-/Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/TakeOffMission.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/main.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/POPCGUtils.o
 /Users/Sbaio/Desktop/SportShooting2/Build/Intermediates/SportShooting2.build/Debug-iphoneos/SportShooting2.build/Objects-normal/arm64/POPMath.o

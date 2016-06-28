@@ -32,8 +32,9 @@
     rowsArray = [@[@"Track",@"Video",@"Drone",@"Car"] mutableCopy];
     
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"FCFeedStarted" object:nil];
+    
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -88,7 +89,9 @@
     textLabel.textColor = [UIColor colorWithHue:0.67 saturation:0 brightness:0.86 alpha:1];
     return cell;
 }
+
 - (IBAction)onCarSwitchChanged:(id)sender {
+    
     if (sender == _carSwitch) {
         if ([sender isOn]) {
             [carLabel setText:@"Car sim"];
@@ -98,10 +101,50 @@
         }
     }
     else if(sender == _droneSwitch) {
-        if ([sender isOn]) {
+        
+        BOOL simulateWithDJI = YES;
+    
+        if (simulateWithDJI) {
+            DJIFlightController* fc = [ComponentHelper fetchFlightController];
+            if (fc && fc.simulator) {
+                if ([sender isOn]) {
+                    if (!fc.simulator.isSimulatorStarted) {
+                        [[[Menu instance] getMapVC] startSimulatorAtLoc:[[Menu instance] getMapVC].phoneLocation WithCompletion:^(NSError * _Nullable error) {
+                            [self updateDroneSwitchAndLabel];
+                        }];
+                    }
+                }
+                else{
+                    if (fc.simulator.isSimulatorStarted) {
+                        [[[Menu instance] getMapVC] stopSimulatorWithCompletion:^(NSError * _Nullable error) {
+                            [self updateDroneSwitchAndLabel];
+                        }];
+                    }
+                }
+            }
+            
+        }
+        else{
+            if ([sender isOn]) {
+                [droneLabel setText:@"Drone sim"];
+            }
+            else{
+                [droneLabel setText:@"Drone"];
+            }
+        }
+        
+    }
+}
+
+-(void) updateDroneSwitchAndLabel{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc) {
+        if (fc.simulator.isSimulatorStarted) {
+            [_droneSwitch setOn:YES];
             [droneLabel setText:@"Drone sim"];
         }
         else{
+            [_droneSwitch setOn:NO];
             [droneLabel setText:@"Drone"];
         }
     }
@@ -150,6 +193,12 @@
     
 }
 
+
+-(void) handleNotification:(NSNotification*) notification{
+    if ([notification.name isEqualToString:@"FCFeedStarted"]) {
+        [self updateDroneSwitchAndLabel];
+    }
+}
 
 
 @end

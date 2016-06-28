@@ -13,6 +13,7 @@
 #import <DJISDK/DJISDK.h>
 #import "ComponentHelper.h"
 #import "MGSwipeTableCell.h"
+#import "ComponentHelper.h"
 
 
 @interface GeneralMenuVC : UITableViewController <MGSwipeTableCellDelegate>
@@ -28,4 +29,6 @@
 
 -(void) mapWentRightMost;
 -(void) mapWentRight;
+
+-(void) updateDroneSwitchAndLabel;
 @end

@@ -366,6 +366,17 @@
 }
 
 #pragma mark - simulation
+
+-(Drone*) droneFromDrone:(Drone*) currentDrone simtulatorState:(DJISimulatorState*) state{
+    
+    Drone* newState = currentDrone;
+    
+    CLLocation* loc = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(state.latitude, state.longitude) altitude:state.positionZ horizontalAccuracy:0 verticalAccuracy:0 course:0 speed:0 timestamp:[NSDate new]];
+    currentDrone.droneLoc = loc;
+    
+    return newState;
+    
+}
 -(Drone*) newDroneStateFrom:(Drone*) currentDroneState withTargetSpeed:(float) targSp andTargetAngle:(float) targHeading andTargAltitude:(float) targAlt during:(float) dt{
     
     Drone* newState = currentDroneState;

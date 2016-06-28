@@ -35,6 +35,8 @@
 #import "pathPlanner.h"
 #import "KF1D.h"
 
+#include "kalman.h"
+
 @class MapView;
 @class Drone;
 @class circuitsListFW;
@@ -46,7 +48,7 @@
 @class CircuitsTVC;
 @class Autopilot;
 
-@interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate,DJIGimbalDelegate>
+@interface MapVC : UIViewController<DJIFlightControllerDelegate,MKMapViewDelegate,CLLocationManagerDelegate,UIViewControllerTransitioningDelegate,DJIGimbalDelegate,DJISimulatorDelegate>
 {
     __weak SWRevealViewController* mainRevealVC;
     __weak SWRevealViewController* menuRevealVC;
@@ -114,6 +116,8 @@
     
     NSDate* lastFCUpdateDate;
     int freqCutterCameraFeed;
+    
+    KalmanFilter f;
 }
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet alertsView *alertsView;
@@ -156,10 +160,13 @@
 @property BOOL isPathDrawingEnabled;
 @property BOOL isRealCar;
 @property BOOL isRealDrone;
+@property BOOL simulateWithDJISimulator;
+
 
 @property Drone* drone;
 @property Drone* realDrone;
 @property Drone* simulatedDrone;
+@property Drone* djiSimulatedDrone;
 @property Drone* predictedDrone;
 
 @property pathPlanner* planner;
@@ -171,6 +178,9 @@
 
 -(void) switchToVideo;
 -(void) switchToMap;
+
+-(void) startSimulatorAtLoc:(CLLocation*) startLoc WithCompletion:(void(^)(NSError * _Nullable error))callback;
+-(void) stopSimulatorWithCompletion:(void(^_Nullable)(NSError * _Nullable error))callback;
 
 -(BOOL) isShowingCircuitList;
 

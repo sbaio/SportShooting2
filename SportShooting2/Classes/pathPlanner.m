@@ -23,6 +23,10 @@
     yellowColorString = @"RGB 212 175 55";
     redColorString = @"RGB 222 22 22";
     
+    _Ki = [mapVC.KiSlider value];
+    _Kp = [mapVC.KpSlider value];
+    _Kd = [mapVC.KdSlider value];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRCSwitchChangedNotif:) name:@"RCSwitchStateChanged" object:nil];
     
     return self;
@@ -172,6 +176,7 @@
    
 
     [mapView movePinNamed:@"targPosition" toCoord:locFrontCar andColor:@"RGB 239 28 29"];
+    
     Vec* drone_carFrontLoc = [[Vec alloc] initWithNorm:[[Calc Instance] distanceFromCoords2D:_predictedDrone.droneLoc.coordinate toCoords2D:locFrontCar.coordinate] andAngle:[[Calc Instance] headingTo:locFrontCar.coordinate fromPosition:_predictedDrone.droneLoc.coordinate]];
     
     float diffPosition = [drone_carFrontLoc dotProduct:_predictedDrone.sensCircuit]; // positif lorsque la voiture en avance

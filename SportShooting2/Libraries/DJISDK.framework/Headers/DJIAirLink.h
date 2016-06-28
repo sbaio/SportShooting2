@@ -10,35 +10,50 @@
 
 @class DJIWiFiLink;
 @class DJILBAirLink;
+@class DJIAuxLink;
 
 /**
- *  This class contains DJI WiFi and DJI Lightbridge components, you can check if the current device supports WiFi and
- *  Lightbridge features by accessing the following two BOOL variables.
+ *
+ *  The class contains different wireless links between the aircraft, the remote controller and the mobile device. To determine whether the current device supports WiFi and Lightbridge features, call `isWifiLinkSupported` or `isLBAirLinkSupported`.
+ *
+ *   With the Osmo the mobile device communicates directly via wifi.
  */
+
 @interface DJIAirLink : DJIBaseComponent
 
 /**
- *  YES if WiFi Link is supported
+ *  YES if WiFi Air Link is supported.
  *
  */
 @property (nonatomic, readonly) BOOL isWifiLinkSupported;
 
 /**
- *  YES if LB Air Link is supported
+ *  YES if Lightbridge Air Link is supported.
  *
  */
 @property (nonatomic, readonly) BOOL isLBAirLinkSupported;
 
 /**
- *  Returns WiFiLink if it's available
+ *  YES if the Auxiliary Control Air Link is supported. The Auxiliary Control link is the wireless link between the remote controller and aircraft on products that have a WiFi Video link. Phantom 3 Standard, and Phantom 3 4K have an auxiliary control link.
  *
  */
-@property (nonatomic, strong) DJIWiFiLink *wifiLink;
+@property (nonatomic, readonly) BOOL isAuxLinkSupported;
 
 /**
- *  Returns Lightbridge Link if it's available
+ *  Returns the WiFi Air Link if it is available.
  *
  */
-@property (nonatomic, strong) DJILBAirLink *lbAirLink;
+@property (nonatomic, strong) DJIWiFiLink *_Nullable wifiLink;
+
+/**
+ *  Returns the Lightbridge Air Link if it is available.
+ *
+ */
+@property (nonatomic, strong) DJILBAirLink *_Nullable lbAirLink;
+
+/**
+ *  Returns the Auxiliary Control Air Link if it is available.
+ */
+@property (nonatomic, strong) DJIAuxLink *_Nullable auxLink;
 
 @end

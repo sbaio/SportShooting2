@@ -74,22 +74,22 @@
         fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
         fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
         self.isVirtualStickModeEnabled = fc.isVirtualStickControlModeAvailable;
+        
+        if (fc.isVirtualStickControlModeAvailable) {
+            
+            [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
+        }
+        else{
+            DVLog(@"virtual stick mode not available");
+            [self enterVirtualStickControlMode];
+        }
     }
     else{
 //        DVLog(@"no FC in sendFlightCommands");
     }
     
     
-    if (fc && fc.isVirtualStickControlModeAvailable) {
-        
-        [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
-    }
-    else{
-        
-        if (!fc.isVirtualStickControlModeAvailable) {
-//            DVLog(@"virtual stick mode not available");
-        }
-    }
+    
 }
 
 
@@ -1306,5 +1306,14 @@
     {
         ShowResult(@"Component not exist.");
     }
+}
+-(NSString*) stringFromFlightcontrollerState:(DJIFlightController*) fc{
+    
+    NSString* yawMode = (fc.yawControlMode == DJIVirtualStickYawControlModeAngle)? @"yAngle":@"ySpeed";
+    NSString* vertMode = (fc.verticalControlMode == DJIVirtualStickVerticalControlModePosition)? @"vPosition":@"verticalVelocity";
+    NSString* rpMode = (fc.rollPitchControlMode == DJIVirtualStickYawControlModeAngle)? @"rpAngle":@"rpSpeed";
+    NSString* coordMode = (fc.rollPitchCoordinateSystem == DJIVirtualStickFlightCoordinateSystemGround)? @"ground":@"body";
+    
+    return [NSString stringWithFormat:@"yaw , %@ , alt , %@ , rp , %@ ,coord , %@ , %d",yawMode,vertMode,rpMode,coordMode,fc.isVirtualStickControlModeAvailable];
 }
 @end

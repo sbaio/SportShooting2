@@ -13,7 +13,10 @@
 		D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1B11D1354DB00CC6D14 /* pathPlanner.m */; };
 		D612D1B51D18970E00CC6D14 /* KF1D.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1B41D18970E00CC6D14 /* KF1D.m */; };
 		D612D1CF1D1CCA7E00CC6D14 /* alert.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1CE1D1CCA7E00CC6D14 /* alert.m */; };
-		D612D1D21D1DFADD00CC6D14 /* TakeOffMission.m in Sources */ = {isa = PBXBuildFile; fileRef = D612D1D11D1DFADD00CC6D14 /* TakeOffMission.m */; };
+		D612D1D31D21DEE100CC6D14 /* DJISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4271D03F62300B12946 /* DJISDK.framework */; };
+		D612D1D41D21DEE100CC6D14 /* DJISDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4271D03F62300B12946 /* DJISDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D612D2591D22E43F00CC6D14 /* kalman.c in Sources */ = {isa = PBXBuildFile; fileRef = D612D2551D22E43F00CC6D14 /* kalman.c */; };
+		D612D25A1D22E43F00CC6D14 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = D612D2571D22E43F00CC6D14 /* matrix.c */; };
 		D6218C9F1D04BC4900DF1E55 /* iphone_frame.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */; };
 		D6218CA11D04CE0700DF1E55 /* Inspire_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA01D04CE0700DF1E55 /* Inspire_red.png */; };
 		D6218CA31D04D2EE00DF1E55 /* Inspire_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */; };
@@ -53,12 +56,10 @@
 		D632D41A1D03F5CB00B12946 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D4181D03F5CB00B12946 /* Main.storyboard */; };
 		D632D41C1D03F5CB00B12946 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D632D41B1D03F5CB00B12946 /* Assets.xcassets */; };
 		D632D41F1D03F5CB00B12946 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D632D41D1D03F5CB00B12946 /* LaunchScreen.storyboard */; };
-		D632D4281D03F62300B12946 /* DJISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4271D03F62300B12946 /* DJISDK.framework */; };
 		D632D42A1D03F63700B12946 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4291D03F63700B12946 /* libstdc++.6.0.9.tbd */; };
 		D632D42C1D03F63D00B12946 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D42B1D03F63D00B12946 /* libz.tbd */; };
 		D632D42E1D03F64500B12946 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D42D1D03F64500B12946 /* libiconv.tbd */; };
 		D632D42F1D03F64C00B12946 /* DJISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4271D03F62300B12946 /* DJISDK.framework */; };
-		D632D4301D03F64C00B12946 /* DJISDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D632D4271D03F62300B12946 /* DJISDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D632D4A31D03F68D00B12946 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D49A1D03F68D00B12946 /* libavcodec.a */; };
 		D632D4A41D03F68D00B12946 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D49B1D03F68D00B12946 /* libavdevice.a */; };
 		D632D4A51D03F68D00B12946 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D632D49C1D03F68D00B12946 /* libavfilter.a */; };
@@ -168,7 +169,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				D699028B1D0412A90038D05B /* PermissionScope.framework in Embed Frameworks */,
-				D632D4301D03F64C00B12946 /* DJISDK.framework in Embed Frameworks */,
+				D612D1D41D21DEE100CC6D14 /* DJISDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,8 +186,10 @@
 		D612D1B41D18970E00CC6D14 /* KF1D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KF1D.m; sourceTree = "<group>"; };
 		D612D1CD1D1CCA7E00CC6D14 /* alert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alert.h; sourceTree = "<group>"; };
 		D612D1CE1D1CCA7E00CC6D14 /* alert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = alert.m; sourceTree = "<group>"; };
-		D612D1D01D1DFADD00CC6D14 /* TakeOffMission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TakeOffMission.h; path = Missions/TakeOffMission.h; sourceTree = "<group>"; };
-		D612D1D11D1DFADD00CC6D14 /* TakeOffMission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TakeOffMission.m; path = Missions/TakeOffMission.m; sourceTree = "<group>"; };
+		D612D2551D22E43F00CC6D14 /* kalman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kalman.c; path = ../../../../iKalman/ikal/kalman.c; sourceTree = "<group>"; };
+		D612D2561D22E43F00CC6D14 /* kalman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kalman.h; path = ../../../../iKalman/ikal/kalman.h; sourceTree = "<group>"; };
+		D612D2571D22E43F00CC6D14 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrix.c; path = ../../../../iKalman/ikal/matrix.c; sourceTree = "<group>"; };
+		D612D2581D22E43F00CC6D14 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = matrix.h; path = ../../../../iKalman/ikal/matrix.h; sourceTree = "<group>"; };
 		D6218C9E1D04BC4900DF1E55 /* iphone_frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_frame.png; sourceTree = "<group>"; };
 		D6218CA01D04CE0700DF1E55 /* Inspire_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_red.png; sourceTree = "<group>"; };
 		D6218CA21D04D2EE00DF1E55 /* Inspire_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Inspire_green.png; sourceTree = "<group>"; };
@@ -516,8 +519,8 @@
 				D632D4AB1D03F68D00B12946 /* libswscale.a in Frameworks */,
 				D632D42A1D03F63700B12946 /* libstdc++.6.0.9.tbd in Frameworks */,
 				D632D4A61D03F68D00B12946 /* libavformat.a in Frameworks */,
-				D632D4281D03F62300B12946 /* DJISDK.framework in Frameworks */,
 				D632D4A31D03F68D00B12946 /* libavcodec.a in Frameworks */,
+				D612D1D31D21DEE100CC6D14 /* DJISDK.framework in Frameworks */,
 				D632D4A71D03F68D00B12946 /* libavresample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -525,6 +528,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D612D2541D22E42F00CC6D14 /* kalman */ = {
+			isa = PBXGroup;
+			children = (
+				D612D2551D22E43F00CC6D14 /* kalman.c */,
+				D612D2561D22E43F00CC6D14 /* kalman.h */,
+				D612D2571D22E43F00CC6D14 /* matrix.c */,
+				D612D2581D22E43F00CC6D14 /* matrix.h */,
+			);
+			name = kalman;
+			sourceTree = "<group>";
+		};
 		D6218CB21D05400E00DF1E55 /* mapView layers */ = {
 			isa = PBXGroup;
 			children = (
@@ -998,8 +1012,6 @@
 				D69902571D0408110038D05B /* Resources */,
 				D632D5411D04035D00B12946 /* Circuit */,
 				D632D5371D04033300B12946 /* Others */,
-				D612D1D01D1DFADD00CC6D14 /* TakeOffMission.h */,
-				D612D1D11D1DFADD00CC6D14 /* TakeOffMission.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1007,6 +1019,7 @@
 		D632D5371D04033300B12946 /* Others */ = {
 			isa = PBXGroup;
 			children = (
+				D612D2541D22E42F00CC6D14 /* kalman */,
 				D6218CDD1D0A0C4300DF1E55 /* closeButton.h */,
 				D6218CDE1D0A0C4300DF1E55 /* closeButton.m */,
 				D632D5481D04042200B12946 /* Anno */,
@@ -1318,6 +1331,7 @@
 				D632D55E1D04042200B12946 /* Aircraft_Camera_Car_AnnoView.m in Sources */,
 				D69902411D0405770038D05B /* MGSwipeButton.m in Sources */,
 				D612D1B21D1354DB00CC6D14 /* pathPlanner.m in Sources */,
+				D612D25A1D22E43F00CC6D14 /* matrix.c in Sources */,
 				D632D4141D03F5CB00B12946 /* AppDelegate.m in Sources */,
 				D612D1B51D18970E00CC6D14 /* KF1D.m in Sources */,
 				D632D52A1D03FD2900B12946 /* SWRevealViewController.m in Sources */,
@@ -1330,6 +1344,7 @@
 				D632D51C1D03F71900B12946 /* DJILinkQueues.m in Sources */,
 				D69902421D0405770038D05B /* MGSwipeTableCell.m in Sources */,
 				D69902871D0410540038D05B /* MapVC.m in Sources */,
+				D612D2591D22E43F00CC6D14 /* kalman.c in Sources */,
 				D632D51D1D03F71900B12946 /* MovieGLView.m in Sources */,
 				D632D50F1D03F6D900B12946 /* DVLogger.m in Sources */,
 				D69902351D04050A0038D05B /* GeneralMenuVC.m in Sources */,
@@ -1357,7 +1372,6 @@
 				D632D4F91D03F6A200B12946 /* POPLayerExtras.mm in Sources */,
 				D69902381D04052C0038D05B /* AircraftMenuTVC.m in Sources */,
 				D6218CEE1D0A52EB00DF1E55 /* alertsView.m in Sources */,
-				D612D1D21D1DFADD00CC6D14 /* TakeOffMission.m in Sources */,
 				D632D4111D03F5CB00B12946 /* main.m in Sources */,
 				D632D4F51D03F6A200B12946 /* POPCGUtils.mm in Sources */,
 				D632D4FA1D03F6A200B12946 /* POPMath.mm in Sources */,
@@ -1485,7 +1499,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SportShooting2/Libraries",
@@ -1508,7 +1522,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SportShooting2/Libraries",

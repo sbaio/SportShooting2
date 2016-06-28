@@ -26,7 +26,6 @@
 #import "UIColor+CustomColors.h"
 
 
-
 @interface MapVC ()
 
 @end
@@ -54,6 +53,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
+    [self initFilter];
+    
 }
 
 
@@ -76,6 +77,50 @@
     
     yellowColorString = @"RGB 212 175 55";
     redColorString = @"RGB 222 22 22";
+}
+
+-(void) initFilter{
+    f = alloc_filter(2, 1);
+    
+    /* The train state is a 2d vector containing position and velocity.
+     Velocity is measured in position units per timestep units. */
+    set_matrix(f.state_transition,
+               1.0, 1.0,
+               0.0, 1.0);
+    
+    /* We only observe position */
+    set_matrix(f.observation_model, 1.0, 0.0);
+    
+    /* The covariance matrices are blind guesses */
+    set_identity_matrix(f.process_noise_covariance);
+    scale_matrix(f.process_noise_covariance, 100000);
+    
+    
+    //R is The measurement noise covariance
+    set_identity_matrix(f.observation_noise_covariance);
+    scale_matrix(f.observation_noise_covariance, 0.3);
+    
+    /* Our knowledge of the start position is incorrect and unconfident */
+    double deviation = 1000.0;
+    set_matrix(f.state_estimate, 10 * deviation);
+    set_identity_matrix(f.estimate_covariance);
+    scale_matrix(f.estimate_covariance, deviation * deviation);
+    
+//    /* Test with time steps of the position gradually increasing */
+//    for (int i = 0; i < 100; ++i) {
+//        set_matrix(f.observation, (double) 2*i);
+//        update(f);
+//        printf("------------------------\n");
+//        printf("estimated position: %f\n", f.state_estimate.data[0][0]);
+//        printf("estimated velocity: %f\n", f.state_estimate.data[1][0]);
+//
+//    }
+    
+    
+
+    
+    
+//    free_filter(f);
 }
 
 -(void) showTopMenu{
@@ -393,6 +438,7 @@
             if (timeSinceLastUpdate > 0.7) {
                 [appD setIsReceivingFlightControllerStatus:NO];
                 DVLog(@"FC feed stopped");
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"FCFeedStopped" object:self];
                 // Notification
                 lastFCUpdateDate = nil;
@@ -538,11 +584,11 @@
     if (camera) {
         [camera startRecordVideoWithCompletion:^(NSError * _Nullable error) {
             if (error) {
-                DVLog(@"ERROR: startRecordVideoWithCompletion:. %@", error.description);
+                ShowResult(@"Start record error %@", error.localizedDescription);
             }
         }];
     }else{
-        DVLog(@"start record: No Camera");
+        ShowResult(@"start record: No Camera");
     }
 }
 -(void) stopRecord{
@@ -550,56 +596,110 @@
     if (camera) {
         [camera stopRecordVideoWithCompletion:^(NSError * _Nullable error) {
             if (error) {
-                DVLog(@"ERROR: stopRecordVideoWithCompletion:. %@", error.description);
+                ShowResult(@"Stop record error %@", error.localizedDescription);
             }
         }];
     }else{
-        DVLog(@"stop record: No camera");
+        ShowResult(@"stop record: No camera");
     }
 }
 
 - (IBAction)didClickOnRecButton:(id)sender {
-//    AppDelegate* appD = [[Menu instance] getAppDelegate];
-//    
-//    if (!appD.isDroneRecording) {
-//        [self startRecord];
-//    }
-//    else{
-//        [self stopRecord];
-//    }
+    
+    if (!appD.isDroneRecording) {
+        [self startRecord];
+    }
+    else{
+        [self stopRecord];
+    }
+    
+}
 
-//    [_alertsView showTakeOffAlert];
-//    [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
+- (IBAction)didClickOnStartDrivingButton:(id)sender {
+//        [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
     
-//    }];
-    
-    
-//    [self startSendCtrlDataTimer];
-    
+    //    }];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
 }
-//-(void) startSendCtrlDataTimer{
-//    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendCtrlData:) userInfo:nil repeats:YES];
-//    [timer fire];
-//}
-//-(void) sendCtrlData:(id) sender{
-//    DJIVirtualStickFlightControlData ctrlData = {0};
-//    
-//    ctrlData.pitch = [_KpSlider value];
-//    ctrlData.roll = [_KdSlider value];
-//    ctrlData.verticalThrottle = [_KiSlider value];
-//    
-//    [_autopilot sendFlightCtrlCommands:ctrlData];
-//}
 
 
+#pragma mark - simulator setup
+-(void) startSimulatorAtLoc:(CLLocation*) startLoc WithCompletion:(void(^)(NSError * _Nullable error))callback{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc && fc.simulator) {
+        
+        if (!fc.simulator.isSimulatorStarted) {
+            [fc.simulator startSimulatorWithLocation:startLoc.coordinate updateFrequency:10 GPSSatellitesNumber:17 withCompletion:^(NSError * _Nullable error) {
+                callback(error);
+                if (error) {
+                    ShowResult(@"Start simulator error:%@", error.description);
+                } else {
+                    ShowResult(@"Start simulator succeeded.");
+                    [fc takeoffWithCompletion:^(NSError * _Nullable error) {
+                        
+                    }];
+                }
+            }];
+        }
+        
+        _djiSimulatedDrone = [[Drone alloc] init];
+        _djiSimulatedDrone.realDrone = NO;
+        
+        [fc.simulator setDelegate:self];
+    }
+}
 
--(void) didTapOnMapVC:(UITapGestureRecognizer*) tapGR{
-    NSLog(@"tap on mapVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
+-(void) stopSimulatorWithCompletion:(void(^)(NSError * _Nullable error))callback{
+    DJIFlightController* fc = [ComponentHelper fetchFlightController];
+    if (fc && fc.simulator) {
+        
+        if (fc.simulator.isSimulatorStarted) {
+            [fc.simulator stopSimulatorWithCompletion:^(NSError * _Nullable error) {
+                callback(error);
+                if (error) {
+                    ShowResult(@"Stop simulator error:%@", error.description);
+                } else {
+                    ShowResult(@"Stop simulator succeeded.");
+                    DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
+                    [gimbal resetGimbalWithCompletion:^(NSError * _Nullable error) {
+                        if (error) {
+                            ShowResult(@"error reset gimbal , %@",error.localizedDescription);
+                        }
+                    }];
+                }
+            }];
+        }
+        else{
+            DVLog(@"simulator is not started");
+        }
+        
+        [fc.simulator setDelegate:nil];
+    }
+}
+// check the simulator state in the same callback also as the real drone
+-(void)simulator:(DJISimulator *)simulator updateSimulatorState:(DJISimulatorState *)state {
+    // We still receive simulator info in the same callback as the real drone callback : filghtController didReceiveStateUpdates...
+
+//    set_identity_matrix(f.process_noise_covariance);
+//    scale_matrix(f.process_noise_covariance,powf(10, [_KpSlider value]));
+    
+//    set_identity_matrix(f.observation_noise_covariance);
+//    scale_matrix(f.observation_noise_covariance, [_KdSlider value]);
+    
+//    set_matrix(f.observation,(double)state.positionX);
+//    update(f);
+
+    
+//    DVLog(@"x , %0.3f , est , %0.3f,gain , %0.3f , estVel , %0.3f  , velo ,%0.3f  ,prc, %0.3f , obs ,%0.3f",state.positionX,f.state_estimate.data[0][0],f.optimal_gain.data[0][0],f.state_estimate.data[1][0],_FCcurrentState.velocityX/10,f.process_noise_covariance.data[0][0],f.observation_noise_covariance.data[0][0]);
 }
 
 
+
+#pragma mark - handle UI
+-(void) didTapOnMapVC:(UITapGestureRecognizer*) tapGR{
+    NSLog(@"tap on mapVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
+}
 
 - (IBAction)onTakeOffButtonClicked:(id)sender {
     [_alertsView showTakeOffAlert];
@@ -792,8 +892,18 @@
 
 
 -(void) startMissionWithCompletion:(void (^)(BOOL started)) callback{
-    _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+    
+    _simulateWithDJISimulator = ([ComponentHelper fetchFlightController]);
+    
+    if (_simulateWithDJISimulator) {
+        _isRealDrone = YES;
+    }
+    else{
+        _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+    }
+    
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+
     
     if (!_circuit || !_circuit.locations.count) {
         NSLog(@"no circuit");
@@ -818,6 +928,18 @@
         if (!appD.isReceivingFlightControllerStatus) {
             DVLog(@"No drone connected");
         }
+        
+        if (_simulateWithDJISimulator) {
+            DJIFlightController* fc = [ComponentHelper fetchFlightController];
+            if (fc.simulator.isSimulatorStarted) {
+                [self stopSimulatorWithCompletion:^(NSError * _Nullable error) {
+                    [self startSimulatorAtLoc:_circuit.locations[0] WithCompletion:^(NSError * _Nullable error) {
+                        
+                    }];
+                }];
+            }
+        }
+        
         // here we are supposed to have info in _realDrone
     }
     
@@ -838,6 +960,7 @@
     countFollow = 0;
     refDate = [[NSDate alloc] init];
 }
+
 -(void) pauseMission{
     if ([pathPlanningTimer isValid]) {
         [pathPlanningTimer invalidate];
@@ -855,6 +978,7 @@
     }
 }
 - (IBAction)onSliderDidChange:(id)sender {
+ 
     if (sender == _KiSlider) {
         [_KiLabel setText:[NSString stringWithFormat:@"i:%0.2f",[_KiSlider value]]];
         _planner.Ki = [_KiSlider value];
@@ -870,7 +994,7 @@
 }
 
 
-
+// This method carAtLocation: manages the locations coming from the phone locationManager and the car simulation
 -(void) carAtLocation:(CLLocation*) location{
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
     if (_isRealCar) {
@@ -900,9 +1024,28 @@
 
 -(void) onPathPlanningTimerTicked{
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
-    _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
     
-    _drone = _simulatedDrone;
+    if (_simulateWithDJISimulator) {
+        _isRealDrone = YES;
+    }
+    else{
+        _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+    }
+    
+    if (_simulateWithDJISimulator) {
+        DJIFlightController* fc = [ComponentHelper fetchFlightController];
+        
+        if (fc.simulator.isSimulatorStarted) {
+            _drone = _realDrone;
+        }
+        else{
+            DVLog(@"problem here: start DJI simulator first, or switch simulator type");
+        }
+    }
+    else{
+        _drone = _simulatedDrone;
+    }
+    
     
     if (_isRealDrone) {
         _drone = _realDrone;
@@ -925,7 +1068,10 @@
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********
-        [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
+        if (!_simulateWithDJISimulator) {
+            [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
+        }
+        
         
         [mapView updateGimbalAnnoOfDrone:_drone];
         

@@ -535,6 +535,14 @@
                                             <action selector="didClickOnRecButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="DX3-vC-ldB"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NMa-Ry-wnB" userLabel="StartDrivingButton">
+                                        <rect key="frame" x="486" y="123" width="108" height="54"/>
+                                        <color key="backgroundColor" red="0.41836997198132497" green="0.6137616527821208" blue="1" alpha="0.63766068262411346" colorSpace="calibratedRGB"/>
+                                        <state key="normal" title="StartDriving"/>
+                                        <connections>
+                                            <action selector="didClickOnStartDrivingButton:" destination="uuK-nl-Nt5" eventType="touchUpInside" id="e6R-8M-R7j"/>
+                                        </connections>
+                                    </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oSQ-Oa-i31" userLabel="TakeOff button">
                                         <rect key="frame" x="20" y="99" width="42" height="42"/>
                                         <constraints>
@@ -632,38 +640,38 @@
                                             <action selector="simulatedCarSpeedSliderDidChangeValue:" destination="uuK-nl-Nt5" eventType="valueChanged" id="c5Z-cs-1Cn"/>
                                         </connections>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-15" maxValue="15" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="-6" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
                                         <rect key="frame" x="49" y="135" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="po1-8j-6dh"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Kp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ik-4W-cha" userLabel="Label Kp">
-                                        <rect key="frame" x="9" y="135" width="42" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ik-4W-cha" userLabel="Label Kp">
+                                        <rect key="frame" x="30" y="135" width="21" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-15" maxValue="15" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.29999999999999999" minValue="0.0" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
                                         <rect key="frame" x="49" y="195" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="YPb-0s-pVH"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Kd" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="03A-5T-h6k" userLabel="Label Kd">
-                                        <rect key="frame" x="9" y="195" width="42" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kd" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="03A-5T-h6k" userLabel="Label Kd">
+                                        <rect key="frame" x="30" y="195" width="21" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.20000000000000001" minValue="-4" maxValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
                                         <rect key="frame" x="49" y="255" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="anR-PG-jEp"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Ki" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sQ0-r0-vfG" userLabel="Label Ki">
-                                        <rect key="frame" x="9" y="255" width="42" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ki" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sQ0-r0-vfG" userLabel="Label Ki">
+                                        <rect key="frame" x="36" y="255" width="15" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
@@ -675,6 +683,7 @@
                                     <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerX" secondItem="e8C-H9-eDY" secondAttribute="centerX" id="2AG-N9-vJK"/>
                                     <constraint firstItem="03A-5T-h6k" firstAttribute="height" secondItem="fGZ-fb-dZh" secondAttribute="height" id="2HO-A9-Rqx"/>
                                     <constraint firstItem="sQ0-r0-vfG" firstAttribute="centerY" secondItem="Wpw-Xu-8fL" secondAttribute="centerY" id="2a1-g6-RNN"/>
+                                    <constraint firstItem="NMa-Ry-wnB" firstAttribute="height" secondItem="e8C-H9-eDY" secondAttribute="height" multiplier="0.5" id="4ai-OM-9WA"/>
                                     <constraint firstItem="JzQ-A5-sJJ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.5" id="4fs-mA-oIE"/>
                                     <constraint firstItem="Evk-qR-BZi" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="1.3" id="5KZ-wx-LIe"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="centerX" secondItem="Enq-Sg-45p" secondAttribute="centerX" id="5YG-7P-Kxp"/>
@@ -715,6 +724,7 @@
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" id="fwl-ZK-OHk" userLabel="MapLargeX"/>
                                     <constraint firstItem="e8C-H9-eDY" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" id="ifV-ru-ixB"/>
                                     <constraint firstItem="Wpw-Xu-8fL" firstAttribute="leading" secondItem="sQ0-r0-vfG" secondAttribute="trailing" id="kbH-6f-qyJ"/>
+                                    <constraint firstItem="NMa-Ry-wnB" firstAttribute="width" secondItem="e8C-H9-eDY" secondAttribute="width" id="m5t-GY-eSM"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" id="mZ5-kd-nZn" userLabel="MapLargeH"/>
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.4" id="nFa-Rg-pwn" userLabel="MapSmallX"/>
                                     <constraint firstItem="sQ0-r0-vfG" firstAttribute="height" secondItem="Wpw-Xu-8fL" secondAttribute="height" id="o5U-oF-DPE"/>
@@ -724,10 +734,12 @@
                                     <constraint firstItem="usf-MQ-ySQ" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="0.33" id="rhw-9Z-rkp" userLabel="MapSmallH"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="width" secondItem="Enq-Sg-45p" secondAttribute="width" id="tgN-lM-5pS"/>
                                     <constraint firstItem="5Ik-4W-cha" firstAttribute="centerY" secondItem="JzQ-A5-sJJ" secondAttribute="centerY" id="u5q-nW-4rh"/>
+                                    <constraint firstItem="NMa-Ry-wnB" firstAttribute="centerX" secondItem="e8C-H9-eDY" secondAttribute="centerX" id="uJz-lQ-rZu"/>
                                     <constraint firstItem="x74-Ra-ao7" firstAttribute="height" secondItem="Enq-Sg-45p" secondAttribute="height" id="uLn-W5-1LA"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="height" secondItem="a9h-25-Hyk" secondAttribute="height" multiplier="0.33" id="vJW-Iv-bOb" userLabel="VideoSmallH"/>
                                     <constraint firstItem="bJm-SV-V7B" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.4" id="vPS-TU-FMD" userLabel="VideoSmallX"/>
                                     <constraint firstItem="oSQ-Oa-i31" firstAttribute="centerX" secondItem="a9h-25-Hyk" secondAttribute="centerX" multiplier="0.135" id="vVu-Xa-mRb"/>
+                                    <constraint firstItem="NMa-Ry-wnB" firstAttribute="centerY" secondItem="a9h-25-Hyk" secondAttribute="centerY" multiplier="0.5" id="wLl-8y-Bdr"/>
                                     <constraint firstAttribute="trailing" secondItem="987-yS-3Vw" secondAttribute="trailing" constant="15" id="x5M-aA-8qe"/>
                                     <constraint firstItem="5D2-VJ-R2r" firstAttribute="centerY" secondItem="e8C-H9-eDY" secondAttribute="centerY" id="yhc-V9-amS"/>
                                 </constraints>
