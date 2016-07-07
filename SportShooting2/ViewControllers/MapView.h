@@ -8,11 +8,11 @@
 
 #import <MapKit/MapKit.h>
 #import "Menu.h"
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "Aircraft_Camera_Car_Annotation.h"
 #import "Drone.h"
 
-@class MapVC;
+@class FrontVC;
 @class Drone;
 @class Circuit;
 
@@ -27,7 +27,7 @@
 //    Aircraft_Camera_Car_Annotation* droneSpeed_vecAnno;
     
 }
-@property (weak) MapVC* mapVC;
+@property (weak) FrontVC* frontVC;
 
 @property (nonatomic,strong) UITapGestureRecognizer* tapGRMapVideoSwitching;
 

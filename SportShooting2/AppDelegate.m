@@ -22,13 +22,15 @@
     
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
     
+    // mainRevealController is the one that shoz the map/video and hides in the rearVC the menus --> see storyboard organisation
     mainRevealController = (SWRevealViewController*)[mainStoryboard instantiateInitialViewController];
     [self.window setRootViewController:mainRevealController];
     
-    mapVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
-    [mapVC.mapView enableMapViewScroll];
+    // this is the front view controller that hides the menus in the left
+    frontVC = [mainStoryboard instantiateViewControllerWithIdentifier:@"mainFrontVC"];
+    [frontVC.mapView enableMapViewScroll];
     menuRevealController = (SWRevealViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"mainBackVC"];
-    [mainRevealController setFrontVC:mapVC rearVC:menuRevealController];
+    [mainRevealController setFrontVC:frontVC rearVC:menuRevealController];
     
     UINavigationController* navC = [[UINavigationController alloc] init];
     [navC setNavigationBarHidden:YES];
@@ -55,7 +57,7 @@
     freqCutterCameraVideoCallback = 0;
     
     [self registerApp];
-    [self initPermissionLocationWhileInUse];
+    [self promptForLocationServices];
     
     
     DVWindowShow();
@@ -141,10 +143,10 @@
         //setting delegates
 
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
-        fc.delegate = [[Menu instance] getMapVC];
+        fc.delegate = [[Menu instance] getFrontVC];
 
         DJICamera* cam = (DJICamera*)[ComponentHelper fetchCamera];
-        [[Menu instance] getMapVC].camera = cam;
+        [[Menu instance] getFrontVC].camera = cam;
         cam.delegate = self;
         
         [ComponentHelper fetchRemoteController].delegate = self;
@@ -153,7 +155,7 @@
         battery.delegate = self;
         
         DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
-        gimbal.delegate = [[Menu instance] getMapVC];
+        gimbal.delegate = [[Menu instance] getFrontVC];
         [gimbal resetGimbalWithCompletion:nil];
         // post notification
     
@@ -220,48 +222,45 @@
     });
 }
 
--(void) initPermissionLocationWhileInUse{
-    _locationPermission = [[PermissionScope alloc]init];
-    [_locationPermission addPermission:[[LocationWhileInUsePermission alloc]init] message:@"We use this to track\r\nwhere you live"];
+
+-(void) promptForLocationServices{ // in use authorisation requesting
+    if (!locManager) {
+        locManager = [[CLLocationManager alloc]init];
+        locManager.delegate = self;
+    }
     
-    if (_locationPermission.statusLocationInUse == PermissionStatusAuthorized) {
-        isLocationsServicesEnabled = YES;
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    
+    if (status != 4) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
         
-        [[[Menu instance] getMapVC] startUpdatingLoc];
+        [locManager requestWhenInUseAuthorization];
+        isLocationsServicesEnabled = NO;
+    }
+    else{
+        isLocationsServicesEnabled = YES;
+        [[[Menu instance] getFrontVC] startUpdatingLoc];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocEnabled" object:self];
     }
-    else {
-        isLocationsServicesEnabled = NO;
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
-    }
-    
 }
 
--(void) promptForLocationServices{ // in use
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
     
-    [_locationPermission show:^(BOOL completed, NSArray *results) {
-        NSLog(@"Changed: %@ - %@", @(completed), results);
-        if (completed) {
-            isLocationsServicesEnabled = YES;
-            [[[Menu instance] getMapVC] startUpdatingLoc];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocEnabled" object:self];
-        }
-        else{
-            isLocationsServicesEnabled = NO;
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
-        }
-    } cancelled:^(NSArray *x) {
-        NSLog(@"cancelled");
-        isLocationsServicesEnabled = NO;
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocNotEnabled" object:self];
-    }];
+    if (status == 4) {
+        // did authorize location manager updates
+        // start map updates
+        isLocationsServicesEnabled = YES;
+        [[[Menu instance] getFrontVC] startUpdatingLoc];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"InUseLocEnabled" object:self];
+    }
 }
+
 
 
 #pragma mark - SWReveal delegate
 
 - (void)revealController:(SWRevealViewController *)revealController panGestureBeganFromLocation:(CGFloat)location progress:(CGFloat)progress overProgress:(CGFloat)overProgress{
-    [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
+    [[[Menu instance] getFrontVC].circuitsList hideCircuitList:YES];
     
     if (revealController == menuRevealController) {
         [mainRevealController _handleRevealGestureStateBeganWithRecognizer:menuRevealController.panGestureRecognizer];
@@ -374,31 +373,31 @@
     if (systemState.isRecording) {
 
         if (!_isDroneRecording) {
-            [mapVC.recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
+            [frontVC.recButton setImage:[UIImage imageNamed:@"recButton_on.png"] forState:UIControlStateNormal];
         }
         _isDroneRecording = YES;
 
     }
     else{
         if (_isDroneRecording) {
-            [mapVC.recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
+            [frontVC.recButton setImage:[UIImage imageNamed:@"recButton_off.png"] forState:UIControlStateNormal];
         }
         _isDroneRecording = NO;
 
     }
 
     if (_isDroneRecording) {
-        if ([mapVC.recordingTimeLabel isHidden]) {
-            [mapVC.recordingTimeLabel setHidden:NO];
+        if ([frontVC.recordingTimeLabel isHidden]) {
+            [frontVC.recordingTimeLabel setHidden:NO];
         }
         int recordingTime = systemState.currentVideoRecordingTimeInSeconds;
         int minute = (recordingTime % 3600) / 60;
         int second = (recordingTime % 3600) % 60;
         NSString* timeString = [NSString stringWithFormat:@"%02d:%02d",minute,second];
-        [mapVC.recordingTimeLabel setText:timeString];
+        [frontVC.recordingTimeLabel setText:timeString];
     }
     else{
-        [mapVC.recordingTimeLabel setText:@"Rec"];
+        [frontVC.recordingTimeLabel setText:@"Rec"];
     }
 }
 

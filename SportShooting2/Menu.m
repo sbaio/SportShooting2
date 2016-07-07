@@ -57,14 +57,14 @@
     return navC;
 }
 
--(MapVC*) getMapVC{
-    MapVC* mapVC = (MapVC*)[self getMainRevealVC].frontViewController;
-    return mapVC;
+-(FrontVC*) getFrontVC{
+    FrontVC* frontVC = (FrontVC*)[self getMainRevealVC].frontViewController;
+    return frontVC;
 }
 
 -(MapView*) getMapView{
     
-    return [self getMapVC].mapView;
+    return [self getFrontVC].mapView;
 }
 
 -(MKMapView*) getMap{

@@ -11,16 +11,16 @@
 #import "AppDelegate.h"
 #import "Menu.h"
 #import "ComponentHelper.h"
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "Calc.h"
 
 @class AppDelegate;
-@class MapVC;
+@class FrontVC;
 
 @interface TopMenu : UIView
 {
     __weak AppDelegate* appD;
-    __weak MapVC* mapVC;
+    __weak FrontVC* frontVC;
     __weak DJIFlightControllerCurrentState* FCcurrentState;
     
     CGRect takeOffButtonFrame;

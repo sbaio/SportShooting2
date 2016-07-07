@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "Menu.h"
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "Autopilot.h"
 
+@class FrontVC;
 
 @interface alertsView : UIView <DJIMissionManagerDelegate>
 {
-    __weak MapVC* mapVC;
+    __weak FrontVC* frontVC;
     
     UITapGestureRecognizer* dismissTapGRAlertView;
     

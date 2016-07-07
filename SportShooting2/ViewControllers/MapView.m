@@ -51,7 +51,7 @@
 
 
 -(void) updateMaskImageAndButton{
-    BOOL show = (!_mapVC.circuit && ![[[[UIApplication sharedApplication]keyWindow] subviews] containsObject:_mapVC.circuitsList]);
+    BOOL show = (!_frontVC.circuit && ![[[[UIApplication sharedApplication]keyWindow] subviews] containsObject:_frontVC.circuitsList]);
     
     if (show) {
         [self setMapViewMaskImage:YES];
@@ -63,7 +63,7 @@
 
 -(void) tap:(id)sender{
     // did click on mapview button
-    [_mapVC.circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+    [_frontVC.circuitsList openCircuitListWithCompletion:^(BOOL finished) {
         
     }];
 }
@@ -240,12 +240,12 @@
 }
 -(void) disableMapViewScroll{
     [self setScrollEnabled:NO];
-    [_mapVC.scrollButton setImage:[UIImage imageNamed:@"pan_50.png"] forState:UIControlStateNormal];
+    [_frontVC.scrollButton setImage:[UIImage imageNamed:@"pan_50.png"] forState:UIControlStateNormal];
 }
 
 -(void) enableMapViewScroll{
     [self setScrollEnabled:YES];
-    [_mapVC.scrollButton setImage:[UIImage imageNamed:@"pan_yellow.png"] forState:UIControlStateNormal];
+    [_frontVC.scrollButton setImage:[UIImage imageNamed:@"pan_yellow.png"] forState:UIControlStateNormal];
 }
 
 

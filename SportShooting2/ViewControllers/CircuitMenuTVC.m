@@ -65,7 +65,7 @@
         case 0:
         {// select circuti .. open
             [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
-            [[[Menu instance] getMapVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+            [[[Menu instance] getFrontVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
                 
             } ];
             break;
@@ -73,8 +73,8 @@
         case 1:
         {// push circuit definition vc
             [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeft animated:YES];
-            [[[Menu instance] getMapVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
-                [[[Menu instance] getMapVC].circuitsList openDefineTableViewForCircuit:nil];
+            [[[Menu instance] getFrontVC].circuitsList openCircuitListWithCompletion:^(BOOL finished) {
+                [[[Menu instance] getFrontVC].circuitsList openDefineTableViewForCircuit:nil];
             }];
             
             break;

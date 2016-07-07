@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="CUB-Fw-CSc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="CUB-Fw-CSc">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -23,7 +22,7 @@
                     </view>
                     <connections>
                         <segue destination="Ux4-Nf-Ypd" kind="custom" identifier="sw_mainReveal_to_menuReveal" customClass="SWRevealViewControllerSegueSetController" id="n5O-vf-iR2"/>
-                        <segue destination="uuK-nl-Nt5" kind="custom" identifier="sw_mainReveal_to_mapVC" customClass="SWRevealViewControllerSegueSetController" id="een-WE-Mbh"/>
+                        <segue destination="uuK-nl-Nt5" kind="custom" identifier="sw_mainReveal_to_frontVC" customClass="SWRevealViewControllerSegueSetController" id="een-WE-Mbh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gVE-Hd-rgd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -492,15 +491,15 @@
             </objects>
             <point key="canvasLocation" x="1341" y="296"/>
         </scene>
-        <!--MapVC-->
+        <!--FrontVC-->
         <scene sceneID="evV-xt-2NF">
             <objects>
-                <viewController storyboardIdentifier="mainFrontVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uuK-nl-Nt5" customClass="MapVC" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="mainFrontVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uuK-nl-Nt5" customClass="FrontVC" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="yxi-0r-0XC"/>
                         <viewControllerLayoutGuide type="bottom" id="66l-44-8QA"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" restorationIdentifier="MapVCView" id="GEG-2L-0Qo">
+                    <view key="view" contentMode="scaleToFill" restorationIdentifier="FrontVCView" id="GEG-2L-0Qo">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

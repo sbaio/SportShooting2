@@ -40,7 +40,7 @@ typedef struct{
 @interface pathPlanner : NSObject <DJIMissionManagerDelegate>
 {
     __weak MapView* mapView;
-    __weak MapVC* mapVC;
+    __weak FrontVC* frontVC;
     
     NSString* redColorString;
     NSString* yellowColorString;

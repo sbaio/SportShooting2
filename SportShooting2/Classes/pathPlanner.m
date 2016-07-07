@@ -18,14 +18,14 @@
     self = [super init];
     
     mapView = [[Menu instance] getMapView];
-    mapVC = [[Menu instance] getMapVC];
+    frontVC = [[Menu instance] getFrontVC];
     
     yellowColorString = @"RGB 212 175 55";
     redColorString = @"RGB 222 22 22";
     
-    _Ki = [mapVC.KiSlider value];
-    _Kp = [mapVC.KpSlider value];
-    _Kd = [mapVC.KdSlider value];
+    _Ki = [frontVC.KiSlider value];
+    _Kp = [frontVC.KpSlider value];
+    _Kd = [frontVC.KdSlider value];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRCSwitchChangedNotif:) name:@"RCSwitchStateChanged" object:nil];
     
@@ -329,12 +329,12 @@
  
     if (_drone.isCloseTracking) {
         // clean after shortcutting phase
-        [mapVC.topMenu setStatusLabelText:@"Close tracking"];
+        [frontVC.topMenu setStatusLabelText:@"Close tracking"];
         [mapView removePinsNamed:@"shortcuttingPin"];
         [self radialCloseTracking:carLoc onCircuit:circ drone:drone];
     }
     else{
-        [mapVC.topMenu setStatusLabelText:@"Shortcutting"];
+        [frontVC.topMenu setStatusLabelText:@"Shortcutting"];
         [mapView removePinsNamed:@"nextCenter"]; // should be cleaned  differently
         [self performShortcutting];
     }
@@ -677,11 +677,11 @@
     
     if (_drone.isCloseTracking) {
         // clean after shortcutting phase
-        [mapVC.topMenu setStatusLabelText:@"Close tracking"];
+        [frontVC.topMenu setStatusLabelText:@"Close tracking"];
         [mapView removePinsNamed:@"shortcuttingPin"];
     }
     else{
-        [mapVC.topMenu setStatusLabelText:@"Shortcutting"];
+        [frontVC.topMenu setStatusLabelText:@"Shortcutting"];
         [mapView removePinsNamed:@"nextCenter"]; // should be cleaned  differently
     }
 }

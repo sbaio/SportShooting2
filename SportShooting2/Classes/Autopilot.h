@@ -12,7 +12,7 @@
 #import "ComponentHelper.h"
 #import "Vec.h"
 #import "Drone.h"
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "mapView.h"
 
 /* inputs of Autopilot are:
@@ -31,7 +31,7 @@
  */
 
 @class Drone;
-@class MapVC;
+@class FrontVC;
 @class MapView;
 
 struct PitchRoll {
@@ -102,7 +102,7 @@ struct Altitude {
     
     DJIMission* currentMission;
     
-    __weak MapVC* mapVC;
+    __weak FrontVC* frontVC;
     __weak MapView* mapView;
     
     

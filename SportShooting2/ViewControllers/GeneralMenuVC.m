@@ -9,7 +9,7 @@
 #import "GeneralMenuVC.h"
 #import "DVFloatingWindow.h"
 
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "Menu.h"
 #import "UIColor+CustomColors.h"
 
@@ -109,14 +109,14 @@
             if (fc && fc.simulator) {
                 if ([sender isOn]) {
                     if (!fc.simulator.isSimulatorStarted) {
-                        [[[Menu instance] getMapVC] startSimulatorAtLoc:[[Menu instance] getMapVC].phoneLocation WithCompletion:^(NSError * _Nullable error) {
+                        [[[Menu instance] getFrontVC] startSimulatorAtLoc:[[Menu instance] getFrontVC].phoneLocation WithCompletion:^(NSError * _Nullable error) {
                             [self updateDroneSwitchAndLabel];
                         }];
                     }
                 }
                 else{
                     if (fc.simulator.isSimulatorStarted) {
-                        [[[Menu instance] getMapVC] stopSimulatorWithCompletion:^(NSError * _Nullable error) {
+                        [[[Menu instance] getFrontVC] stopSimulatorWithCompletion:^(NSError * _Nullable error) {
                             [self updateDroneSwitchAndLabel];
                         }];
                     }

@@ -35,8 +35,6 @@
 #import "pathPlanner.h"
 #import "KF1D.h"
 
-//#include "kalman.h"
-
 @class MapView;
 @class Drone;
 @class circuitsListFW;

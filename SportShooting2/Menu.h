@@ -12,13 +12,13 @@
 #import "GeneralMenuVC.h"
 #import "CircuitMenuTVC.h"
 
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "AppDelegate.h"
 #import "VideoPreviewer.h"
 #import "TopMenu.h"
 #import "MapView.h"
 
-@class MapVC;
+@class FrontVC;
 @class GeneralMenuVC;
 @class AppDelegate;
 @class CircuitsTVC;
@@ -44,7 +44,7 @@
 
 -(GeneralMenuVC*) getGeneralMenu;
 
--(MapVC*) getMapVC;
+-(FrontVC*) getFrontVC;
 -(AppDelegate*) getAppDelegate;
 
 -(MKMapView*) getMap;

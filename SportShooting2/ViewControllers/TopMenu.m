@@ -34,7 +34,7 @@
     
     self.clipsToBounds =  YES;
     appD = [[Menu instance] getAppDelegate];
-    mapVC = [[Menu instance] getMapVC];
+    frontVC = [[Menu instance] getFrontVC];
     
     Menu* menu = [Menu instance];
     menu.topMenu = self;
@@ -159,24 +159,24 @@
 
 -(void)showTakeOffButton{
     
-    takeOffButtonFrame = mapVC.takeOffButton.frame;
+    takeOffButtonFrame = frontVC.takeOffButton.frame;
     CGRect modifiedFrame = takeOffButtonFrame;
     
     modifiedFrame.origin.x = -200;
-    mapVC.takeOffButton.frame = modifiedFrame;
-    [mapVC.takeOffButton setHidden:NO];
-    [mapVC.takeOffButton setAlpha:1.0];
+    frontVC.takeOffButton.frame = modifiedFrame;
+    [frontVC.takeOffButton setHidden:NO];
+    [frontVC.takeOffButton setAlpha:1.0];
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     positionAnimation.toValue = @(takeOffButtonFrame.origin.x + takeOffButtonFrame.size.width/2);
     positionAnimation.springBounciness = 10;
     
-    [mapVC.takeOffButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
+    [frontVC.takeOffButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
 }
 
 -(void) hideTakeOffButton{
 
-    CGRect initialRect = mapVC.takeOffButton.frame;
+    CGRect initialRect = frontVC.takeOffButton.frame;
     
     POPBasicAnimation *opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
     opacityAnimation.toValue = @(0);
@@ -184,12 +184,12 @@
     POPBasicAnimation *X_Animation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     X_Animation.toValue = @(0);
     [opacityAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
-        [mapVC.takeOffButton setHidden:YES];
-        mapVC.takeOffButton.frame = initialRect;
+        [frontVC.takeOffButton setHidden:YES];
+        frontVC.takeOffButton.frame = initialRect;
     }];
     
-    [mapVC.takeOffButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
-    [mapVC.takeOffButton.layer pop_addAnimation:opacityAnimation forKey:@"takeOffButtonDismissingOpacity"];
+    [frontVC.takeOffButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
+    [frontVC.takeOffButton.layer pop_addAnimation:opacityAnimation forKey:@"takeOffButtonDismissingOpacity"];
     
 
     
@@ -198,24 +198,24 @@
 
 -(void)showLandButton{
     
-    landButtonFrame = mapVC.landButton.frame;
+    landButtonFrame = frontVC.landButton.frame;
     CGRect modifiedFrame = landButtonFrame;
     
     modifiedFrame.origin.x = -100;
-    mapVC.landButton.frame = modifiedFrame;
-    [mapVC.landButton setHidden:NO];
-    [mapVC.landButton setAlpha:1.0];
+    frontVC.landButton.frame = modifiedFrame;
+    [frontVC.landButton setHidden:NO];
+    [frontVC.landButton setAlpha:1.0];
     
     POPSpringAnimation *positionAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     positionAnimation.toValue = @(landButtonFrame.origin.x + landButtonFrame.size.width/2);
     positionAnimation.springBounciness = 20;
     
-    [mapVC.landButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
+    [frontVC.landButton.layer pop_addAnimation:positionAnimation forKey:@"takeOffButtonEntrance"];
 }
 
 -(void) hideLandButton{
     
-    CGRect initialRect = mapVC.landButton.frame;
+    CGRect initialRect = frontVC.landButton.frame;
     
     POPBasicAnimation *opacityAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerOpacity];
     opacityAnimation.toValue = @(0);
@@ -223,12 +223,12 @@
     POPBasicAnimation *X_Animation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionX];
     X_Animation.toValue = @(0);
     [opacityAnimation setCompletionBlock:^(POPAnimation *anim, BOOL finished) {
-        [mapVC.landButton setHidden:YES];
-        mapVC.landButton.frame = initialRect;
+        [frontVC.landButton setHidden:YES];
+        frontVC.landButton.frame = initialRect;
     }];
     
-    [mapVC.landButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
-    [mapVC.landButton.layer pop_addAnimation:opacityAnimation forKey:@"landButtonDismissingOpacity"];
+    [frontVC.landButton.layer pop_addAnimation:X_Animation forKey:@"X_Animation"];
+    [frontVC.landButton.layer pop_addAnimation:opacityAnimation forKey:@"landButtonDismissingOpacity"];
     
     
     

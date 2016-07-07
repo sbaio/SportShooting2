@@ -14,15 +14,15 @@
 #import "ComponentHelper.h"
 #import "DVFloatingWindow.h"
 
-#import <PermissionScope/PermissionScope-Swift.h>
+//#import <PermissionScope/PermissionScope-Swift.h>
 
 #import "VideoPreviewer/VideoPreviewer.h"
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "MapView.h"
 
-@class MapVC;
+@class FrontVC;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate,DJIBatteryDelegate,DJIRemoteControllerDelegate,DJICameraDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,DJISDKManagerDelegate,SWRevealViewControllerDelegate,DJIBatteryDelegate,DJIRemoteControllerDelegate,DJICameraDelegate,CLLocationManagerDelegate>
 {
     int attemptsToRegister;
     BOOL registered;
@@ -36,14 +36,16 @@
     NSDate* lastCameraUpdateDate;
     NSDate* lastRCUpdateDate;
     
-    __weak MapVC* mapVC;
+    CLLocationManager* locManager;
+    
+    __weak FrontVC* frontVC;
     
     DJIRCHardwareFlightModeSwitchState prevSwitchState;
     
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
-@property(nonatomic,strong) PermissionScope * locationPermission;
+//@property(nonatomic,strong) PermissionScope * locationPermission;
 
 @property BOOL isReceivingVideoData;
 @property BOOL isReceivingRCUpdates;

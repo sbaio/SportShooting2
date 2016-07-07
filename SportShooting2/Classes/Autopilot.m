@@ -28,7 +28,7 @@
     
     [self initFlightVariables];
 
-    mapVC = [[Menu instance] getMapVC];
+    frontVC = [[Menu instance] getFrontVC];
     mapView = [[Menu instance] getMapView];
     
     [self addObserver:self forKeyPath:@"isVirtualStickModeEnabled" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
@@ -166,7 +166,7 @@
     DJIMissionStep* takeoffStep = [[DJITakeoffStep alloc] init];
     [takeOffMissionSteps addObject:takeoffStep];
 
-    DJIMissionStep* goUpStep = [[DJIGoToStep alloc] initWithCoordinate:[[Menu instance]getMapVC].FCcurrentState.aircraftLocation altitude:11];
+    DJIMissionStep* goUpStep = [[DJIGoToStep alloc] initWithCoordinate:[[Menu instance]getFrontVC].FCcurrentState.aircraftLocation altitude:11];
     [takeOffMissionSteps addObject:goUpStep];
     
     _takeOffMission = [[DJICustomMission alloc] initWithSteps:takeOffMissionSteps];
@@ -212,7 +212,7 @@
 -(void) startFollowMissionWithCompletion:(void (^)(NSError* error))callback{
     if (!_followMeMission) {
         _followMeMission = [[DJIFollowMeMission alloc] init];
-        _followMeMission.followMeCoordinate = [[Menu instance] getMapVC].realDrone.droneLoc.coordinate;
+        _followMeMission.followMeCoordinate = [[Menu instance] getFrontVC].realDrone.droneLoc.coordinate;
         _followMeMission.followMeAltitude = 10.5;
         _followMeMission.heading = DJIFollowMeHeadingTowardFollowPosition;
     }
@@ -246,7 +246,7 @@
 
 -(void) onUpdateTimer:(id)sender{
     if (!self.followLoc) {
-        _followLoc = mapVC.phoneLocation;
+        _followLoc = frontVC.phoneLocation;
     }
     _followMeMission.followMeCoordinate = self.followLoc.coordinate;
     
@@ -325,7 +325,7 @@
 //            // takeoff succeeded
 //            [[[Menu instance] getTopMenu] setStatusLabelText:@"Hovering"];
 //            
-////            _takeOffLocation = [[Menu instance] getMapVC].realDrone.droneLoc;
+////            _takeOffLocation = [[Menu instance] getFrontVC].realDrone.droneLoc;
 //            
 //            // prepare follow mission
 //        }

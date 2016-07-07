@@ -45,7 +45,7 @@
     [_takeOffAlertView.layer pop_removeAllAnimations];
     
     [self setFrame:self.superview.bounds];
-    [mapVC.view addSubview:self];
+    [frontVC.view addSubview:self];
     
     CGPoint center = self.center;
     CGSize size = CGSizeMake(self.frame.size.width*0.6, self.frame.size.height*0.75);
@@ -84,8 +84,8 @@
     [_takeOffAlertView.layer pop_addAnimation:positionAnimation forKey:@"positionAnimation"];
     [_takeOffAlertView.layer pop_addAnimation:positionAnimationY forKey:@"positionAnimationY"];
     
-    if ([[[Menu instance] getMapVC] isShowingCircuitList]) {
-        [[[Menu instance] getMapVC].circuitsList hideCircuitList:YES];
+    if ([[[Menu instance] getFrontVC] isShowingCircuitList]) {
+        [[[Menu instance] getFrontVC].circuitsList hideCircuitList:YES];
     }
     
     [self updateSwitchStack];
@@ -134,7 +134,7 @@
 
 - (IBAction)didClickOnTakeOffButton:(id)sender {
     
-    [mapVC.autopilot takeOffWithCompletion:^(NSError * _Nullable error){
+    [frontVC.autopilot takeOffWithCompletion:^(NSError * _Nullable error){
         if (error) {
             [self shakeTakeoffAlertViewWithComp:^(BOOL finished) {
             }];
@@ -166,7 +166,7 @@
 -(id) initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
     
-    mapVC = [[Menu instance] getMapVC];
+    frontVC = [[Menu instance] getFrontVC];
     dismissTapGRAlertView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnAlertView:)];
     
     [self addGestureRecognizer:dismissTapGRAlertView];
@@ -179,7 +179,7 @@
 -(BOOL) isShowingAnAlert{
     NSArray* arrayOfSiblings = self.superview.subviews;
     int alertIndex = (int)[arrayOfSiblings indexOfObject:self];
-    int mainContentViewIndex = (int)[arrayOfSiblings indexOfObject:[[Menu instance] getMapVC].contentView];
+    int mainContentViewIndex = (int)[arrayOfSiblings indexOfObject:[[Menu instance] getFrontVC].contentView];
     
     
     if (alertIndex < mainContentViewIndex) {

@@ -453,12 +453,12 @@
         
         NSString* circuitName = [self txtOfCell:cell];
         
-        MapVC* mapVC = [[Menu instance] getMapVC];
+        FrontVC* frontVC = [[Menu instance] getFrontVC];
         MapView* mapView = [[Menu instance] getMapView];
         
         circuitManager* cm = [circuitManager Instance];
         
-        if (!mapVC.circuit || !mapVC.circuit.circuitName || ![mapVC.circuit.circuitName isEqualToString:circuitName]) {
+        if (!frontVC.circuit || !frontVC.circuit.circuitName || ![frontVC.circuit.circuitName isEqualToString:circuitName]) {
             loadedCircuit = [cm loadCircuitNamed_coder:circuitName];
         }
         
@@ -469,11 +469,11 @@
         
         [[Calc Instance] map:mapView showCircuit:loadedCircuit];
         
-        if (mapVC.phoneLocation) {
+        if (frontVC.phoneLocation) {
             float dist = 1000000;
             int i = 0;
             for (CLLocation* loci in loadedCircuit.locations) {
-                float disti = [[Calc Instance] distanceFromCoords2D:loci.coordinate toCoords2D:mapVC.phoneLocation.coordinate];
+                float disti = [[Calc Instance] distanceFromCoords2D:loci.coordinate toCoords2D:frontVC.phoneLocation.coordinate];
                 if (dist > disti) {
                     dist = disti;
                     i = (int)[loadedCircuit.locations indexOfObject:loci];
@@ -558,16 +558,16 @@
 
 - (void) didSelectCircuitAtSelectedRow:(id) sender{
     
-    MapVC* mapVC = [[Menu instance] getMapVC];
+    FrontVC* frontVC = [[Menu instance] getFrontVC];
     if (loadedCircuit) {
         
         loadedCircuit.mapView = [[Menu instance] getMapView];
         
         [loadedCircuit update];
         
-        mapVC.circuit = loadedCircuit;
+        frontVC.circuit = loadedCircuit;
         
-        NSLog(@"setting mapVC circuit: \"%@\"",loadedCircuit.circuitName);
+        NSLog(@"setting frontVC circuit: \"%@\"",loadedCircuit.circuitName);
         
         // inform that this circuit "circuitName" is selected
         MGSwipeTableCell* cell = [_tableView cellForRowAtIndexPath:[_tableView indexPathForSelectedRow]];
@@ -691,12 +691,12 @@
 
 -(void) startPan{
     [[[Menu instance] getMainRevealVC] setFrontViewPosition:FrontViewPositionLeftSide animated:YES];
-    MapVC* mapVC = [[Menu instance] getMapVC];
+    FrontVC* frontVC = [[Menu instance] getFrontVC];
     
-    [mapVC disableMainMenuPan];
-    [mapVC.mapView disableMapViewScroll];
+    [frontVC disableMainMenuPan];
+    [frontVC.mapView disableMapViewScroll];
     
-    mapVC.isPathDrawingEnabled = YES;
+    frontVC.isPathDrawingEnabled = YES;
     
     DVLog(@"please define circuit through swiping on the screen");
 }

@@ -488,7 +488,7 @@
 }
 
 -(void) moveCarOnCircuit:(NSTimer*)timer{
-    if ([[Menu instance]getMapVC].isRealCar) {
+    if ([[Menu instance]getFrontVC].isRealCar) {
         return;
     }
     // input slider ...
@@ -501,8 +501,8 @@
    
     
     carSimulatedLocation = [[CLLocation alloc]initWithCoordinate:carSimulatedLocation.coordinate altitude:0 horizontalAccuracy:1 verticalAccuracy:1 course:course_heading speed:carSpeed timestamp:[[NSDate alloc] init]];
-    if (![[Menu instance]getMapVC].isRealCar) {
-        [[[Menu instance]getMapVC] carAtLocation:carSimulatedLocation];
+    if (![[Menu instance]getFrontVC].isRealCar) {
+        [[[Menu instance]getFrontVC] carAtLocation:carSimulatedLocation];
     }
     
 }

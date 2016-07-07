@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MapVC.h"
+#import "FrontVC.h"
 #import "Circuit.h"
 #import "circuitManager.h"
 

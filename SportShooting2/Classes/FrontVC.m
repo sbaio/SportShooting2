@@ -699,7 +699,7 @@
 
 #pragma mark - handle UI
 -(void) didTapOnFrontVC:(UITapGestureRecognizer*) tapGR{
-    NSLog(@"tap on frontVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
+    NSLog(@"tap on FrontVC , %@",NSStringFromCGPoint([tapGR locationInView:self.view]));
 }
 
 - (IBAction)onTakeOffButtonClicked:(id)sender {
