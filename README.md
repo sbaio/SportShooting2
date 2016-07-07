@@ -13,3 +13,10 @@ The app is also mainly inspired from the DJI Demo app where the use of the SDK i
 # About the SDK
 
 The last SDK available as of July 7th contains very interesting APIs that weren't in the previous SDK.
+
+
+# Things tried - random ideas
+
+- The follow me functionality in the SDK (DJIFollowMeMission) is working perfectly but not adapted to the very dynamic SportShooting use case. The maximum speed is limited to 10m/s and the turns are thus very smooth.
+- asfig
+
