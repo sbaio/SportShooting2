@@ -21,8 +21,8 @@ In order to start receiving drone updates, we need to register the app with a ke
 # Concerning the video
 
 The main callback is received in the function camera: didReceiveVideoData: where buffers are received at about 100Hz and added to videoPreviewer's queue. In the videoPreviewer execution loop "startRun", the frames are extracted and sent to the glView property of VideoPreviewer in order to be displayed.
+
 # Things tried - random ideas
 
 - The follow me functionality in the SDK (DJIFollowMeMission) is working perfectly but not adapted to the very dynamic SportShooting use case. The maximum speed is limited to 10m/s and the turns are thus very smooth.
 - The DJICustomMission is a good and easy way of organising a scenario of takeoff, start record, goto a certain location. That's how the takeoff is done when the user confirm his intention to takeoff. The drone takes off to 1.2m and then goes up to 10m.
-- 
