@@ -14,13 +14,21 @@ The app is also mainly inspired from the DJI Demo app where the use of the SDK i
 
 The last SDK available as of July 7th contains very interesting APIs that weren't in the previous SDK.
 
-In DJI SDK tutorials you will find how to make the SDK work in a xcode project, there are 3 libraries one should not forget: libz.tbd, libstdc++.6.0.9.tbd and libiconv.tbd
+In DJI SDK tutorials you will find how to make the SDK work in a xcode project, there are 3 libraries one should not forget to link with: libz.tbd, libstdc++.6.0.9.tbd and libiconv.tbd
 
 In order to start receiving drone updates, we need to register the app with a key provided by DJI on the Developer center website.
 
 # Concerning the video
 
 The main callback is received in the function camera: didReceiveVideoData: where buffers are received at about 100Hz and added to videoPreviewer's queue. In the videoPreviewer execution loop "startRun", the frames are extracted and sent to the glView property of VideoPreviewer in order to be displayed.
+
+In glView one can manipulate the frame obtained after the YUV conversion to RGB, either for obtaining less resolution or for distorting the image for virtual reality headsets etc..
+
+The camera callback is received in AppDelegate.
+
+# Concerning Drone state updates
+
+We receive the most important information about the drone in the callback flightController:didUpdateSystemState: in FrontVC. There 
 
 # Things tried - random ideas
 
