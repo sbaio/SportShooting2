@@ -37,6 +37,7 @@ We receive the most important information about the drone in the callback flight
   * The notion of distanceOnCircuit :
       
   * oihv
+ 
 The circuit class is composed of different properties which are useful for the pathplanning and which we don't need to calculate each time, such as: (locations, length, distanceOnCircuit between two different locations from the circuit, the angle of the circuit at each location, the curvature).
 
 
