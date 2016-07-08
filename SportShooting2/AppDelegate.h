@@ -14,8 +14,6 @@
 #import "ComponentHelper.h"
 #import "DVFloatingWindow.h"
 
-//#import <PermissionScope/PermissionScope-Swift.h>
-
 #import "VideoPreviewer/VideoPreviewer.h"
 #import "FrontVC.h"
 #import "MapView.h"
@@ -45,8 +43,6 @@
 }
 @property (strong, nonatomic) UIWindow *window;
 @property(nonatomic,weak) DJIAircraft* realDrone;
-//@property(nonatomic,strong) PermissionScope * locationPermission;
-
 @property BOOL isReceivingVideoData;
 @property BOOL isReceivingRCUpdates;
 @property BOOL isReceivingFlightControllerStatus;

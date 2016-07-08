@@ -53,8 +53,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
     
-    //[self initFilter];
-    
 }
 
 
@@ -78,50 +76,6 @@
     yellowColorString = @"RGB 212 175 55";
     redColorString = @"RGB 222 22 22";
 }
-
-/*-(void) initFilter{
-    f = alloc_filter(2, 1);
-    
-    /* The train state is a 2d vector containing position and velocity.
-     Velocity is measured in position units per timestep units.
-    set_matrix(f.state_transition,
-               1.0, 1.0,
-               0.0, 1.0);
-    
-     We only observe position
-    set_matrix(f.observation_model, 1.0, 0.0);
-    
-     The covariance matrices are blind guesses
-    set_identity_matrix(f.process_noise_covariance);
-    scale_matrix(f.process_noise_covariance, 100000);
-    
-    
-    //R is The measurement noise covariance
-    set_identity_matrix(f.observation_noise_covariance);
-    scale_matrix(f.observation_noise_covariance, 0.3);
-    
-     Our knowledge of the start position is incorrect and unconfident
-    double deviation = 1000.0;
-    set_matrix(f.state_estimate, 10 * deviation);
-    set_identity_matrix(f.estimate_covariance);
-    scale_matrix(f.estimate_covariance, deviation * deviation);
-    
-//     Test with time steps of the position gradually increasing
-//    for (int i = 0; i < 100; ++i) {
-//        set_matrix(f.observation, (double) 2*i);
-//        update(f);
-//        printf("------------------------\n");
-//        printf("estimated position: %f\n", f.state_estimate.data[0][0]);
-//        printf("estimated velocity: %f\n", f.state_estimate.data[1][0]);
-//
-//    }
-    
-    
-
-    
-    
-//    free_filter(f);
-}*/
 
 -(void) showTopMenu{
     

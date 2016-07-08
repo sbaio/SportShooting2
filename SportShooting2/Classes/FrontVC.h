@@ -115,7 +115,6 @@
     NSDate* lastFCUpdateDate;
     int freqCutterCameraFeed;
     
-//    KalmanFilter f;
 }
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet alertsView *alertsView;
