@@ -34,9 +34,9 @@ We receive the most important information about the drone in the callback flight
 # Classes :
 
 -The circuit class :
-  * The notion of distanceOnCircuit :
-      
-  * oihv
+  * The notion of distanceOnCircuit : (property -> self.interIndexesDistance)
+      from two different locations on the circui we can calculate the distanceOnCircuit, which is the distance the car will have to go from one position to another.
+  * We calculate the angle of the circuit at each location, from which we calculate curvature, and then deduct which side of the track is prefereble for the drone to be in so to make the shorter path.
  
 The circuit class is composed of different properties which are useful for the pathplanning and which we don't need to calculate each time, such as: (locations, length, distanceOnCircuit between two different locations from the circuit, the angle of the circuit at each location, the curvature).
 
