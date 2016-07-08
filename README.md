@@ -35,3 +35,15 @@ We receive the most important information about the drone in the callback flight
 
 - The follow me functionality in the SDK (DJIFollowMeMission) is working perfectly but not adapted to the very dynamic SportShooting use case. The maximum speed is limited to 10m/s and the turns are thus very smooth.
 - The DJICustomMission is a good and easy way of organising a scenario of takeoff, start record, goto a certain location. That's how the takeoff is done when the user confirm his intention to takeoff. The drone takes off to 1.2m and then goes up to 10m.
+
+
+# Diffiulties encontered
+- When using the app, the phone needs to be plugged to the drone's RC, this makes it difficult to have the logs a developer has on the console. Also many errors cause the app to crash without indicating the cause. DJI worked on this issue by created a classe DJIRemoteLogger and a mode for debugging using a bridge app.
+
+The bridge app solution works as follows: The phone running the app is connected to the mac. To get the drone updates without being linked to the RC, we use another device running the bridge app and that communicates with the phone running the SportShooting2 app. This way we can debug our code being connected wirelessly to the drone's RC.
+
+ 
+
+# Libraries Used
+
+For this app, we use different libraries for different purposes. SWRevealVC class is used to make easy the revealable menu as facebook friend list style. DVFloatingWindow is used to have logs directly on the window of the iphone.
