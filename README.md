@@ -31,6 +31,10 @@ The camera callback is received in AppDelegate.
 
 We receive the most important information about the drone in the callback flightController:didUpdateSystemState: in FrontVC. There we update drone GPS position, aircraft speed, GPS signal strength, drone yaw.
 
+# Workflow of the app: normal use
+
+After opening the app, it will start trying to connect to the drone. We should first choose the circuit we plan to drive and being filmed on. After selecting the circuit, we can click on takeoff button and confirm to start the takeoff mission, which is a normal takeoff plus a go up to 10 m.
+
 # Things tried - random ideas
 
 - The follow me functionality in the SDK (DJIFollowMeMission) is working perfectly but not adapted to the very dynamic SportShooting use case. The maximum speed is limited to 10m/s and the turns are thus very smooth.
