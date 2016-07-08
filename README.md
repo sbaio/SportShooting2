@@ -17,7 +17,7 @@ The last SDK available as of July 7th contains very interesting APIs that weren'
 In DJI SDK tutorials you will find how to make the SDK work in a xcode project, there are 3 libraries one should not forget to link with: libz.tbd, libstdc++.6.0.9.tbd and libiconv.tbd
 
 In order to start receiving drone updates, we need to register the app with a key provided by DJI on the Developer center website.
-- Another interesting point about the new SDK, new possibility of Simulator is possible. DJISimulator is a class created by DJI to make simulations easy. This makes having access to drone dynamics easier than having to go out and fly. When we start the simulator, the real drone turns to simulation mode and in responds to all the commands send to it in simulation.. for example when the command of takeoff is sent, we see the altitude going up in the flightController callback without the motors turning.,
+- Another interesting point about the new SDK, new possibility of Simulator is possible. DJISimulator is a class created by DJI to make simulations easy. This makes having access to drone dynamics easier than having to go out and fly. When we start the simulator, the real drone turns to simulation mode and in responds to all the commands send to it in simulation.. for example when the command of takeoff is sent, we see the altitude going up in the flightController callback without the motors rotating.
 
 # Concerning the video
 
@@ -42,8 +42,15 @@ We receive the most important information about the drone in the callback flight
 
 The bridge app solution works as follows: The phone running the app is connected to the mac. To get the drone updates without being linked to the RC, we use another device running the bridge app and that communicates with the phone running the SportShooting2 app. This way we can debug our code being connected wirelessly to the drone's RC.
 
- 
+# Still to do
+
 
 # Libraries Used
 
-For this app, we use different libraries for different purposes. SWRevealVC class is used to make easy the revealable menu as facebook friend list style. DVFloatingWindow is used to have logs directly on the window of the iphone.
+For this app, we use different libraries for different purposes. 
+
+- SWRevealVC class is used to make easy the revealable menu as facebook friend list style. 
+- DVFloatingWindow is used to have logs directly on the window of the iphone.
+- Pop library from facebook for easy animations
+- ffmpeg library is given by DJI Demo app project, it is used for decoding the video buffers coming from the camera and extracting a frame. (See VideoPreviewer class, videoFrameExtractor and MovieGlView classes)
+- DJI framework 
