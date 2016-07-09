@@ -31,6 +31,30 @@ The camera callback is received in AppDelegate.
 
 We receive the most important information about the drone in the callback flightController:didUpdateSystemState: in FrontVC. There we update drone GPS position, aircraft speed, GPS signal strength, drone yaw.
 
+# Classes :
+
+-The circuit class :
+  * The notion of distanceOnCircuit : (property -> self.interIndexesDistance)
+      from two different locations on the circui we can calculate the distanceOnCircuit, which is the distance the car will have to go from one position to another.
+  * We calculate the angle of the circuit at each location, from which we calculate curvature, and then deduct which side of the track is prefereble for the drone to be in so to make the shorter path.
+ 
+The circuit class is composed of different properties which are useful for the pathplanning and which we don't need to calculate each time, such as: (locations, length, distanceOnCircuit between two different locations from the circuit, the angle of the circuit at each location, the curvature).
+
+
+# Before starting the follow mission
+
+Before starting the following loop (calculate target position, send control commands to reach it) we need to setup the inputs for this loop. The circuit is set when the user clicks select. 
+
+
+
+# Workflow of the app: normal use
+
+After opening the app, it will start trying to connect to the drone. We should first choose the circuit we plan to drive and being filmed on. After selecting the circuit, we can click on takeoff button and confirm to start the takeoff mission, which is a normal takeoff plus a go up to 10 m.
+
+The takeoff mission requires the user to switch the RC's hardware stick to F mode in order to be able to send automatic flight commands such as go up to 10m.
+
+Once the takeoff mission has finished, we start the follow me mission, running the pathplanning loop.
+
 # Things tried - random ideas
 
 - The follow me functionality in the SDK (DJIFollowMeMission) is working perfectly but not adapted to the very dynamic SportShooting use case. The maximum speed is limited to 10m/s and the turns are thus very smooth.
