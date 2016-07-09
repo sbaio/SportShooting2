@@ -20,15 +20,15 @@
 @property NSMutableArray* locations; // need to be set
 @property float circuitLength;
 @property NSString* circuitName; // need to be set
-@property NSMutableArray* interDistance;
-@property NSMutableArray* interIndexesDistance;
-@property NSMutableArray* interAngle;
+@property NSMutableArray* interDistance; // distance between a loc i and the loc i+1
+@property NSMutableArray* interIndexesDistance; // 2D array of distance between  loc i and a loc j
+@property NSMutableArray* interAngle; // angle of circuit at loc i .. should be smooth and averaged
 @property NSMutableArray* courbures;
-@property NSMutableArray* turnLocs;
+@property NSMutableArray* turnLocs; // locations of circuit where courbure is high and
 @property NSMutableArray* turnCenters;
 @property NSMutableArray* Loc0_Loci_Vecs;
 @property (nonatomic) MKCoordinateRegion region;
-@property float RTH_altitude; // need to be set
+@property float RTH_altitude; // need to be set by user
 @property __weak MapView* mapView;
 
 // NFZ regions

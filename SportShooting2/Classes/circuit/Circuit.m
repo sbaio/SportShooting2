@@ -32,6 +32,7 @@
 //            [self calculateCourbureCircuit:self.locations];
             self.interIndexesDistance = [[Calc Instance] loadArrayNamed:[NSString stringWithFormat:@"distances%@",self.circuitName]];
             if (!self.interIndexesDistance) {
+                // THIS Operation takes around 5 seconds depending on the circuit size
                 self.interIndexesDistance = [self calculateInterIndexesDistances:self.locations];
                 NSString* st = [NSString stringWithFormat:@"distances%@",self.circuitName];
                 [self saveArrayFrom:self.interIndexesDistance toPathName:st];
