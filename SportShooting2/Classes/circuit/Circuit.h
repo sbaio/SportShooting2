@@ -32,6 +32,7 @@
 @property __weak MapView* mapView;
 
 
+
 // NFZ regions
 // type of obstacles
 
