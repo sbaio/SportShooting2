@@ -31,6 +31,7 @@
 @property float RTH_altitude; // need to be set by user
 @property __weak MapView* mapView;
 
+
 // NFZ regions
 // type of obstacles
 
