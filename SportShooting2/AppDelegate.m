@@ -173,7 +173,7 @@
     attemptsToRegister = 0;
     registered = NO;
     
-    NSString* appKey = @"c0c4b76bc9958412ef245778";
+    NSString* appKey = @"c0c4b76bc9958412ef245778"; // To Change
     
     [DJISDKManager registerApp:appKey withDelegate:self];
 }

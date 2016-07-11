@@ -470,7 +470,6 @@
 
 #pragma mark - car simulation 
 
-
 -(void) simulateCarOnCircuit:(Circuit*) circuit{
     if ([carSimulationTimer isValid]) {
         [carSimulationTimer invalidate];

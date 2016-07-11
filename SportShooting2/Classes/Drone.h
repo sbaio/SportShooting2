@@ -37,10 +37,11 @@
 
 //@property (weak, nonatomic) MKMapView* mapView;
 @property CLLocation* droneLoc; // GPS pos , alt, velocity .. when realDrone updated in callback at init
-@property int droneIndexOnCircuit;
-@property CLLocation* droneIndexLocation;
 
-@property float droneDistToItsIndex;
+@property int droneIndexOnCircuit; // useful
+@property CLLocation* droneIndexLocation; // location in the track  of index of the drone
+
+@property float droneDistToItsIndex; // dist from the drone to its index location.. condition for triggering the closeTracking
 
 @property float droneYaw;
 @property float droneYawSpeed;
@@ -56,6 +57,8 @@
 
 
 @property CLLocation* targetLocation;
+@property float targSp;
+@property float targHeading;
 
 @property Aircraft_Camera_Car_Annotation* droneAnno;
 @property Aircraft_Camera_Car_Annotation* gimbalAnno;
@@ -81,8 +84,7 @@
 @property Vec* versCircuit;
 @property Vec* sensNextCenter;
 
-@property float targSp;
-@property float targHeading;
+
 
 @property float V_parralele;
 @property float V_perp;

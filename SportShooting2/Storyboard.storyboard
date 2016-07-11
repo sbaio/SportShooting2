@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="CUB-Fw-CSc">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -639,7 +640,7 @@
                                             <action selector="simulatedCarSpeedSliderDidChangeValue:" destination="uuK-nl-Nt5" eventType="valueChanged" id="c5Z-cs-1Cn"/>
                                         </connections>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="-6" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
+                                    <slider hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="-6" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="JzQ-A5-sJJ" userLabel="Kp">
                                         <rect key="frame" x="49" y="135" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="po1-8j-6dh"/>
@@ -651,7 +652,7 @@
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.29999999999999999" minValue="0.0" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
+                                    <slider hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.29999999999999999" minValue="0.0" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="fGZ-fb-dZh" userLabel="Kd">
                                         <rect key="frame" x="49" y="195" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="YPb-0s-pVH"/>
@@ -663,7 +664,7 @@
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
+                                    <slider hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Wpw-Xu-8fL" userLabel="Ki">
                                         <rect key="frame" x="49" y="255" width="202" height="31"/>
                                         <connections>
                                             <action selector="onSliderDidChange:" destination="uuK-nl-Nt5" eventType="valueChanged" id="anR-PG-jEp"/>

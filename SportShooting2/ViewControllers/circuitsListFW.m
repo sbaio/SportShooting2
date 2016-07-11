@@ -38,7 +38,6 @@
     return self;
 }
 
-
 -(void) initWithDefaultsProperties{
     
     CGRect screenFrame = [[UIScreen mainScreen]bounds];
@@ -319,6 +318,7 @@
         return YES;
     }
 }
+
 -(NSArray*) swipeTableCell:(MGSwipeTableCell*) cell swipeButtonsForDirection:(MGSwipeDirection)direction
              swipeSettings:(MGSwipeSettings*) swipeSettings expansionSettings:(MGSwipeExpansionSettings*) expansionSettings;
 {
@@ -355,7 +355,7 @@
 -(BOOL) swipeTableCell:(MGSwipeTableCell*) cell tappedButtonAtIndex:(NSInteger) index direction:(MGSwipeDirection)direction fromExpansion:(BOOL) fromExpansion{
     circuitManager* cm = [circuitManager Instance];
     
-    if (index == 0) {
+    if (index == 0) { // tapped button delete
         [cm removeCircuitNamed:[self txtOfCell:cell]];
         allCircuits = [self loadExistingCircuitsNames_coder];
         [_tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[_tableView indexPathForCell:cell]]  withRowAnimation:UITableViewRowAnimationFade];
@@ -364,12 +364,12 @@
         [_tableView reloadData];
         
     }
-    else if(index == 1 ){
+    else if(index == 1 ){ // tapped button edit
         [self tableView:_tableView didDeselectRowAtIndexPath:[_tableView indexPathForSelectedRow]];
         [self tableView:_tableView didSelectRowAtIndexPath:[_tableView indexPathForCell:cell]];
         [self openDefineTableViewForCircuit:loadedCircuit];
     }
-    return NO;
+    return YES;
 }
 
 // DEFINE TABLE VIEW
@@ -448,7 +448,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (tableView == _tableView) {
-        // load concerned circuit and show it
+        // load selected circuit and show it
         MGSwipeTableCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         
         NSString* circuitName = [self txtOfCell:cell];
@@ -469,6 +469,7 @@
         
         [[Calc Instance] map:mapView showCircuit:loadedCircuit];
         
+        // make sure the circuit is not very far from user location
         if (frontVC.phoneLocation) {
             float dist = 1000000;
             int i = 0;
@@ -491,6 +492,7 @@
     
     
 }
+
 -(void) tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
     selectRow = -1;
     [self setButtonForCell:[tableView cellForRowAtIndexPath:indexPath] AtIndexPath:indexPath];
@@ -555,7 +557,6 @@
     }];
 }
 
-
 - (void) didSelectCircuitAtSelectedRow:(id) sender{
     
     FrontVC* frontVC = [[Menu instance] getFrontVC];
@@ -586,9 +587,7 @@
     selectedRow = (int) [_tableView indexPathForSelectedRow].row;
 }
 
-
-- (void)topBorderPanGesture:(UIPanGestureRecognizer *)recognizer
-{
+- (void)topBorderPanGesture:(UIPanGestureRecognizer *)recognizer{
     CGPoint translation = [recognizer translationInView:_titleLabel];
     [recognizer setTranslation:CGPointZero inView:_titleLabel];
     

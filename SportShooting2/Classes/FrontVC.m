@@ -248,6 +248,11 @@
     freqCutterCameraFeed = 0;
 }
 
+
+
+
+# pragma mark - methods to switch map and video views
+
 -(void) enlargeVideo_MakeMapSmall_updateConstraints{
     // remove video constraints from superview constraints .. this will keep video aspect
     [_contentView removeConstraints:[NSArray arrayWithObjects:mapSmallHeight,mapSmallX,mapSmallY,mapLargeHeight,mapLargeX,mapLargeY, nil]];
@@ -360,7 +365,9 @@
         [self switchToVideo];
     }
 }
-#pragma mark - drone state callback
+
+
+#pragma mark - drone state callback - flight controller callback
 
 - (void)flightController:(DJIFlightController *)fc didUpdateSystemState:(DJIFlightControllerCurrentState *)state{
 
@@ -369,6 +376,7 @@
     
     [[[Menu instance] getTopMenu] updateGPSLabel:state.satelliteCount];
     [_bottomStatusBar updateWith:state andPhoneLocation:_phoneLocation];
+    
     if (!_realDrone) {
         _realDrone = [[Drone alloc] initWithLocation:[[Calc Instance] locationWithCoordinates:state.aircraftLocation]];
         _realDrone.realDrone = YES;
@@ -409,6 +417,7 @@
     }
 
 }
+
 #pragma mark - gimbal state callback
 
 -(void) gimbalController:(DJIGimbal *)controller didUpdateGimbalState:(DJIGimbalState *)gimbalState{
@@ -848,10 +857,13 @@
 
 -(void) startMissionWithCompletion:(void (^)(BOOL started)) callback{
     
+    // if the drone is connected
     _simulateWithDJISimulator = ([ComponentHelper fetchFlightController]);
     
+    
+    //
     if (_simulateWithDJISimulator) {
-        _isRealDrone = YES;
+        _isRealDrone = YES; // because we interact with the real drone but in simulation mode
     }
     else{
         _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
@@ -860,20 +872,23 @@
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
 
     
+    // make sure we have the track
     if (!_circuit || !_circuit.locations.count) {
-        NSLog(@"no circuit");
+
+        ShowResult(@"Please load Track");
         callback(NO);
         return;
     }
     
-    // ***********  CAR ***********
+    // ***********  CAR setup ***********
     if (!_isRealCar) {
         // start simulation --> callback --> carLocation contains current car location
         [[circuitManager Instance]simulateCarOnCircuit:_circuit];
     }
-    // ***********  Drone ***********
-    if (!_isRealDrone) {
-        
+    
+    // ***********  Drone setup***********
+    if (!_isRealDrone) { // no physical drone .. When not connected to the DJI drone
+    
         CLLocation* droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:[_circuit.locations[0] coordinate] altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
         
         _simulatedDrone = [[Drone alloc] initWithLocation:droneSimulatedLoc];
@@ -884,7 +899,7 @@
             DVLog(@"No drone connected");
         }
         
-        if (_simulateWithDJISimulator) {
+        if (_simulateWithDJISimulator) { // DJI Simulation
             DJIFlightController* fc = [ComponentHelper fetchFlightController];
             if (fc.simulator.isSimulatorStarted) {
                 [self stopSimulatorWithCompletion:^(NSError * _Nullable error) {
@@ -977,7 +992,8 @@
     }
 }
 
--(void) onPathPlanningTimerTicked{
+-(void) onPathPlanningTimerTicked{ // running each 0.1 s
+    
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
     
     if (_simulateWithDJISimulator) {
@@ -991,7 +1007,7 @@
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
         
         if (fc.simulator.isSimulatorStarted) {
-            _drone = _realDrone;
+            _drone = _realDrone; // physical drone
         }
         else{
             DVLog(@"problem here: start DJI simulator first, or switch simulator type");

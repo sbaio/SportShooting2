@@ -283,7 +283,6 @@
         
     }
     
-    
     self.droneIndexLocation = circuit.locations[self.droneIndexOnCircuit];
     self.droneDistToItsIndex = [[Calc Instance] distanceFromCoords2D:self.droneIndexLocation.coordinate toCoords2D:self.droneLoc.coordinate];
     
