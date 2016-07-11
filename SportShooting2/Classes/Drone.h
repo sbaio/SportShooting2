@@ -35,10 +35,11 @@
     int freqCalcIndex;
 }
 
-//@property (weak, nonatomic) MKMapView* mapView;
-@property CLLocation* droneLoc; // GPS pos , alt, velocity .. when realDrone updated in callback at init
+@property CLLocation* droneLoc; // GPS pos , altitude, velocity
 
-@property int droneIndexOnCircuit; // useful
+// droneIndexOnCircuit is useful to infer if drone is in advance of the car, or car is in advance and also calculate distanceOnCircuitToCar.
+// To Decide the drone index, we have a algorithm desribed in
+@property int droneIndexOnCircuit;
 @property CLLocation* droneIndexLocation; // location in the track  of index of the drone
 
 @property float droneDistToItsIndex; // dist from the drone to its index location.. condition for triggering the closeTracking
@@ -83,7 +84,6 @@
 @property Vec* sensCircuit;
 @property Vec* versCircuit;
 @property Vec* sensNextCenter;
-
 
 
 @property float V_parralele;

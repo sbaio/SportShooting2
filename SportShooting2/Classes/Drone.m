@@ -231,11 +231,12 @@
     self.drone_Loc0_Vec = [[Vec alloc] initWithNorm:[[Calc Instance] distanceFromCoords2D:self.droneLoc.coordinate toCoords2D:loc0.coordinate] andAngle:[[Calc Instance] headingTo:loc0.coordinate fromPosition:self.droneLoc.coordinate]];
     
     freqCalcIndex++;
-    if (freqCalcIndex%10 == 0 && calc) {
+    if (freqCalcIndex%10 == 0 && calc) { // we update drone index at a slower frequency because it is a long process especially when the track is made of a lot of locations
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self setDroneIndex:circuit forCarLocation:carLoc carIndex:carIndex];
         });
     }else{
+        // here based on the previous drone index calculation we perform a local search to update drone index and drone index location
         int maxIndex = 0;
         
         NSMutableArray* arrayOfIndexesDrone = [circuit.interIndexesDistance objectAtIndex:self.droneIndexOnCircuit];
