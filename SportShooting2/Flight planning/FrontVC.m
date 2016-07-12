@@ -871,7 +871,7 @@
     
     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
 
-    
+    // ***********  Track setup ***********
     // make sure we have the track
     if (!_circuit || !_circuit.locations.count) {
 
@@ -886,7 +886,7 @@
         [[circuitManager Instance]simulateCarOnCircuit:_circuit];
     }
     
-    // ***********  Drone setup***********
+    // ***********  Drone setup ***********
     if (!_isRealDrone) { // no physical drone .. When not connected to the DJI drone
     
         CLLocation* droneSimulatedLoc = [[CLLocation alloc] initWithCoordinate:[_circuit.locations[0] coordinate] altitude:10 horizontalAccuracy:1 verticalAccuracy:1 course:0 speed:0 timestamp:[[NSDate alloc]init]];
@@ -1025,14 +1025,16 @@
     
     [_planner follow:_carLocation onCircuit:_circuit drone:_drone];
     
-//    [_planner follow2:_carLocation onCircuit:_circuit drone:_drone];
+    // follow function will update _drone.targSp and _drone.targHeading for the autopilot to send commands
+
     
     [mapView updateDroneAnnotation:_drone];
     [mapView updateDrone:_drone Vec_Anno_WithTargetSpeed:_drone.targSp AndTargetHeading:_drone.targHeading];
     
-
+    // _isRealDrone means is physical drone
     if (!_isRealDrone) {// SIMULATED DRONE
         
+        // move the simulated drone with our simulation, basic dynamics
         _simulatedDrone = [_simulatedDrone newDroneStateFrom:_simulatedDrone withTargetSpeed:_simulatedDrone.targSp andTargetAngle:_simulatedDrone.targHeading andTargAltitude:10 during:0.1];
 
         [_bottomStatusBar updateHorizontalSpeedWithHorizontalSpeed:_simulatedDrone.droneSpeed_Vec.norm];
@@ -1046,13 +1048,14 @@
         
         [mapView updateGimbalAnnoOfDrone:_drone];
         
-
+        // send the commands  to the real drone
+        
         [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
     
         // ********* PATH PLANNING ************
     }
     
-    // CALCULER LA FREQ D'exec
+    // CALCULER the frequency of pathplanning, it should be 10Hz, when the algorithm is taking too much time the frenquency is less .. 4, 5 Hz
     countFollow ++;
     countFollow = countFollow%10;
     if (!countFollow) {

@@ -236,6 +236,7 @@
             [self setDroneIndex:circuit forCarLocation:carLoc carIndex:carIndex];
         });
     }else{
+        // Local search based  on the last update of the drone index algorithm
         // here based on the previous drone index calculation we perform a local search to update drone index and drone index location
         int maxIndex = 0;
         
@@ -296,7 +297,7 @@
     
     float angleSens = [circuit.interAngle[self.droneIndexOnCircuit%circuit.locations.count] floatValue];
     self.sensCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
-    self.versCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens];
+    self.versCircuit = [[Vec alloc] initWithNorm:1 andAngle:angleSens]; // towards the circuit.. useful to make the drone stay closer to the track
     
     
     Vec* versCircuiTest90 = [[Vec alloc] initWithNorm:1 andAngle:[[Calc Instance] angle180Of330Angle:angleSens+90]];

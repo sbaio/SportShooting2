@@ -122,12 +122,12 @@
     [self sendFlightCtrlCommands:ctrlData];
     
     return;
-    // commands
-    struct PitchRoll pitchRollCommands = {eastSpeed,northSpeed,NO,NO};
-    struct Altitude altitudeCommand = {altitude,YES};
-    struct Yaw yawCommand = {[self droneCommandYawForDroneTargetYaw:0],YES};
-    
-    [self sendFlightCtrlCommands:pitchRollCommands withAltitude:altitudeCommand andYaw:yawCommand];
+//    // commands
+//    struct PitchRoll pitchRollCommands = {eastSpeed,northSpeed,NO,NO};
+//    struct Altitude altitudeCommand = {altitude,YES};
+//    struct Yaw yawCommand = {[self droneCommandYawForDroneTargetYaw:0],YES};
+//    
+//    [self sendFlightCtrlCommands:pitchRollCommands withAltitude:altitudeCommand andYaw:yawCommand];
     
 }
 
@@ -195,7 +195,7 @@
                         ShowResult(@"Please switch Remote controller to F mode and retry");
                     }
                     else{
-                        ShowResult(@"ERROR: startMissionExecutionWithCompletion:. %@", error.description);
+                        ShowResult(@"Error starting takeoff mission %@", error.localizedDescription);
                     }
                     
                     
@@ -209,6 +209,7 @@
     }];
 }
 
+// This is DJI follow me mission, we don't use it, we just tried it, and found tht it is limited to 10m/s which is not good for our use case
 -(void) startFollowMissionWithCompletion:(void (^)(NSError* error))callback{
     if (!_followMeMission) {
         _followMeMission = [[DJIFollowMeMission alloc] init];
@@ -248,14 +249,14 @@
     if (!self.followLoc) {
         _followLoc = frontVC.phoneLocation;
     }
-    _followMeMission.followMeCoordinate = self.followLoc.coordinate;
+//    _followMeMission.followMeCoordinate = self.followLoc.coordinate;
+    _followMeMission.followMeCoordinate = frontVC.phoneLocation.coordinate;
     
     [DJIFollowMeMission updateFollowMeCoordinate:self.followLoc.coordinate altitude:11 withCompletion:^(NSError * _Nullable error) {
         if (error) {
             DVLog(@"error updating follow me coord %@",error.localizedDescription);
         }
     }];
-    
     
     [mapView movePinNamed:@"followMeCoord" toCoord:[[Calc Instance] locationWithCoordinates:_followMeMission.followMeCoordinate] andColor:@"RGB 255 255 255"];
     
@@ -313,6 +314,7 @@
     
     if (currentMission == _takeOffMission) {
         ShowResult(@"takeoff finished");
+        // can send notification
     }
     else{
         ShowResult(@"smth else finished");
@@ -350,7 +352,7 @@
 
 
 
-
+// OLD methods
 
 
 

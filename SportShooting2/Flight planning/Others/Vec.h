@@ -14,7 +14,7 @@
     
 }
 
-@property (nonatomic) float norm;
+@property (nonatomic) float norm; // module
 @property (nonatomic) float angle;
 @property (nonatomic) float N;
 @property (nonatomic) float E;

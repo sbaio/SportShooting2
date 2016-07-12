@@ -41,7 +41,7 @@
     circuit = circ;
     _drone = drone;
     
-    _carIndexOnCircuit = [self carIndexOnCircuit:circ forCarLoc:carLoc];
+    _carIndexOnCircuit = [self carIndexOnCircuit:circ forCarLoc:carLoc];// find location on circuit that is close to the car
     
     [_drone calculateDroneInfoOnCircuit:circ forCarLocation:carLoc carIndex:_carIndexOnCircuit calcIndex:YES];
     [mapView movePinNamed:@"droneIndexLoc" toCoord:_drone.droneIndexLocation andColor:@"RGB 0 255 0"];
@@ -49,7 +49,7 @@
     
     [self updatePredictedDrone:_drone];
    
-    
+    // decide whether we szitch to shortcuttig or to close tracking based on some detectors to avoid frequent mode switches
     [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circ];
 
 //    _drone.isCloseTracking = YES;

@@ -1291,7 +1291,7 @@ exit:
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
     
-    // result YUV conversion ---> YUV_offscreenRenderTexture
+    // result YUV conversion ---> YUV_offscreenRenderTexture .. output
     // **************  END YUV CONVERSION **************
 
     // ************** START ZOOM FOR DISPLAY AND MOVIE  **************
@@ -1388,13 +1388,13 @@ exit:
     // ************** END ZOOM FOR TRACKING  **************
     
     
-    CMTime presentTime = CMTimeMake(frameNumber, 30);
+//    CMTime presentTime = CMTimeMake(frameNumber, 30);
     
 //    [[MovieWriter instance] newFrame:distorsionRenderTarget ReadyAtTime:presentTime atIndex:0];
 //        [[MovieWriter instance] newFrame:zoomRenderTarget ReadyAtTime:presentTime atIndex:0];
-    if (!_isMovieWritingPaused) {
-//        [[MovieWriter instance] newFrame:trackingRenderTarget ReadyAtTime:presentTime atIndex:0];
-    }
+//    if (!_isMovieWritingPaused) {
+////        [[MovieWriter instance] newFrame:trackingRenderTarget ReadyAtTime:presentTime atIndex:0];
+//    }
     
 //    frameNumber ++;
     // START UPDATE TRACKER FRAME

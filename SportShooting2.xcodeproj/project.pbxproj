@@ -195,7 +195,7 @@
 
 /* Begin PBXFileReference section */
 		36E258A21D34720300B8ED82 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		36E258A31D34720300B8ED82 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		36E258A31D34720300B8ED82 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		36E258A41D34720300B8ED82 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		36E258A61D34720300B8ED82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		36E258A81D34720300B8ED82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -230,8 +230,8 @@
 		36E258CA1D34720300B8ED82 /* mvtVector_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mvtVector_blue.png; sourceTree = "<group>"; };
 		36E258CB1D34720300B8ED82 /* target.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = target.png; sourceTree = "<group>"; };
 		36E258CC1D34720300B8ED82 /* targetDronePosition.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = targetDronePosition.png; sourceTree = "<group>"; };
-		36E258CD1D34720300B8ED82 /* Calc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Calc.h; sourceTree = "<group>"; };
-		36E258CE1D34720300B8ED82 /* Calc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Calc.m; sourceTree = "<group>"; };
+		36E258CD1D34720300B8ED82 /* Calc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Calc.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		36E258CE1D34720300B8ED82 /* Calc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = Calc.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		36E258CF1D34720300B8ED82 /* closeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = closeButton.h; sourceTree = "<group>"; };
 		36E258D01D34720300B8ED82 /* closeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = closeButton.m; sourceTree = "<group>"; };
 		36E258D11D34720300B8ED82 /* KalmanFilter1D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KalmanFilter1D.h; sourceTree = "<group>"; };
@@ -492,7 +492,7 @@
 		36E259EE1D34720300B8ED82 /* AircraftMenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AircraftMenuTVC.h; sourceTree = "<group>"; };
 		36E259EF1D34720300B8ED82 /* AircraftMenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AircraftMenuTVC.m; sourceTree = "<group>"; };
 		36E259F01D34720300B8ED82 /* alertsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alertsView.h; sourceTree = "<group>"; };
-		36E259F11D34720300B8ED82 /* alertsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = alertsView.m; sourceTree = "<group>"; };
+		36E259F11D34720300B8ED82 /* alertsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = alertsView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		36E259F31D34720300B8ED82 /* BottomStatusBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BottomStatusBar.h; sourceTree = "<group>"; };
 		36E259F41D34720300B8ED82 /* BottomStatusBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BottomStatusBar.m; sourceTree = "<group>"; };
 		36E259F51D34720300B8ED82 /* BottomStatusBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BottomStatusBar.xib; sourceTree = "<group>"; };
