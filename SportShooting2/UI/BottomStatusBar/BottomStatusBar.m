@@ -22,7 +22,7 @@
     float width = screenFrame.size.width;
     float height = screenFrame.size.height;
 
-    self.frame = CGRectMake(0  , 0.,width/2, height/13);
+    self.frame = CGRectMake(0  , 0,11*width/20, height/13);
     self.alpha = 0.95;
     self.layer.cornerRadius = 3.0;
     
@@ -57,7 +57,7 @@
     float width = screenFrame.size.width;
     float height = screenFrame.size.height;
 
-    self.frame = CGRectMake(0.4*width, 2*height, width/2, height/13);
+    self.frame = CGRectMake(0.37*width, 2*height, 11*width/20, height/13);
     
     POPBasicAnimation* y_animation = [POPBasicAnimation animationWithPropertyNamed:kPOPLayerPositionY];
     y_animation.toValue = @(0.925*height);

@@ -51,8 +51,6 @@
     
     _autopilot = [[Autopilot alloc] init];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGoButton:) name:@"startedDriving" object:nil];
-    
 }
 
 
@@ -579,14 +577,6 @@
     
 }
 
-- (IBAction)didClickOnStartDrivingButton:(id)sender {
-//        [_autopilot startFollowMissionWithCompletion:^(NSError *error) {
-    
-    //    }];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startedDriving" object:nil];
-}
-
 
 #pragma mark - simulator setup
 -(void) startSimulatorAtLoc:(CLLocation*) startLoc WithCompletion:(void(^)(NSError * _Nullable error))callback{
@@ -701,18 +691,21 @@
     
 }
 
--(void) handleGoButton:(NSNotification*) notif{
+
+
+-(void) showGoButton{ // after successful takeoff
     if ([_GoButton isHidden]) {
         [_GoButton setHidden:NO];
-        [_simulatedCarSpeedSlider setHidden:NO];
-        
         
     }
+    if (!_isRealCar) {
+        [_simulatedCarSpeedSlider setHidden:NO];
+    }
     else{
-        [_GoButton setHidden:YES];
         [_simulatedCarSpeedSlider setHidden:YES];
     }
 }
+
 
 - (IBAction)didClickOnGoButton:(id)sender {
     // when detected driving .. popup to ask if drone should start following/ moving

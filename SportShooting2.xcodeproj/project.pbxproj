@@ -10,7 +10,6 @@
 		36E25A1A1D34720300B8ED82 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E258A31D34720300B8ED82 /* AppDelegate.m */; };
 		36E25A1B1D34720300B8ED82 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36E258A41D34720300B8ED82 /* Assets.xcassets */; };
 		36E25A1C1D34720300B8ED82 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36E258A51D34720300B8ED82 /* LaunchScreen.storyboard */; };
-		36E25A1D1D34720300B8ED82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36E258A71D34720300B8ED82 /* Main.storyboard */; };
 		36E25A1E1D34720300B8ED82 /* Autopilot.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E258AB1D34720300B8ED82 /* Autopilot.m */; };
 		36E25A1F1D34720300B8ED82 /* Circuit.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E258AE1D34720300B8ED82 /* Circuit.m */; };
 		36E25A201D34720300B8ED82 /* circuitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E258B01D34720300B8ED82 /* circuitManager.m */; };
@@ -177,6 +176,7 @@
 		36E25AC51D34722500B8ED82 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 36E25AC41D34722500B8ED82 /* libstdc++.6.0.9.tbd */; };
 		36E25AC61D34725500B8ED82 /* DJISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36E2592C1D34720300B8ED82 /* DJISDK.framework */; };
 		36E25AC71D34725500B8ED82 /* DJISDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 36E2592C1D34720300B8ED82 /* DJISDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		36E25ACA1D3571D100B8ED82 /* VideoMenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E25AC91D3571D100B8ED82 /* VideoMenuTVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -198,7 +198,6 @@
 		36E258A31D34720300B8ED82 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		36E258A41D34720300B8ED82 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		36E258A61D34720300B8ED82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		36E258A81D34720300B8ED82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		36E258AA1D34720300B8ED82 /* Autopilot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Autopilot.h; sourceTree = "<group>"; };
 		36E258AB1D34720300B8ED82 /* Autopilot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Autopilot.m; sourceTree = "<group>"; };
 		36E258AD1D34720300B8ED82 /* Circuit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circuit.h; sourceTree = "<group>"; };
@@ -532,6 +531,8 @@
 		36E25AC01D34721800B8ED82 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		36E25AC21D34721E00B8ED82 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		36E25AC41D34722500B8ED82 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
+		36E25AC81D3571D100B8ED82 /* VideoMenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoMenuTVC.h; sourceTree = "<group>"; };
+		36E25AC91D3571D100B8ED82 /* VideoMenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoMenuTVC.m; sourceTree = "<group>"; };
 		D632D40C1D03F5CB00B12946 /* SportShooting2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportShooting2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -567,7 +568,6 @@
 				36E258A31D34720300B8ED82 /* AppDelegate.m */,
 				36E258A41D34720300B8ED82 /* Assets.xcassets */,
 				36E258A51D34720300B8ED82 /* LaunchScreen.storyboard */,
-				36E258A71D34720300B8ED82 /* Main.storyboard */,
 				36E258A91D34720300B8ED82 /* Flight planning */,
 				36E259221D34720300B8ED82 /* Info.plist */,
 				36E259231D34720300B8ED82 /* Libraries */,
@@ -1131,6 +1131,7 @@
 		36E259ED1D34720300B8ED82 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				36E25A021D34720300B8ED82 /* Storyboard.storyboard */,
 				36E259EE1D34720300B8ED82 /* AircraftMenuTVC.h */,
 				36E259EF1D34720300B8ED82 /* AircraftMenuTVC.m */,
 				36E259F01D34720300B8ED82 /* alertsView.h */,
@@ -1148,11 +1149,12 @@
 				36E259FF1D34720300B8ED82 /* MapView.m */,
 				36E25A001D34720300B8ED82 /* Menu.h */,
 				36E25A011D34720300B8ED82 /* Menu.m */,
-				36E25A021D34720300B8ED82 /* Storyboard.storyboard */,
 				36E25A031D34720300B8ED82 /* takeOffAlertView */,
 				36E25A051D34720300B8ED82 /* TopMenu.h */,
 				36E25A061D34720300B8ED82 /* TopMenu.m */,
 				36E25A071D34720300B8ED82 /* TopMenu.xib */,
+				36E25AC81D3571D100B8ED82 /* VideoMenuTVC.h */,
+				36E25AC91D3571D100B8ED82 /* VideoMenuTVC.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1320,7 +1322,6 @@
 				36E25A441D34720300B8ED82 /* Cable_green.png in Resources */,
 				36E25A5B1D34720300B8ED82 /* map.png in Resources */,
 				36E25A301D34720300B8ED82 /* MeGPS.png in Resources */,
-				36E25A1D1D34720300B8ED82 /* Main.storyboard in Resources */,
 				36E25A751D34720300B8ED82 /* GeneralMenuLogo.png in Resources */,
 				36E25AB71D34720300B8ED82 /* LUT_XG.png in Resources */,
 				36E25ABA1D34720300B8ED82 /* LUT_YG.png in Resources */,
@@ -1420,6 +1421,7 @@
 				36E25A241D34720300B8ED82 /* Aircraft_Camera_Car_Annotation.m in Sources */,
 				36E25A8F1D34720300B8ED82 /* MGSwipeTableCell.m in Sources */,
 				36E25A931D34720300B8ED82 /* POPAnimation.mm in Sources */,
+				36E25ACA1D3571D100B8ED82 /* VideoMenuTVC.m in Sources */,
 				36E25AAB1D34720300B8ED82 /* CircuitMenuTVC.m in Sources */,
 				36E25AB01D34720300B8ED82 /* Menu.m in Sources */,
 				36E25A371D34720300B8ED82 /* KalmanFilter1D.m in Sources */,
@@ -1461,14 +1463,6 @@
 				36E258A61D34720300B8ED82 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		36E258A71D34720300B8ED82 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				36E258A81D34720300B8ED82 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		36E259B11D34720300B8ED82 /* InfoPlist.strings */ = {

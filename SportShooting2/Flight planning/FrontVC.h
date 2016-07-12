@@ -176,6 +176,8 @@
 -(void) switchToVideo;
 -(void) switchToMap;
 
+-(void) showGoButton;
+
 -(void) startSimulatorAtLoc:(CLLocation*) startLoc WithCompletion:(void(^)(NSError * _Nullable error))callback;
 -(void) stopSimulatorWithCompletion:(void(^_Nullable)(NSError * _Nullable error))callback;
 

@@ -266,7 +266,12 @@
 
 -(void)missionManager:(DJIMissionManager *)manager missionProgressStatus:(DJIMissionProgressStatus *)missionProgress {
 
-    currentMission = manager.currentExecutingMission;
+    if (manager.currentExecutingMission) {
+        currentMission = manager.currentExecutingMission;
+    }
+    else{
+        // no mission
+    }
     
     if (manager.currentExecutingMission ==  _takeOffMission) {
         
@@ -286,60 +291,23 @@
     }
     
     return;
-    /*
-    else if(manager.currentExecutingMission == _followMeMission){
-        // never comes here !!?
-        
-//        _followMeMission.followMeCoordinate = CLLocationCoordinate2DMake(37.410374, -122.023635);
-        
-        DJIFollowMeMissionStatus* fmStatus = (DJIFollowMeMissionStatus*)missionProgress;
-        if (fmStatus.executionState == DJIFollowMeMissionExecutionStateInitializing) {
-            DVLog(@"initializing");
-        }
-        else if (fmStatus.executionState == DJIFollowMeMissionExecutionStateMoving){
-            DVLog(@"moving");
-        }
-        else {
-            DVLog(@"waiting");
-        }
-    }
-    
-    else{
-        DVLog(@"currentExec mission not recognized , %@",manager.currentExecutingMission);
-    }
-    */
 }
 
 - (void)missionManager:(DJIMissionManager *_Nonnull)manager didFinishMissionExecution:(NSError *_Nullable)error{
     
     if (currentMission == _takeOffMission) {
-        ShowResult(@"takeoff finished");
-        // can send notification
+//        ShowResult(@"takeoff finished");
+        
+        [frontVC.topMenu setStatusLabelText:@"Hovering"];
+        
+        // after successful takeoff (good check point), check that no timer is firing , and also set the UI as it should be
+        
+        
+        [frontVC showGoButton];
     }
     else{
-        ShowResult(@"smth else finished");
+        ShowResult(@"smth else finished %@,%@",currentMission,_takeOffMission);
     }
-
-//        if (error) {
-//            ShowResult(@"take off mission finished with error : %@",error);
-//        }
-//        else{
-//            // takeoff succeeded
-//            [[[Menu instance] getTopMenu] setStatusLabelText:@"Hovering"];
-//            
-////            _takeOffLocation = [[Menu instance] getFrontVC].realDrone.droneLoc;
-//            
-//            // prepare follow mission
-//        }
-//    }
-//    else if(manager.currentExecutingMission == _followMeMission){
-//        DVLog(@"follow me mission did finish execution");
-//    }
-//    else{
-//        DVLog(@"unrecognized mission has finished");
-//    }
-
-//    ShowResult(@"smth finished");
 }
 
 
