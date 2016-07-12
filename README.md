@@ -14,7 +14,7 @@ The app is also mainly inspired from the DJI Demo app where the use of the SDK i
 
 The last SDK available as of July 7th contains very interesting APIs that weren't in the previous SDK.
 
-In DJI SDK tutorials you will find how to make the SDK work in a xcode project, there are 3 libraries one should not forget to link with: libz.tbd, libstdc++.6.0.9.tbd and libiconv.tbd
+In DJI SDK tutorials you will find how to make the SDK work in a xcode project, there are 3 libraries one should not forget to link with: libz.tbd, libstdc++.6.0.9.tbd and libiconv.tbd. Never forget to add these libraries and embed DJI SDK Binaries.
 
 In order to start receiving drone updates, we need to register the app with a key provided by DJI on the Developer center website.
 - Another interesting point about the new SDK, new possibility of Simulator is possible. DJISimulator is a class created by DJI to make simulations easy. This makes having access to drone dynamics easier than having to go out and fly. When we start the simulator, the real drone turns to simulation mode and in responds to all the commands send to it in simulation.. for example when the command of takeoff is sent, we see the altitude going up in the flightController callback without the motors rotating.
