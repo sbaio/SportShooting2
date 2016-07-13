@@ -24,6 +24,10 @@
     return menu;
 }
 
+-(id) init{
+    _simulationMenu = [[self getStoryboard] instantiateViewControllerWithIdentifier:@"SimulationMenu"];
+    return self;
+}
 -(UIStoryboard*) getStoryboard{
     UIStoryboard* mainStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
     return mainStoryboard;

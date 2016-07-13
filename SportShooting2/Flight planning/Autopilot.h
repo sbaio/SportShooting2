@@ -145,7 +145,10 @@ struct Altitude {
 -(void) disableVirtualStickControlMode;
 
 //-(void) updateZoneOfGimbal;
--(void) updateZoneOfGimbalForDrone:(Drone*) drone withGimbalState:(DJIGimbalState*) gimbalState;
+//-(void) updateZoneOfGimbalForDrone:(Drone*) drone withGimbalState:(DJIGimbalState*) gimbalState;
+// update gimbal info  new 13 july
+-(void) updateGimbalInfoForDrone:(Drone*)drone;
+
 
 -(void) gimbalGoToAbsolutePitch:(float) targetPitch andRoll:(float) targetRoll andYaw:(float) target330Yaw;
 -(void) gimbalMoveWithSpeed:(float) pitchSp andRoll:(float) rollSp andYaw:(float) yawSp;

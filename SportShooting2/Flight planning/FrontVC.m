@@ -413,15 +413,19 @@
         [mapView updateGimbalAnnoOfDrone:_realDrone];
         [_topMenu updateDistDroneCarLabelWith:_phoneLocation andDroneLoc:_realDrone.droneLoc];
     }
-
+    
+    
+    // gimbal update
+    [_autopilot updateGimbalInfoForDrone:_realDrone];
 }
 
 #pragma mark - gimbal state callback
 
 -(void) gimbalController:(DJIGimbal *)controller didUpdateGimbalState:(DJIGimbalState *)gimbalState{
+    // sometimes this callback is not called
     // 10 Hz Freq
     // update zone of gimbal
-    [_autopilot updateZoneOfGimbalForDrone:_realDrone withGimbalState:gimbalState];
+//    [_autopilot updateZoneOfGimbalForDrone:_realDrone withGimbalState:gimbalState]; // I was making the update here but sometimes this callback wasnt called, so I am updating in the flight controller callback ...
     
     if (controller) {
         _autopilot.gimbal = controller;
@@ -575,6 +579,10 @@
         [self stopRecord];
     }
     
+    
+    [self startMissionWithCompletion:^(BOOL started) {
+        
+    }];
 }
 
 
@@ -851,11 +859,9 @@
 -(void) startMissionWithCompletion:(void (^)(BOOL started)) callback{
     
     // if the drone is connected
-    _simulateWithDJISimulator = ([ComponentHelper fetchFlightController]);
     
-    
-    //
-    if (_simulateWithDJISimulator) {
+
+    if ([ComponentHelper fetchFlightController]) {
         _isRealDrone = YES; // because we interact with the real drone but in simulation mode
     }
     else{
@@ -894,7 +900,7 @@
             
         }
         
-        if (_simulateWithDJISimulator) { // DJI Simulation
+        if ([ComponentHelper fetchFlightController]) { // DJI Simulation
             DJIFlightController* fc = [ComponentHelper fetchFlightController];
             if (fc.simulator.isSimulatorStarted) {
                 [self stopSimulatorWithCompletion:^(NSError * _Nullable error) {
@@ -962,6 +968,7 @@
 // This method carAtLocation: manages the locations coming from the phone locationManager and the car simulation
 -(void) carAtLocation:(CLLocation*) location{
     _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
+
     if (_isRealCar) {
         
         if (location.speed < 0) {
@@ -991,21 +998,18 @@
     
     _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
     
-    if (_simulateWithDJISimulator) {
-        _isRealDrone = YES;
+    if ([ComponentHelper fetchFlightController]) {
+        _isRealDrone = YES; // physical drone
     }
     else{
         _isRealDrone = ![[[Menu instance] simulationMenu] simulateDrone];
     }
     
-    if (_simulateWithDJISimulator) {
+    if ([ComponentHelper fetchFlightController]) {
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
         
         if (fc.simulator.isSimulatorStarted) {
             _drone = _realDrone; // physical drone
-        }
-        else{
-            DVLog(@"problem here: start DJI simulator first, or switch simulator type");
         }
     }
     else{
@@ -1021,7 +1025,6 @@
     [_planner follow:_carLocation onCircuit:_circuit drone:_drone];
     
     // follow function will update _drone.targSp and _drone.targHeading for the autopilot to send commands
-
     
     [mapView updateDroneAnnotation:_drone];
     [mapView updateDrone:_drone Vec_Anno_WithTargetSpeed:_drone.targSp AndTargetHeading:_drone.targHeading];
@@ -1036,7 +1039,9 @@
     }
     else{ // REAL DRONE
          // ********* GIMBAL COMMAND **********
-        if (!_simulateWithDJISimulator) {
+        DJIFlightController* fc = [ComponentHelper fetchFlightController];
+        
+        if (!fc.simulator.isSimulatorStarted) {
             [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
         }
         
@@ -1045,7 +1050,7 @@
         
         // send the commands  to the real drone
         
-        [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
+//        [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
     
         // ********* PATH PLANNING ************
     }
@@ -1089,9 +1094,12 @@
         
         float gimbalTarget330Yaw = [self calculateGimbalTarget300YawFrom:carLoc drone:drone]; //we also have gimbalTargetYawEarth stored as a global variable
         
+        
         float delta330 = gimbalTarget330Yaw - _drone.gimbalCurrent330yaw;//_autopilot.gimbalCurrent330yaw;
         
         float speed = 175*sign(delta330)*(1-expf(-fabsf(delta330)/(80)));
+        
+        DVLog(@"%0.3f,%0.3f , %0.3f",gimbalTarget330Yaw,delta330,_drone.gimbalCurrent330yaw);
         //    float speed = 150*sign(delta330)*(1-expf(-fabsf(delta330)/(80)));
         speed = bindBetween(speed, -120, 120);
         

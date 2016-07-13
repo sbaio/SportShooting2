@@ -122,19 +122,14 @@
     [self sendFlightCtrlCommands:ctrlData];
     
     return;
-//    // commands
-//    struct PitchRoll pitchRollCommands = {eastSpeed,northSpeed,NO,NO};
-//    struct Altitude altitudeCommand = {altitude,YES};
-//    struct Yaw yawCommand = {[self droneCommandYawForDroneTargetYaw:0],YES};
-//    
-//    [self sendFlightCtrlCommands:pitchRollCommands withAltitude:altitudeCommand andYaw:yawCommand];
-    
 }
 
 #pragma mark - Gimbal control methods
--(void) updateZoneOfGimbalForDrone:(Drone*) drone withGimbalState:(DJIGimbalState*) gimbalState{
+
+-(void) updateGimbalInfoForDrone:(Drone*)drone {
+    DJIGimbal* gimbal = [ComponentHelper fetchGimbal];
     
-    drone.gimbalYawEarth = gimbalState.attitudeInDegrees.yaw;
+    drone.gimbalYawEarth = gimbal.attitudeInDegrees.yaw;
     drone.previousGDDiffAngle = drone.gimbalCurrentBearingInDroneBC;
     
     drone.gimbalCurrentBearingInDroneBC = [[Calc Instance] closestDiffAngle:drone.gimbalYawEarth toAngle:drone.droneYaw];
@@ -149,9 +144,10 @@
         }
     }
     
-    drone.gimbalCurrent330yaw = [[Calc Instance] angle330OfAngle:gimbalCurrentBearingInDroneBC withZone:gimbalZone];
+    drone.gimbalCurrent330yaw = [[Calc Instance] angle330OfAngle:drone.gimbalCurrentBearingInDroneBC withZone:gimbalZone];
+    
+    DVLog(@"%0.3f, %0.3f, %d , %0.3f, %0.3f",drone.gimbalYawEarth,drone.gimbalCurrent330yaw,drone.gimbalZone,drone.droneYaw,drone.gimbalCurrentBearingInDroneBC);
 }
-
 
 
 #pragma mark - Mission manager methods

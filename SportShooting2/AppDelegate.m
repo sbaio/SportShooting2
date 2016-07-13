@@ -42,6 +42,8 @@
     
     [self setMainAndMenuRevealProperties];
     
+    [[Menu instance] setSubmenu:2];
+    [[Menu instance] setSubmenu:1];
     [[Menu instance] setSubmenu:0];
     
     
