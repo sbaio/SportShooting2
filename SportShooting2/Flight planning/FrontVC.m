@@ -109,7 +109,7 @@
 }
 
 -(void) predictCarLoc{
-     _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
     
     if (!_phoneLocation) {
         return;
@@ -859,10 +859,11 @@
         _isRealDrone = YES; // because we interact with the real drone but in simulation mode
     }
     else{
-        _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+        _isRealDrone = ![[[Menu instance] simulationMenu] simulateDrone];
+        DVLog(@"start mission is real drone : %d",_isRealDrone);
     }
     
-    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
 
     // ***********  Track setup ***********
     // make sure we have the track
@@ -890,6 +891,7 @@
     else{
         if (!appD.isReceivingFlightControllerStatus) {
             DVLog(@"No drone connected");
+            
         }
         
         if (_simulateWithDJISimulator) { // DJI Simulation
@@ -959,7 +961,7 @@
 
 // This method carAtLocation: manages the locations coming from the phone locationManager and the car simulation
 -(void) carAtLocation:(CLLocation*) location{
-    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
     if (_isRealCar) {
         
         if (location.speed < 0) {
@@ -987,13 +989,13 @@
 
 -(void) onPathPlanningTimerTicked{ // running each 0.1 s
     
-    _isRealCar = ![[[Menu instance] getGeneralMenu].carSwitch isOn];
+    _isRealCar = ![[[Menu instance] simulationMenu] simulateCar];
     
     if (_simulateWithDJISimulator) {
         _isRealDrone = YES;
     }
     else{
-        _isRealDrone = ![[[Menu instance] getGeneralMenu].droneSwitch isOn];
+        _isRealDrone = ![[[Menu instance] simulationMenu] simulateDrone];
     }
     
     if (_simulateWithDJISimulator) {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36C0E5A71D369ACD00B65494 /* SimulationMenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C0E5A61D369ACD00B65494 /* SimulationMenuTVC.m */; };
 		36E25A1A1D34720300B8ED82 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E258A31D34720300B8ED82 /* AppDelegate.m */; };
 		36E25A1B1D34720300B8ED82 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36E258A41D34720300B8ED82 /* Assets.xcassets */; };
 		36E25A1C1D34720300B8ED82 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36E258A51D34720300B8ED82 /* LaunchScreen.storyboard */; };
@@ -194,6 +195,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		36C0E5A51D369ACD00B65494 /* SimulationMenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulationMenuTVC.h; sourceTree = "<group>"; };
+		36C0E5A61D369ACD00B65494 /* SimulationMenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulationMenuTVC.m; sourceTree = "<group>"; };
 		36E258A21D34720300B8ED82 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		36E258A31D34720300B8ED82 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		36E258A41D34720300B8ED82 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1155,6 +1158,8 @@
 				36E25A071D34720300B8ED82 /* TopMenu.xib */,
 				36E25AC81D3571D100B8ED82 /* VideoMenuTVC.h */,
 				36E25AC91D3571D100B8ED82 /* VideoMenuTVC.m */,
+				36C0E5A51D369ACD00B65494 /* SimulationMenuTVC.h */,
+				36C0E5A61D369ACD00B65494 /* SimulationMenuTVC.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1445,6 +1450,7 @@
 				36E25A7D1D34720300B8ED82 /* ComponentHelper.m in Sources */,
 				36E25A211D34720300B8ED82 /* Drone.m in Sources */,
 				36E25A3A1D34720300B8ED82 /* UIImage+animatedGIF.m in Sources */,
+				36C0E5A71D369ACD00B65494 /* SimulationMenuTVC.m in Sources */,
 				36E25A951D34720300B8ED82 /* POPAnimationExtras.mm in Sources */,
 				36E25A941D34720300B8ED82 /* POPAnimationEvent.mm in Sources */,
 				36E25A961D34720300B8ED82 /* POPAnimationRuntime.mm in Sources */,

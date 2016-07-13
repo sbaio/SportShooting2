@@ -29,10 +29,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    rowsArray = [@[@"Track",@"Video",@"Drone",@"Car"] mutableCopy];
-    
+    rowsArray = [@[@"Track",@"Video",@"Simulation"] mutableCopy];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"FCFeedStarted" object:nil];
     
 }
 
@@ -63,93 +61,17 @@
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     [cell setSelectedBackgroundView:bgColorView];
     
-    UILabel* textLabel = [cell.contentView.subviews objectAtIndex:0];
-    if ([textLabel.text containsString:@"Car"]) {
-        carLabel = textLabel;
-        _carSwitch = [cell.contentView.subviews objectAtIndex:1];
-        if ([_carSwitch isOn]) {
-            [carLabel setText:@"Car sim"];
-        }
-        else{
-            [carLabel setText:@"Car"];
+    UILabel* label = nil;
+    
+    for (UIView* subview in cell.contentView.subviews) {
+        if ([subview isKindOfClass:[UILabel class]]) {
+            label = (UILabel*)subview;
         }
     }
-    if ([textLabel.text containsString:@"Drone"]) {
-        droneLabel = textLabel;
-        _droneSwitch = [cell.contentView.subviews objectAtIndex:2];
-        if ([_droneSwitch isOn]) {
-            [droneLabel setText:@"Drone sim"];
-        }
-        else{
-            [droneLabel setText:@"Drone"];
-        }
-    }
+    label.textColor = [UIColor colorWithHue:0.67 saturation:0 brightness:0.86 alpha:1];
     
-    
-    textLabel.textColor = [UIColor colorWithHue:0.67 saturation:0 brightness:0.86 alpha:1];
     return cell;
 }
-
-- (IBAction)onCarSwitchChanged:(id)sender {
-    
-    if (sender == _carSwitch) {
-        if ([sender isOn]) {
-            [carLabel setText:@"Car sim"];
-        }
-        else{
-            [carLabel setText:@"Car"];
-        }
-    }
-    else if(sender == _droneSwitch) {
-        
-        BOOL simulateWithDJI = YES;
-    
-        if (simulateWithDJI) {
-            DJIFlightController* fc = [ComponentHelper fetchFlightController];
-            if (fc && fc.simulator) {
-                if ([sender isOn]) {
-                    if (!fc.simulator.isSimulatorStarted) {
-                        [[[Menu instance] getFrontVC] startSimulatorAtLoc:[[Menu instance] getFrontVC].phoneLocation WithCompletion:^(NSError * _Nullable error) {
-                            [self updateDroneSwitchAndLabel];
-                        }];
-                    }
-                }
-                else{
-                    if (fc.simulator.isSimulatorStarted) {
-                        [[[Menu instance] getFrontVC] stopSimulatorWithCompletion:^(NSError * _Nullable error) {
-                            [self updateDroneSwitchAndLabel];
-                        }];
-                    }
-                }
-            }
-            
-        }
-        else{
-            if ([sender isOn]) {
-                [droneLabel setText:@"Drone sim"];
-            }
-            else{
-                [droneLabel setText:@"Drone"];
-            }
-        }
-        
-    }
-}
-
--(void) updateDroneSwitchAndLabel{
-    DJIFlightController* fc = [ComponentHelper fetchFlightController];
-    if (fc) {
-        if (fc.simulator.isSimulatorStarted) {
-            [_droneSwitch setOn:YES];
-            [droneLabel setText:@"Drone sim"];
-        }
-        else{
-            [_droneSwitch setOn:NO];
-            [droneLabel setText:@"Drone"];
-        }
-    }
-}
-
 
 -(void) mapWentRightMost{
     
@@ -164,7 +86,6 @@
 
 #pragma mark - Table view delegate
 
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     NSInteger row = indexPath.row;
@@ -172,13 +93,18 @@
     switch (row) {
         case 0:
         {
-            [[Menu instance] setSubmenu:0];
+            [[Menu instance] setSubmenu:0]; // track menu
             break;
         }
             
         case 1:
         {
-            [[Menu instance] setSubmenu:1];
+            [[Menu instance] setSubmenu:1]; // video menu
+            break;
+        }
+        case 2:
+        {
+            [[Menu instance] setSubmenu:2]; // simulation menu
             break;
         }
         default:
@@ -192,12 +118,6 @@
     
 }
 
-
--(void) handleNotification:(NSNotification*) notification{
-    if ([notification.name isEqualToString:@"FCFeedStarted"]) {
-        [self updateDroneSwitchAndLabel];
-    }
-}
 
 
 @end

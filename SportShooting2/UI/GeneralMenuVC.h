@@ -14,7 +14,9 @@
 #import "ComponentHelper.h"
 #import "MGSwipeTableCell.h"
 #import "ComponentHelper.h"
+#import "SimulationMenuTVC.h"
 
+@class SimulationMenuTVC;
 
 @interface GeneralMenuVC : UITableViewController <MGSwipeTableCellDelegate>
 {
@@ -24,11 +26,13 @@
 
 @property BOOL realDrone;
 @property BOOL isCameraConnected;
-@property UISwitch* carSwitch;
-@property UISwitch* droneSwitch;
+
+//@property UISwitch* carSwitch;
+//@property UISwitch* droneSwitch;
+@property SimulationMenuTVC* simulationMenu;
 
 -(void) mapWentRightMost;
 -(void) mapWentRight;
 
--(void) updateDroneSwitchAndLabel;
+//-(void) updateDroneSwitchAndLabel;
 @end

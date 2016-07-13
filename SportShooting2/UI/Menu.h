@@ -17,6 +17,7 @@
 #import "VideoPreviewer.h"
 #import "TopMenu.h"
 #import "MapView.h"
+#import "SimulationMenuTVC.h"
 
 @class FrontVC;
 @class GeneralMenuVC;
@@ -32,6 +33,7 @@
 
 @property (nonatomic,strong) TopMenu* topMenu;
 
+@property SimulationMenuTVC* simulationMenu;
 
 +(id) instance;
 

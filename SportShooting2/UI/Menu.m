@@ -45,13 +45,11 @@
 }
 
 
-
 -(UINavigationController*) getNavC{
     SWRevealViewController* menuReveal = [self getMenuRevealVC];
     UINavigationController* navC = (UINavigationController*)menuReveal.frontViewController;
     if (navC.viewControllers.count) {
-        UIViewController* sf = navC.viewControllers[0];
-        NSLog(@"%@",sf.title);
+//        UIViewController* sf = navC.viewControllers[0];
     }
     
     return navC;
@@ -75,12 +73,14 @@
 -(UITableViewController*) getProtoTVC{
     return [[self getStoryboard] instantiateViewControllerWithIdentifier:@"Proto"];
 }
+
+
 -(void) setSubmenu:(int) submenuIndex{
     
     UINavigationController* navC = [self getNavC];
     
     BOOL new = YES;
-    NSArray* menuItems = [NSArray arrayWithObjects:@"TrackMenu",@"VideoMenu", nil];
+    NSArray* menuItems = [NSArray arrayWithObjects:@"TrackMenu",@"VideoMenu",@"SimulationMenu", nil];
     
     if (navC.viewControllers.count == 1) {
         UIViewController* vc = navC.viewControllers[0];
@@ -98,8 +98,8 @@
     switch (submenuIndex) {
         case 0: // circuit menu
         {
-            if (new) { // the back up is empty
-                CircuitMenuTVC* circtuiMenu = [[self getStoryboard] instantiateViewControllerWithIdentifier:@"TrackMenu"];
+            if (new) {
+                UITableViewController* circtuiMenu = [[self getStoryboard] instantiateViewControllerWithIdentifier:@"TrackMenu"];
                 newArrayOfViewControllers = [NSArray arrayWithObject:circtuiMenu];
                 [navC setViewControllers:newArrayOfViewControllers animated:NO];
             }
@@ -108,13 +108,24 @@
         }
         case 1: // video menu
         {
-            if (new) { // the back up is empty
+            if (new) {
                 UITableViewController* videoMenu = [[self getStoryboard] instantiateViewControllerWithIdentifier:@"VideoMenu"];
                 newArrayOfViewControllers = [NSArray arrayWithObject:videoMenu];
                 [navC setViewControllers:newArrayOfViewControllers animated:NO];
             }
             
             break;
+        }
+        
+        case 2:
+        { // simulation menu
+            if (!_simulationMenu) {
+                _simulationMenu = [[self getStoryboard] instantiateViewControllerWithIdentifier:@"SimulationMenu"];
+            }
+            
+                newArrayOfViewControllers = [NSArray arrayWithObject:_simulationMenu];
+                [navC setViewControllers:newArrayOfViewControllers animated:NO];
+            
         }
         default:
             break;

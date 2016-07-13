@@ -585,6 +585,13 @@
         }
     }
     selectedRow = (int) [_tableView indexPathForSelectedRow].row;
+    
+    
+    // shoz the button for starting the simulation
+    if ([frontVC.GoButton isHidden]) {
+        [frontVC.GoButton setHidden:NO];
+        [frontVC.simulatedCarSpeedSlider setHidden:NO];
+    }
 }
 
 - (void)topBorderPanGesture:(UIPanGestureRecognizer *)recognizer{
