@@ -1245,7 +1245,7 @@
         
         [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
             if (error) {
-                ShowResult(@"Enter Virtual Stick Mode:%@", error.description);
+//                ShowResult(@"Enter Virtual Stick Mode:%@", error.description);
             }
             else
             {

@@ -224,13 +224,20 @@
         float dist = [[Calc Instance] distanceFromCoords2D:_drone.droneLoc.coordinate toCoords2D:target.coordinate];
         float bearing = [[Calc Instance] headingTo:target.coordinate fromPosition:_drone.droneLoc.coordinate];
         
+        DVLog(@"dist to target , %0.3f",dist);
         
+        
+        if (dist < 100) {
+            _drone.isCloseTracking = YES;
+        }
         _drone.targHeading = bearing;
         _drone.targSp = 16*(1-expf(-dist/16));
         
         
         [mapView movePinNamed:@"shortcuttingPin" toCoord:target andColor:yellowColorString];
     }
+    
+    
 }
 
 -(CLLocation*) shortcuttingPhase:(CLLocation*) carLoc drone:(Drone*) drone onCircuit:(Circuit*) circ{
