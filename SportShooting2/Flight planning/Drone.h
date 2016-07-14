@@ -83,7 +83,7 @@
 
 @property Vec* sensCircuit;
 @property Vec* versCircuit;
-@property Vec* sensNextCenter;
+@property Vec* sensNextCenter; // sensNextCenter is always pointing from the circuit location to the direction of the next turnCenter ... see pathplanner close tracking part
 
 
 @property float V_parralele;

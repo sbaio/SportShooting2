@@ -73,6 +73,12 @@ typedef struct{
     
     float integralDistErrorSensCircuit;
     
+    
+    float previousDroneDistanceToTarget;
+    Vec* previousDrone_TargetLoc_Vec;
+    
+    NSMutableArray* diffVecNorm_Drone_TargetLoc_Array;
+    NSMutableArray* diffVecAngle_Drone_TargetLoc_Array;
 }
 
 

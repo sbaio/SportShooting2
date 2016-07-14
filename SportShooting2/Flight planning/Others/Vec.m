@@ -15,6 +15,7 @@
 
 #import "Vec.h"
 #import "DVFloatingWindow.h"
+#import "Calc.h"
 
 @implementation Vec
 
@@ -47,6 +48,13 @@
     vec.angle = [self angleFromNorthOfVectorWithNorthComponent:vec_N EastComponent:vec_E]; //from north in deg
     
     return vec;
+}
+
+-(id) vectorFrom:(CLLocationCoordinate2D) coord1 toCoord:(CLLocationCoordinate2D) coord2{
+    float dist = [[Calc Instance] distanceFromCoords2D:coord1 toCoords2D:coord2];
+    float heading = [[Calc Instance] headingTo:coord2 fromPosition:coord1];
+    Vec* new = [[Vec alloc] initWithNorm:dist andAngle:heading];
+    return new;
 }
 
 -(void) updateWithNorthComponent:(float) vec_N andEastComponent:(float) vec_E{

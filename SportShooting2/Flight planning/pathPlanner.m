@@ -27,6 +27,8 @@
     _Kp = [frontVC.KpSlider value];
     _Kd = [frontVC.KdSlider value];
     
+    previousDroneDistanceToTarget = 0;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRCSwitchChangedNotif:) name:@"RCSwitchStateChanged" object:nil];
     
     return self;
@@ -44,7 +46,7 @@
     _carIndexOnCircuit = [self carIndexOnCircuit:circ forCarLoc:carLoc];// find location on circuit that is close to the car
     
     [_drone calculateDroneInfoOnCircuit:circ forCarLocation:carLoc carIndex:_carIndexOnCircuit calcIndex:YES];
-    [mapView movePinNamed:@"droneIndexLoc" toCoord:_drone.droneIndexLocation andColor:@"RGB 0 255 0"];
+//    [mapView movePinNamed:@"droneIndexLoc" toCoord:_drone.droneIndexLocation andColor:@"RGB 0 255 0"];
     
     
     [self updatePredictedDrone:_drone];
@@ -52,7 +54,7 @@
     // decide whether we szitch to shortcuttig or to close tracking based on some detectors to avoid frequent mode switches
     [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circ];
 
-//    _drone.isCloseTracking = YES;
+    _drone.isCloseTracking = YES;
     if (_drone.isCloseTracking) {
         [self performCloseTracking13];
     }
@@ -63,7 +65,7 @@
 
 -(void) updatePredictedDrone:(Drone*) drone{
 
-    CLLocation* predictLoc = [[Calc Instance] locationFrom:drone.droneLoc atDistance:drone.droneLoc.speed*1.5 atBearing:drone.droneLoc.course];
+    CLLocation* predictLoc = [[Calc Instance] locationFrom:drone.droneLoc atDistance:drone.droneLoc.speed*0.3 atBearing:drone.droneLoc.course];
     
     CLLocation* dronePredictedLocation = [[CLLocation alloc] initWithCoordinate:predictLoc.coordinate altitude:drone.droneLoc.altitude horizontalAccuracy:0 verticalAccuracy:0 course:drone.droneLoc.course speed:drone.droneLoc.speed timestamp:drone.droneLoc.timestamp];
     
@@ -78,11 +80,14 @@
     
     [_predictedDrone calculateDroneInfoOnCircuit:circuit forCarLocation:carLocation carIndex:_carIndexOnCircuit calcIndex:NO];
     
-    [mapView movePinNamed:@"dronePredictedLoc" toCoord:dronePredictedLocation andColor:@"RGB 129 22 89"];
-    [mapView updateDroneSensCircuit_PerpAnnotations:_predictedDrone];
+//    [mapView movePinNamed:@"dronePredictedLoc" toCoord:dronePredictedLocation andColor:@"RGB 129 22 89"];
+//    [mapView updateDroneSensCircuit_PerpAnnotations:_predictedDrone];
 }
 
+-(void) setDroneSensNextCenter{
+    }
 -(void) performCloseTracking13{
+    
     
     //  close tracking should be independent from drone index info (because very non continuous) !!  but more dependent on drone-car distance and bearing  through a PID controller that will decide the target bearing and target speed in coordinance with the turns found in the circuit
     
@@ -120,8 +125,11 @@
         }
     }];
     
+    // if we have few turn locs or a lot, we should tune the algorithm that finds the turnsLoc in circuit.m file to find the right ones,
+    
     CLLocation* nextCenter = [circuit.turnCenters objectAtIndex:[circuit.turnLocs indexOfObject:sortedByNext[0]]];
     
+    // the vector from predicted drone index loc to next Center .. will be used to set sensNextCenter
     Vec* index_center = [[Vec alloc] initWithNorm:1 andAngle:[[Calc Instance] headingTo:nextCenter.coordinate fromPosition:_predictedDrone.droneIndexLocation.coordinate]];
     
     if ([_predictedDrone.versCircuit dotProduct:index_center]>=0) {
@@ -131,90 +139,67 @@
         _predictedDrone.sensNextCenter = [[Vec alloc] initWithNorm:-1 andAngle:_predictedDrone.versCircuit.angle];
     }
     
-    CLLocation* locFrontCar = [[Calc Instance] locationFrom:carLocation atDistance:15 atBearing:[[Calc Instance] headingTo:nextCenter.coordinate fromPosition:carLocation.coordinate]];
-    Vec* car_LocFront = [[Vec alloc] initWithNorm:[[Calc Instance] distanceFromCoords2D:carLocation.coordinate toCoords2D:locFrontCar.coordinate] andAngle:[[Calc Instance] headingTo:locFrontCar.coordinate fromPosition:carLocation.coordinate]];
-    float dist = [_predictedDrone.sensNextCenter dotProduct:car_LocFront];
+    // Strategy of path planning
+    // we will work with the two vectors : _predictedDrone.versCircuit (u) and _predictedDrone.sensNextCenter(v)
+    // to bring the drone closer to the track we tune a PID to minimize the error following the (v) direction
+    // to make the drone follow the car on the track direction we tune a second PID to minimize the error following the (u) direction
+    // the error to minimize on the (u) direction is
     
-    CLLocation* locBis = [[Calc Instance] locationFrom:_predictedDrone.droneIndexLocation atDistance:dist atBearing:_predictedDrone.sensNextCenter.angle];
+    // TARGET LOCATION for the drone to follow .. non continuous when nextCenter changes ...
+    CLLocation* locFrontCar = [[Calc Instance] locationFrom:carLocation atDistance:10 atBearing:[[Calc Instance] headingTo:nextCenter.coordinate fromPosition:carLocation.coordinate]];
     
+    /// filtrer locFrontCar
     
+    // vector from carLocation to the location loc Front Car
     
+//    Vec* car_LocFront = [[Vec alloc] vectorFrom:carLocation.coordinate toCoord:locFrontCar.coordinate];
     
-    Vec* locBis_predDrone = [[Vec alloc] initWithNorm:[[Calc Instance]distanceFromCoords2D:locBis.coordinate toCoords2D:_predictedDrone.droneLoc.coordinate] andAngle:[[Calc Instance]headingTo:_predictedDrone.droneLoc.coordinate fromPosition:locBis.coordinate]];
-    
-    float distErrorToCirc = [locBis_predDrone dotProduct:_predictedDrone.sensNextCenter];
-    
-    Vec* perpSpeed_pred = [[Vec alloc] initWithNorm:[_predictedDrone.droneSpeed_Vec dotProduct:_predictedDrone.sensNextCenter] andAngle:_predictedDrone.sensNextCenter.angle];
-    
-    float derivError = 0;
-    if ([perpSpeed_pred dotProduct:locBis_predDrone] >= 0) {
-        derivError = perpSpeed_pred.norm; // s'eloigne
+    // calculate distance between last target and current target
+    float distCurrentTargetToPrevTarget = [[Calc Instance] distanceFromCoords2D:_drone.targetLocation.coordinate toCoords2D:locFrontCar.coordinate]; // in order to see if discontinuity in target ...
+
+    _drone.targetLocation = locFrontCar;
+    Vec* currentDrone_TargetLoc_Vec = [[Vec alloc] vectorFrom:_drone.droneLoc.coordinate toCoord:_drone.targetLocation.coordinate];
+    if (!previousDrone_TargetLoc_Vec) {
+        previousDrone_TargetLoc_Vec = [[Vec alloc]initWithNorm:0 andAngle:0];
     }
-    else{
-        derivError = -perpSpeed_pred.norm;// se rapproche
+    Vec* diffVec_Drone_TargetLoc = [currentDrone_TargetLoc_Vec substractVector:previousDrone_TargetLoc_Vec];
+    // filter norm and angle of variation of vec drone _ targetLoc
+    if (!diffVecNorm_Drone_TargetLoc_Array) {
+        diffVecNorm_Drone_TargetLoc_Array = [[NSMutableArray alloc]init];
     }
-    // if drone should strictly follow the circuit locations then choose
-    
-    
-    
-    integralDistError += distErrorToCirc;
-    
-    if (fabsf(distErrorToCirc) <= 5) {
-        integralDistError = 0;
+    if (!diffVecAngle_Drone_TargetLoc_Array) {
+        diffVecAngle_Drone_TargetLoc_Array = [[NSMutableArray alloc]init];
     }
-    integralDistError = bindBetween(integralDistError, -100, 100);
+    float filteredNorm = [[Calc Instance] filterVar:bindBetween(diffVec_Drone_TargetLoc.norm, 0, 5)  inArray:diffVecNorm_Drone_TargetLoc_Array angles:NO withNum:30];
+    float filteredAngle = [[Calc Instance] filterVar:diffVec_Drone_TargetLoc.angle inArray:diffVecAngle_Drone_TargetLoc_Array angles:YES withNum:30];
     
-    // Kp = 0.33 ; Ki = 0.11 , Kd = 0.15 ...
-    float targ_V_perp = -0.4* distErrorToCirc + 0.11*derivError - 0.15*integralDistError;
+    [diffVec_Drone_TargetLoc updateWithNorm:filteredNorm andAngle:filteredAngle];
+    Vec* drone_Target_Vec = [[Vec alloc] vectorFrom:_drone.droneLoc.coordinate toCoord:_drone.targetLocation.coordinate];
     
-    targ_V_perp = bindBetween(targ_V_perp, -16, 16);
-    
-    //    NSLog(@"targV_perp --> %0.3f , prop -->%0.3f , deriv --> %0.3f ,integral --> %0.3f",targ_V_perp,_Kp*distErrorToCirc,-_Kd*_predictedDrone.V_perp ,_Ki*integralDistError);
-    
+    float targSpeed = bindBetween(_Kp* drone_Target_Vec.norm, 0, 16) ; // _Kp should be around 0.3
     
     
+    Vec* droneTargetSpeed_Vec = [[Vec alloc]initWithNorm:targSpeed andAngle:drone_Target_Vec.angle]; // the proportional term: _Kp*distToTargetwith angle to target
     
-    Vec* drone_carFrontLoc = [[Vec alloc] initWithNorm:[[Calc Instance] distanceFromCoords2D:_predictedDrone.droneLoc.coordinate toCoords2D:locFrontCar.coordinate] andAngle:[[Calc Instance] headingTo:locFrontCar.coordinate fromPosition:_predictedDrone.droneLoc.coordinate]];
+    float Kd = bindBetween(drone_Target_Vec.norm/10, 0, 10);
+    Vec* multiplyVEc = [diffVec_Drone_TargetLoc multiplyByScalar:Kd]; // _Kd should be around 10
+    DVLog(@"norm , %0.3f , angle , %0.3f",multiplyVEc.norm,multiplyVEc.angle);
+    droneTargetSpeed_Vec= [droneTargetSpeed_Vec addVector:multiplyVEc];
     
-    float diffPosition = [drone_carFrontLoc dotProduct:_predictedDrone.sensCircuit]; // positif lorsque la voiture en avance
-    float diffSpeed = [_predictedDrone.carSpeed_Vec dotProduct:_predictedDrone.sensCircuit] - [_predictedDrone.droneSpeed_Vec dotProduct:_predictedDrone.sensCircuit]; // positif si voiture plus rapide que le drone
-    
-    if (fabsf(diffPosition)< 5) {
-        //        integralDistErrorSensCircuit = 0;
-    }
-    else{
-        integralDistErrorSensCircuit+= diffPosition;
-    }
-    
-    float targ_V_para = _Kp*diffPosition + _Kd*diffSpeed + _Ki*integralDistErrorSensCircuit;
-    
-    //    NSLog(@"diffPosition , %0.3f,diffSpeed , %0.3f", diffPosition,diffSpeed);
-    //    NSLog(@"targV_para , %0.3f , prop , %0.3f , der  , %0.3f ",targ_V_para , _Kp*diffPosition,_Kd*diffSpeed);
-    
-    float diffSp = _drone.carSpeed_Vec.norm - _drone.V_parralele;
-    float totalDist = _drone.distanceOnCircuitToCar-20*(1+diffSp/10);
-    
-    float speedFromDist = -16*sign(totalDist)*(1-expf(-fabsf(totalDist)/25));
-    float targ_V_Parallel = speedFromDist + _drone.carSpeed_Vec.norm;
-    
-    // --> chgmt
-    targ_V_Parallel = targ_V_para;
-    
-    targ_V_Parallel = bindBetween(targ_V_Parallel, -sqrt(256-targ_V_perp*targ_V_perp), sqrt(256-targ_V_perp*targ_V_perp));
+    // for derivative term .. we see the evolution of dist drone->targetLoc
     
     
-    Vec* V_parallele_Vec = [[Vec alloc] initWithNorm:targ_V_Parallel andAngle:_predictedDrone.sensCircuit.angle];
-    Vec* V_Perp_Vec = [[Vec alloc] initWithNorm:targ_V_perp andAngle:_predictedDrone.sensNextCenter.angle];
-    Vec* targetDroneSpeed_Vec = [V_parallele_Vec addVector:V_Perp_Vec];
+    _drone.targSp = bindBetween(droneTargetSpeed_Vec.norm, 0, 16) ;
+    _drone.targHeading = droneTargetSpeed_Vec.angle;
     
-    _drone.targSp = targetDroneSpeed_Vec.norm;
-    _drone.targHeading = targetDroneSpeed_Vec.angle;
+    previousDrone_TargetLoc_Vec = currentDrone_TargetLoc_Vec;
     
+ 
     
     [mapView movePinNamed:@"nextCenter" toCoord:nextCenter andColor:@"RGB 17 170 184"];
-    [mapView movePinNamed:@"targPosition" toCoord:locFrontCar andColor:@"RGB 239 28 29"];
-    [mapView movePinNamed:@"predictedindex" toCoord:_predictedDrone.droneIndexLocation andColor:@"RGB 216 179 19"];
-    [mapView movePinNamed:@"locBis" toCoord:locBis andColor:@"RGB 20 199 230"];
+    [mapView movePinNamed:@"targPosition" toCoord:locFrontCar andColor:@"RGB 239 28 29"]; // from car at heading to nextCenter at distance 15 from the car.
+//    [mapView movePinNamed:@"predictedindex" toCoord:_predictedDrone.droneIndexLocation andColor:@"RGB 216 179 19"];
+//    [mapView movePinNamed:@"locBis" toCoord:locBis andColor:@"RGB 20 199 230"];
 }
 
 -(void) performCloseTracking{

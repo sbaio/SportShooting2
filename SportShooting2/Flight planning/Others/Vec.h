@@ -21,6 +21,9 @@
 
 
 -(id) initWithNorm:(float) norm andAngle:(float) angle;
+
+-(id) vectorFrom:(CLLocationCoordinate2D) coord1 toCoord:(CLLocationCoordinate2D) coord2;
+
 -(id) initWithNorthComponent:(float) vec_N andEastComponent:(float) vec_E;
 -(void) updateWithNorthComponent:(float) vec_N andEastComponent:(float) vec_E;
 -(void) updateWithNorm:(float) norm andAngle:(float) angle;

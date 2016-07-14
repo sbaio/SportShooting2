@@ -146,7 +146,7 @@
     
     drone.gimbalCurrent330yaw = [[Calc Instance] angle330OfAngle:drone.gimbalCurrentBearingInDroneBC withZone:gimbalZone];
     
-    DVLog(@"%0.3f, %0.3f, %d , %0.3f, %0.3f",drone.gimbalYawEarth,drone.gimbalCurrent330yaw,drone.gimbalZone,drone.droneYaw,drone.gimbalCurrentBearingInDroneBC);
+//    DVLog(@"%0.3f, %0.3f, %d , %0.3f, %0.3f",drone.gimbalYawEarth,drone.gimbalCurrent330yaw,drone.gimbalZone,drone.droneYaw,drone.gimbalCurrentBearingInDroneBC);
 }
 
 

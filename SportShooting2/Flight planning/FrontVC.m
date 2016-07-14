@@ -903,11 +903,19 @@
         if ([ComponentHelper fetchFlightController]) { // DJI Simulation
             DJIFlightController* fc = [ComponentHelper fetchFlightController];
             if (fc.simulator.isSimulatorStarted) {
-                [self stopSimulatorWithCompletion:^(NSError * _Nullable error) {
-                    [self startSimulatorAtLoc:_circuit.locations[0] WithCompletion:^(NSError * _Nullable error) {
+                float distDroneSim_Car = [[Calc Instance] distanceFromCoords2D:_realDrone.droneLoc.coordinate toCoords2D:_carLocation.coordinate];
+                DVLog(@"dist , %0.3f",distDroneSim_Car);
+                if (distDroneSim_Car >1000) {
+                    [self stopSimulatorWithCompletion:^(NSError * _Nullable error) {
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            [self startSimulatorAtLoc:_circuit.locations[0] WithCompletion:^(NSError * _Nullable error) {
+                                
+                            }];
+                        });
                         
                     }];
-                }];
+                }
+                
             }
         }
         
@@ -1042,7 +1050,7 @@
         DJIFlightController* fc = [ComponentHelper fetchFlightController];
         
         if (!fc.simulator.isSimulatorStarted) {
-            [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
+//            [self adjustGimbalToCarLocation:_carLocation andDrone:_drone];
         }
         
         
@@ -1050,7 +1058,7 @@
         
         // send the commands  to the real drone
         
-//        [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
+        [_autopilot goWithSpeed:_drone.targSp atBearing:_drone.targHeading atAltitude:10 andYaw:0];
     
         // ********* PATH PLANNING ************
     }
@@ -1161,7 +1169,5 @@
     }
     return gimbalTarget330Yaw;
 }
-/*
- Test reponse à l'accéleration a partir de stopped position
- */
+
 @end
