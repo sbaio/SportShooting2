@@ -27,8 +27,6 @@
     _Kp = [frontVC.KpSlider value];
     _Kd = [frontVC.KdSlider value];
     
-    previousDroneDistanceToTarget = 0;
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRCSwitchChangedNotif:) name:@"RCSwitchStateChanged" object:nil];
     
     return self;
@@ -54,7 +52,7 @@
     // decide whether we szitch to shortcuttig or to close tracking based on some detectors to avoid frequent mode switches
     [self setCloseTrackingOrShortcutting:carLoc drone:_drone onCircuit:circ];
 
-    _drone.isCloseTracking = YES;
+//    _drone.isCloseTracking = YES;
     if (_drone.isCloseTracking) {
         [self performCloseTracking13];
     }
@@ -148,51 +146,41 @@
     // TARGET LOCATION for the drone to follow .. non continuous when nextCenter changes ...
     CLLocation* locFrontCar = [[Calc Instance] locationFrom:carLocation atDistance:10 atBearing:[[Calc Instance] headingTo:nextCenter.coordinate fromPosition:carLocation.coordinate]];
     
-    /// filtrer locFrontCar
-    
-    // vector from carLocation to the location loc Front Car
-    
-//    Vec* car_LocFront = [[Vec alloc] vectorFrom:carLocation.coordinate toCoord:locFrontCar.coordinate];
-    
+    /// filtrer locFrontCar -- NEED TO BE DONE
     // calculate distance between last target and current target
     float distCurrentTargetToPrevTarget = [[Calc Instance] distanceFromCoords2D:_drone.targetLocation.coordinate toCoords2D:locFrontCar.coordinate]; // in order to see if discontinuity in target ...
 
     _drone.targetLocation = locFrontCar;
-    Vec* currentDrone_TargetLoc_Vec = [[Vec alloc] vectorFrom:_drone.droneLoc.coordinate toCoord:_drone.targetLocation.coordinate];
-    if (!previousDrone_TargetLoc_Vec) {
-        previousDrone_TargetLoc_Vec = [[Vec alloc]initWithNorm:0 andAngle:0];
-    }
-    Vec* diffVec_Drone_TargetLoc = [currentDrone_TargetLoc_Vec substractVector:previousDrone_TargetLoc_Vec];
-    // filter norm and angle of variation of vec drone _ targetLoc
-    if (!diffVecNorm_Drone_TargetLoc_Array) {
-        diffVecNorm_Drone_TargetLoc_Array = [[NSMutableArray alloc]init];
-    }
-    if (!diffVecAngle_Drone_TargetLoc_Array) {
-        diffVecAngle_Drone_TargetLoc_Array = [[NSMutableArray alloc]init];
-    }
-    float filteredNorm = [[Calc Instance] filterVar:bindBetween(diffVec_Drone_TargetLoc.norm, 0, 5)  inArray:diffVecNorm_Drone_TargetLoc_Array angles:NO withNum:30];
-    float filteredAngle = [[Calc Instance] filterVar:diffVec_Drone_TargetLoc.angle inArray:diffVecAngle_Drone_TargetLoc_Array angles:YES withNum:30];
+
     
-    [diffVec_Drone_TargetLoc updateWithNorm:filteredNorm andAngle:filteredAngle];
+    // the vector of change in position of drone and target location can be calculated either by difference of current and previous position or through speed of each of.. drone speed and carLoc speed vec
+
+    // derivative term
+    Vec* diff_speed_Vec_Drone_TargetLoc = [_drone.carSpeed_Vec substractVector:_drone.droneSpeed_Vec];
     Vec* drone_Target_Vec = [[Vec alloc] vectorFrom:_drone.droneLoc.coordinate toCoord:_drone.targetLocation.coordinate];
     
-    float targSpeed = bindBetween(_Kp* drone_Target_Vec.norm, 0, 16) ; // _Kp should be around 0.3
-    
-    
+    // proportional term
+    float targSpeed = bindBetween(0.3* drone_Target_Vec.norm, 0, 16) ; // _Kp should be around 0.3
     Vec* droneTargetSpeed_Vec = [[Vec alloc]initWithNorm:targSpeed andAngle:drone_Target_Vec.angle]; // the proportional term: _Kp*distToTargetwith angle to target
     
-    float Kd = bindBetween(drone_Target_Vec.norm/10, 0, 10);
-    Vec* multiplyVEc = [diffVec_Drone_TargetLoc multiplyByScalar:Kd]; // _Kd should be around 10
-    DVLog(@"norm , %0.3f , angle , %0.3f",multiplyVEc.norm,multiplyVEc.angle);
-    droneTargetSpeed_Vec= [droneTargetSpeed_Vec addVector:multiplyVEc];
-    
-    // for derivative term .. we see the evolution of dist drone->targetLoc
+
+//    diff_speed_Vec_Drone_TargetLoc = [diff_speed_Vec_Drone_TargetLoc multiplyByScalar:bindBetween(drone_Target_Vec.norm/50, 0, 1)];
+    droneTargetSpeed_Vec= [droneTargetSpeed_Vec addVector:diff_speed_Vec_Drone_TargetLoc];
     
     
-    _drone.targSp = bindBetween(droneTargetSpeed_Vec.norm, 0, 16) ;
-    _drone.targHeading = droneTargetSpeed_Vec.angle;
+    // filter the output
+    if (!targetAngle_array) {
+        targetAngle_array = [[NSMutableArray alloc]init];
+    }
+    if (!targetSpeed_array) {
+        targetSpeed_array = [[NSMutableArray alloc]init];
+    }
     
-    previousDrone_TargetLoc_Vec = currentDrone_TargetLoc_Vec;
+    float filteredNorm = [[Calc Instance] filterVar:bindBetween(droneTargetSpeed_Vec.norm, 0, 16)  inArray:targetSpeed_array angles:NO withNum:10];
+    float filteredAngle = [[Calc Instance] filterVar:droneTargetSpeed_Vec.angle inArray:targetAngle_array angles:YES withNum:10];
+    
+    _drone.targSp = filteredNorm;//bindBetween(droneTargetSpeed_Vec.norm, 0, 16) ;
+    _drone.targHeading = filteredAngle;//droneTargetSpeed_Vec.angle;
     
  
     
